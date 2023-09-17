@@ -91,7 +91,9 @@ class DashBoardController extends Controller
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->count();
-        return view('dashboard.index', compact('totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        $incomingTasks = TaskConversions::where('destination_department', $departmentId)->get();
+        $outgoingTasks = TaskConversions::where('source_department', $departmentId)->get();
+        return view('dashboard.index', compact('outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
 
     // return MainTask::with('station')->whereHas('station', function ($query) {

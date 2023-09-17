@@ -23,4 +23,8 @@ class TaskConversions extends Model
     {
         return $this->belongsTo(Department::class, 'source_department');
     }
+    public function toDepartment()
+    {
+        return $this->belongsTo(Department::class, 'destination_department');
+    }
 }

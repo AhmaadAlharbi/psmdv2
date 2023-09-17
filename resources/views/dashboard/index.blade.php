@@ -388,6 +388,7 @@
                         <tr>
                             <th class="text-lg">ID</th>
                             <th class="text-lg">STATION</th>
+                            <th class="text-lg">Main Alarm</th>
                             <th class="text-lg">ENGINEER</th>
                             <th class="text-lg">DATE</th>
                             <th class="text-lg">OPERATION</th>
@@ -398,10 +399,13 @@
                         <tr>
                             <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
                             <td class="text-lg">{{$task->main_task->station->SSNAME}}</td>
+                            <td class="text-lg">{{$task->main_task->main_alarm->name}}</td>
                             @if($task->eng_id)
                             <td class="text-lg">{{$task->engineer->name}}</td>
-                            @endif
+                            @else
                             <td>-</td>
+                            @endif
+
                             <td class="text-lg">{{$task->created_at}}</td>
                             <td class="text-lg"><button class="btn btn-light">View</button></td>
                         </tr>
@@ -409,6 +413,103 @@
                     </tbody>
                 </table>
 
+            </div>
+        </div>
+    </div>
+    {{-- incoming table--}}
+    <div class="card">
+        <div class="card-header pb-0">
+            <div class="d-flex justify-content-between">
+                <h4 class="card-title mg-b-0">Info Table</h4>
+                <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+                        class="mdi mdi-dots-horizontal text-gray"></i></a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="javascript:void(0);">Action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Another
+                        Action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Something Else
+                        Here</a>
+                </div>
+            </div>
+            <p class="tx-12 tx-gray-500 mb-2">Example of Valex Info Table.. <a href="javascript:void(0);">Learn more</a>
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-vcenter table-bordered text-nowrap mb-0 table-info align-items-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>STATION</th>
+                            <th>FROM</th>
+                            <th>TO</th>
+                            <th>Date</th>
+                            <th>OPERATION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($incomingTasks as $task)
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>{{$task->main_task->station->SSNAME}}</td>
+                            <td>{{$task->department->name}}</td>
+                            <td>{{$task->toDepartment->name}}</td>
+                            <td>{{$task->created_at}}</td>
+                            <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                    class="btn btn-light">View</a></td>
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{-- outgoing tasks--}}
+    <div class="card">
+        <div class="card-header pb-0">
+            <div class="d-flex justify-content-between">
+                <h4 class="card-title mg-b-0">Warning Table</h4>
+                <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+                        class="mdi mdi-dots-horizontal text-gray"></i></a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="javascript:void(0);">Action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Another
+                        Action</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Something Else
+                        Here</a>
+                </div>
+            </div>
+            <p class="tx-12 tx-gray-500 mb-2">Example of Valex Warning Table.. <a href="javascript:void(0);">Learn
+                    more</a></p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table
+                    class="table table-vcenter table-bordered text-nowrap mb-0 table-warning align-items-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>STATION</th>
+                            <th>FROM</th>
+                            <th>TO</th>
+                            <th>Date</th>
+                            <th>OPERATION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($outgoingTasks as $task)
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>{{$task->main_task->station->SSNAME}}</td>
+                            <td>{{$task->department->name}}</td>
+                            <td>{{$task->toDepartment->name}}</td>
+                            <td>{{$task->created_at}}</td>
+                            <td><a href="" class="btn btn-light">View</a></td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
