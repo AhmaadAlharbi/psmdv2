@@ -86,7 +86,7 @@ class DashBoardController extends Controller
         // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('status', 'completed')->latest()->paginate(2, ['*'], 'page2');
+        })->where('status', 'completed')->get();
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->count();
