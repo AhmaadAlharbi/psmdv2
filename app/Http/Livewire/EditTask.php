@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Station;
+use App\Models\department_task_assignment;
 use App\Models\Equip;
 use App\Models\MainAlarm;
 use App\Models\MainTask;
@@ -292,18 +293,6 @@ class EditTask extends Component
             $equip_number = $this->otherEquip;
             $equip_name = null;
         }
-
-        //check department
-        if ($this->selectedDepartment !== Auth::user()->department_id) {
-            $previous_department_id = Auth::user()->department_id;
-            $this->selectedEngineer = null;
-        } else {
-            if ($this->task->previous_department_id) {
-                $previous_department_id = $this->task->previous_department_id;
-            } else {
-                $previous_department_id = null;
-            }
-        }
         //cehck main alarm if it is empty or not before saving to db
         if ($this->selectedMainAlarm !== 'other') {
             $mainAlarmId = $this->selectedMainAlarm;
@@ -326,13 +315,24 @@ class EditTask extends Component
             'work_type' => $this->work_type,
             'notes' => $this->notes,
             'status' => 'pending',
-            'department_id' => $this->selectedDepartment,
             'main_alarm_id' => $mainAlarmId,
             'user_id' => Auth::user()->id,
-            'eng_id' => $this->selectedEngineer,
-            'previous_department_id' => $previous_department_id,
         ]);
         $main_task_id = $this->task->id;
+        $department_task = department_task_assignment::where('main_tasks_id', $main_task_id)->first();
+        $department_task->update([
+            'eng_id' => $this->selectedEngineer,
+        ]);
+        if ($department_task->department_id !== Auth::user()->department_id) {
+            department_task_assignment::create([
+                'department_id' => Auth::user()->department_id,
+                'main_tasks_id' => $main_task_id,
+                'eng_id' => $this->selectedEngineer,
+                'status' => 'pending'
+            ]);
+        }
+
+
         $section_task = SectionTask::create([
             'main_tasks_id' => $main_task_id,
             'department_id' => Auth::user()->department_id,
@@ -342,8 +342,6 @@ class EditTask extends Component
             'status' => 'update',
             'engineer-notes' => null,
             'user_id' => Auth::user()->id,
-            'previous_department_id' => null,
-            'transfer_date_time' => null,
         ]);
         foreach ($this->photos as $photo) {
             // $photo->store('photos');
@@ -359,7 +357,7 @@ class EditTask extends Component
         }
         if ($this->selectedEngineer !== null) {
             $user = User::where('email', $this->engineerEmail)->first();
-            Notification::send($user, new TaskReport($this->task, $this->photos));
+            // Notification::send($user, new TaskReport($this->task, $this->photos));
         }
         session()->flash('success', 'تم التعديل بنجاح');
 

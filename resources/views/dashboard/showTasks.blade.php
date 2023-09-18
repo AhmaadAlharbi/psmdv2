@@ -187,7 +187,7 @@
                 @endif
                 @if($task->status === 'completed')
                 <div class="col">
-                    <a href="{{route('dashboard.reportPage',['id'=>$task->id])}}" type="button"
+                    <a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}" type="button"
                         class="btn btn-outline-success  button-icon "><i class="si si-notebook px-2"
                             data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
                             aria-label="si-notebook"></i>Report</a>

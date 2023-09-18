@@ -183,14 +183,17 @@
                             </div>
                             <div class="progress ht-20 mt-4">
                                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning ht-20"
-                                    style="width: {{ $totalTasksInWeek > 0 ? ($completedTasksInWeek / $totalTasksInWeek) * 100 : 0 }}%;">
+                                    style="width: {{ min(100, ($completedTasksInWeek / $totalTasksInWeek) * 100) }}%;">
                                     <span class="tx-18">
-                                        {{ number_format($totalTasksInWeek > 0 ? ($completedTasksInWeek /
-                                        $totalTasksInWeek) * 100 : 0, 2) }}%
+                                        {{ number_format(min(100, ($completedTasksInWeek /
+                                        $totalTasksInWeek) * 100), 2) }}%
                                     </span>
                                 </div>
                             </div>
                         </div><!-- col -->
+
+
+
                         <div class="col border-start text-center">
                             <div class="fw-bold tx-20">
                                 <div class="text-danger"> This Month Tasks</div>
@@ -211,360 +214,233 @@
                     </div><!-- row -->
                 </div>
             </div>
-            <div class="card mt-4">
-                <div class="card-header pb-0">
-                    <div class="card-title pb-0 mb-2">All-Time Statistics</div>
-                </div>
+        </div>
+        <div class="col">
+            {{-- TOP 5 engineers this month--}}
+            <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col text-center">
-                            <div class="fw-bold tx-20">
-                                <div>Total Tasks</div>
-                                <div>{{ $totalTasksAllTime }}</div>
-                                <div class="text-muted">Completed</div>
-                                <div>{{ $completedTasksAllTime }}</div>
+                        <div class="card-body">
+                            <div class="main-content-label">
+                                Pie Chart
                             </div>
-                            <div class="progress ht-20 mt-4">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success ht-20"
-                                    style="width: {{ $totalTasksAllTime > 0 ? ($completedTasksAllTime / $totalTasksAllTime) * 100 : 0 }}%;">
-                                    <span class="tx-18">
-                                        {{ number_format($totalTasksAllTime > 0 ? ($completedTasksAllTime /
-                                        $totalTasksAllTime) * 100 : 0, 2) }}%
-                                    </span>
-                                </div>
+                            <div class="chartjs-wrapper-demo" style="width: 300px; height: 300px;">
+                                <!-- Add or adjust these styles -->
+                                <canvas id="chartPie" width="400" height="400"></canvas>
                             </div>
-                        </div><!-- col -->
+                        </div>
                     </div><!-- row -->
                 </div>
             </div>
 
         </div>
-        <div class="col">
-            {{-- TOP 5 engineers this month--}}
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
-                        <h4 class="card-title">Browser Usage</h4>
-                        <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                                class="mdi mdi-dots-vertical text-gray"></i></a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Another
-                                Action</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Something Else
-                                Here</a>
-                        </div>
-                    </div>
-                    <p class="tx-12 tx-gray-500 mb-0">Tells you where your visitors originated from, such as
-                        search engines, social networks or website referrals. <a href="javascript:void(0);">Learn
-                            more</a></p>
-                </div><!-- card-header -->
-                <div class="card-body p-0">
-                    <div class="browser-stats">
-                        <div class="d-flex align-items-center item  border-bottom">
-                            <div class="d-flex">
-                                <img src="https://laravelui.spruko.com/valex/build/assets/img/svgicons/chrome.svg"
-                                    alt="img" class="ht-30 wd-30 me-2">
-                                <div class="">
-                                    <h6 class="">Chrome</h6>
-                                    <span class="sub-text">Mozilla Foundation, Inc.</span>
-                                </div>
-                            </div>
-                            <div class="ms-auto my-auto">
-                                <div class="d-flex">
-                                    <span class="me-4 my-auto">35,502</span>
-                                    <span class="text-success fs-15"><i class="fe fe-arrow-up"></i>12.75%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center item  border-bottom">
-                            <div class="d-flex">
-                                <img src="https://laravelui.spruko.com/valex/build/assets/img/svgicons/opera.svg"
-                                    alt="img" class="ht-30 wd-30 me-2">
-                                <div class="">
-                                    <h6 class="">Opera</h6>
-                                    <span class="sub-text">Mozilla Foundation, Inc.</span>
-                                </div>
-                            </div>
-                            <div class="ms-auto my-auto">
-                                <div class="d-flex">
-                                    <span class="me-4 my-auto">12,563</span>
-                                    <span class="text-danger"><i class="fe fe-arrow-down"></i>15.12%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center item  border-bottom">
-                            <div class="d-flex">
-                                <img src="https://laravelui.spruko.com/valex/build/assets/img/svgicons/edge.svg"
-                                    alt="img" class="ht-30 wd-30 me-2">
-                                <div class="">
-                                    <h6 class="">Edge</h6>
-                                    <span class="sub-text">Mozilla Foundation, Inc.</span>
-                                </div>
-                            </div>
-                            <div class="ms-auto my-auto">
-                                <div class="d-flex">
-                                    <span class="me-4 mt-1">25,364</span>
-                                    <span class="text-success"><i class="fe fe-arrow-up"></i>24.37%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center item  border-bottom">
-                            <div class="d-flex">
-                                <img src="https://laravelui.spruko.com/valex/build/assets/img/svgicons/firefox.svg"
-                                    alt="img" class="ht-30 wd-30 me-2">
-                                <div class="">
-                                    <h6 class="">Firefox</h6>
-                                    <span class="sub-text">Mozilla Foundation, Inc.</span>
-                                </div>
-                            </div>
-                            <div class="ms-auto my-auto">
-                                <div class="d-flex">
-                                    <span class="me-4 mt-1">14,635</span>
-                                    <span class="text-success"><i class="fe fe-arrow-up"></i>15,63%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center item border-bottom">
-                            <div class="d-flex">
-                                <img src="https://laravelui.spruko.com/valex/build/assets/img/svgicons/uc-browser.svg"
-                                    alt="img" class="ht-30 wd-30 me-2">
-                                <div class="">
-                                    <h6 class="">Ucbrowser</h6>
-                                    <span class="sub-text">Mozilla Foundation, Inc.</span>
-                                </div>
-                            </div>
-                            <div class="ms-auto my-auto">
-                                <div class="d-flex">
-                                    <span class="me-4 mt-1">15,453</span>
-                                    <span class="text-danger"><i class="fe fe-arrow-down"></i>23.70%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center item">
-                            <div class="d-flex">
-                                <img src="https://laravelui.spruko.com/valex/build/assets/img/svgicons/safari.svg"
-                                    alt="img" class="ht-30 wd-30 me-2">
-                                <div class="">
-                                    <h6 class="">Safari</h6>
-                                    <span class="sub-text">Mozilla Foundation, Inc.</span>
-                                </div>
-                            </div>
-                            <div class="ms-auto my-auto">
-                                <div class="d-flex">
-                                    <span class="me-4 mt-1">35,657</span>
-                                    <span class="text-danger"><i class="fe fe-arrow-down"></i>12.54%</span>
-                                </div>
-                            </div>
-                        </div>
+        {{--red table --}}
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Secondary Table</h4>
+                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+                            class="mdi mdi-dots-horizontal text-gray"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Another
+                            Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Something Else
+                            Here</a>
                     </div>
                 </div>
+                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Secondary Table.. <a href="javascript:void(0);">Learn
+                        more</a></p>
             </div>
-        </div>
-    </div>
-    {{--red table --}}
-    <div class="card">
-        <div class="card-header pb-0">
-            <div class="d-flex justify-content-between">
-                <h4 class="card-title mg-b-0">Secondary Table</h4>
-                <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                        class="mdi mdi-dots-horizontal text-gray"></i></a>
-                <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Another
-                        Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Something Else
-                        Here</a>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-vcenter table-bordered text-nowrap table-danger align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-lg">ID</th>
+                                <th class="text-lg">STATION</th>
+                                <th class="text-lg">Main Alarm</th>
+                                <th class="text-lg">ENGINEER</th>
+                                <th class="text-lg">DATE</th>
+                                <th class="text-lg">OPERATION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pendingTasks as $task)
+                            <tr>
+                                <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
+                                <td class="text-lg">{{$task->main_task->station->SSNAME}}</td>
+                                <td class="text-lg">{{$task->main_task->main_alarm->name}}</td>
+                                @if($task->eng_id)
+                                <td class="text-lg">{{$task->engineer->name}}</td>
+                                @else
+                                <td>-</td>
+                                @endif
+
+                                <td class="text-lg">{{$task->created_at}}</td>
+                                <td class="text-lg"><button class="btn btn-light">View</button></td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
-            <p class="tx-12 tx-gray-500 mb-2">Example of Valex Secondary Table.. <a href="javascript:void(0);">Learn
-                    more</a></p>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-vcenter table-bordered text-nowrap table-danger align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-lg">ID</th>
-                            <th class="text-lg">STATION</th>
-                            <th class="text-lg">Main Alarm</th>
-                            <th class="text-lg">ENGINEER</th>
-                            <th class="text-lg">DATE</th>
-                            <th class="text-lg">OPERATION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($pendingTasks as $task)
-                        <tr>
-                            <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
-                            <td class="text-lg">{{$task->main_task->station->SSNAME}}</td>
-                            <td class="text-lg">{{$task->main_task->main_alarm->name}}</td>
-                            @if($task->eng_id)
-                            <td class="text-lg">{{$task->engineer->name}}</td>
-                            @else
-                            <td>-</td>
-                            @endif
-
-                            <td class="text-lg">{{$task->created_at}}</td>
-                            <td class="text-lg"><button class="btn btn-light">View</button></td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
+        {{-- incoming table--}}
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Info Table</h4>
+                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+                            class="mdi mdi-dots-horizontal text-gray"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Another
+                            Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Something Else
+                            Here</a>
+                    </div>
+                </div>
+                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Info Table.. <a href="javascript:void(0);">Learn
+                        more</a>
+                </p>
             </div>
-        </div>
-    </div>
-    {{-- incoming table--}}
-    <div class="card">
-        <div class="card-header pb-0">
-            <div class="d-flex justify-content-between">
-                <h4 class="card-title mg-b-0">Info Table</h4>
-                <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                        class="mdi mdi-dots-horizontal text-gray"></i></a>
-                <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Another
-                        Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Something Else
-                        Here</a>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table
+                        class="table table-vcenter table-bordered text-nowrap mb-0 table-info align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>STATION</th>
+                                <th>FROM</th>
+                                <th>TO</th>
+                                <th>Date</th>
+                                <th>OPERATION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($incomingTasks as $task)
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>{{$task->main_task->station->SSNAME}}</td>
+                                <td>{{$task->department->name}}</td>
+                                <td>{{$task->toDepartment->name}}</td>
+                                <td>{{$task->created_at}}</td>
+                                <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                        class="btn btn-light">View</a></td>
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <p class="tx-12 tx-gray-500 mb-2">Example of Valex Info Table.. <a href="javascript:void(0);">Learn more</a>
-            </p>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-vcenter table-bordered text-nowrap mb-0 table-info align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>STATION</th>
-                            <th>FROM</th>
-                            <th>TO</th>
-                            <th>Date</th>
-                            <th>OPERATION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($incomingTasks as $task)
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>{{$task->main_task->station->SSNAME}}</td>
-                            <td>{{$task->department->name}}</td>
-                            <td>{{$task->toDepartment->name}}</td>
-                            <td>{{$task->created_at}}</td>
-                            <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                    class="btn btn-light">View</a></td>
-                        </tr>
-                        @endforeach
-
-                    </tbody>
-                </table>
+        {{-- outgoing tasks--}}
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Warning Table</h4>
+                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+                            class="mdi mdi-dots-horizontal text-gray"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Another
+                            Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Something Else
+                            Here</a>
+                    </div>
+                </div>
+                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Warning Table.. <a href="javascript:void(0);">Learn
+                        more</a></p>
             </div>
-        </div>
-    </div>
-    {{-- outgoing tasks--}}
-    <div class="card">
-        <div class="card-header pb-0">
-            <div class="d-flex justify-content-between">
-                <h4 class="card-title mg-b-0">Warning Table</h4>
-                <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                        class="mdi mdi-dots-horizontal text-gray"></i></a>
-                <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Another
-                        Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Something Else
-                        Here</a>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table
+                        class="table table-vcenter table-bordered text-nowrap mb-0 table-warning align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>STATION</th>
+                                <th>FROM</th>
+                                <th>TO</th>
+                                <th>Date</th>
+                                <th>OPERATION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($outgoingTasks as $task)
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>{{$task->main_task->station->SSNAME}}</td>
+                                <td>{{$task->department->name}}</td>
+                                <td>{{$task->toDepartment->name}}</td>
+                                <td>{{$task->created_at}}</td>
+                                <td><a href="" class="btn btn-light">View</a></td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <p class="tx-12 tx-gray-500 mb-2">Example of Valex Warning Table.. <a href="javascript:void(0);">Learn
-                    more</a></p>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table
-                    class="table table-vcenter table-bordered text-nowrap mb-0 table-warning align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>STATION</th>
-                            <th>FROM</th>
-                            <th>TO</th>
-                            <th>Date</th>
-                            <th>OPERATION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($outgoingTasks as $task)
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>{{$task->main_task->station->SSNAME}}</td>
-                            <td>{{$task->department->name}}</td>
-                            <td>{{$task->toDepartment->name}}</td>
-                            <td>{{$task->created_at}}</td>
-                            <td><a href="" class="btn btn-light">View</a></td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        {{-- green table--}}
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title mg-b-0">Success Table</h4>
+                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
+                            class="mdi mdi-dots-horizontal text-gray"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Another
+                            Action</a>
+                        <a class="dropdown-item" href="javascript:void(0);">Something Else
+                            Here</a>
+                    </div>
+                </div>
+                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Success Table.. <a href="javascript:void(0);">Learn
+                        more</a></p>
             </div>
-        </div>
-    </div>
-    {{-- green table--}}
-    <div class="card">
-        <div class="card-header pb-0">
-            <div class="d-flex justify-content-between">
-                <h4 class="card-title mg-b-0">Success Table</h4>
-                <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                        class="mdi mdi-dots-horizontal text-gray"></i></a>
-                <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Another
-                        Action</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Something Else
-                        Here</a>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-vcenter table-bordered text-nowrap table-success align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>STATION</th>
+                                <th>Main alarm</th>
+                                <th>ENGINEER</th>
+                                <th>Department</th>
+                                <th>Action Take</th>
+                                <th>Report</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($completedTasks as $task)
+                            <tr>
+                                <th scope="row">{{ $loop->iteration }}</th>
+                                <td>{{$task->main_task->station->SSNAME}}</td>
+                                <td>{{$task->main_task->main_alarm->name}}</td>
+                                <td>{{$task->engineer->name}}</td>
+                                <td>{{$task->engineer->department->name}}</td>
+                                <td>{{$task->action_take}}</td>
+                                <td><a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}"
+                                        type="button" class="btn btn-outline-success  button-icon "><i
+                                            class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
+                                            data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a>
+                                </td>
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <p class="tx-12 tx-gray-500 mb-2">Example of Valex Success Table.. <a href="javascript:void(0);">Learn
-                    more</a></p>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-vcenter table-bordered text-nowrap table-success align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>STATION</th>
-                            <th>Main alarm</th>
-                            <th>ENGINEER</th>
-                            <th>Action Take</th>
-                            <th>Report</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($completedTasks as $task)
-                        <tr>
-                            <th scope="row">{{ $loop->iteration }}</th>
-                            <td>{{$task->main_task->station->SSNAME}}</td>
-                            <td>{{$task->main_task->main_alarm->name}}</td>
-                            <td>{{$task->engineer->name}}</td>
-                            <td>{{$task->action_take}}</td>
-                            <td><a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}" type="button"
-                                    class="btn btn-outline-success  button-icon "><i class="si si-notebook px-2"
-                                        data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
-                                        aria-label="si-notebook"></i>Report</a></td>
-                        </tr>
-                        @endforeach
-
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
-</div>
 
 
 
@@ -583,7 +459,12 @@
 <script src="{{asset('assets/plugins/counters/jquery.missofis-countdown.js')}}"></script>
 <script src="{{asset('assets/plugins/counters/counter.js')}}"></script>
 
-<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+<!--Internal  Chart.bundle js -->
+<script src="{{asset('assets/plugins/chart.js/Chart.bundle.min.js')}}"></script>
+
+<!-- Internal Chartjs js -->
+<script src="{{asset('assets/js/chart.chartjs.js')}}"></script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -619,4 +500,24 @@
     }
 </script>
 
+
+<script>
+    // JavaScript code to create a pie chart using Chart.js
+    var ctx = document.getElementById('chartPie').getContext('2d');
+    var data = {
+        labels: ['Completed Tasks', 'Remaining Tasks'],
+        datasets: [{
+            data: [{{ $completedTasksAllTime }}, {{ $totalTasksAllTime - $completedTasksAllTime }}],
+            backgroundColor: ['#11d43d', '#ff1947']
+        }]
+    };
+    var options = {
+        responsive: true
+    };
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: options
+    });
+</script>
 @endsection

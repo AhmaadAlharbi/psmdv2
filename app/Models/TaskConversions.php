@@ -14,6 +14,10 @@ class TaskConversions extends Model
     {
         return $this->belongsTo(MainTask::class, 'main_tasks_id');
     }
+    public function mainTask()
+    {
+        return $this->belongsTo(MainTask::class, 'main_tasks_id', 'id');
+    }
     public function engineer()
     {
         return $this->belongsTo(User::class, 'eng_id');

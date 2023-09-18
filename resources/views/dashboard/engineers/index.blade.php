@@ -125,7 +125,8 @@
                 <div class="dropdown-menu">
                     {{-- <a href="{{route('dashboard.editTask',['id'=>$task->id])}}" class="dropdown-item">تعديل</a>
                     --}}
-                    <a href="/engineer-task-page/{{$task->id}}" class="btn btn-outline-secondary dropdown-item">Engineer
+                    <a href="/engineer-task-page/{{$task->main_tasks_id}}"
+                        class="btn btn-outline-secondary dropdown-item">Engineer
                         report</a>
                 </div><!-- dropdown-menu -->
 

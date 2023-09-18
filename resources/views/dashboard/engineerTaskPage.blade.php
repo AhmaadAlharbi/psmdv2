@@ -226,7 +226,7 @@
                                 data-toggle="modal" data-target="#exampleModal">
                                 Can not complete the task
                             </button>
-                            <form action="{{route('dashboard.submitEngineerReport',['id'=>$tasks->id])}}"
+                            <form action="{{route('dashboard.submitEngineerReport',['id'=>$tasks->main_tasks_id])}}"
                                 enctype="multipart/form-data" method="post" autocomplete="off">
                                 @csrf
                                 <div class="d-flex flex-column align-items-start justify-content-start my-2  text-dark">

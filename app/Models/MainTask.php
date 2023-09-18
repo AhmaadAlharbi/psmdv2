@@ -48,4 +48,8 @@ class MainTask extends Model
         return $this->belongsToMany(Department::class, 'department_id')
             ->withPivot('status');
     }
+    public function conversions()
+    {
+        return $this->hasMany(TaskConversions::class, 'main_tasks_id', 'id');
+    }
 }
