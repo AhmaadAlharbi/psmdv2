@@ -70,17 +70,23 @@ class EditTask extends Component
         $this->stations = Station::all();
         $this->main_alarms = MainAlarm::where('department_id', 2)->get();
         $this->task = MainTask::find($this->task_id);
-        $this->selectedStation = $this->task->station->SSNAME;
         $this->station_id =  $this->task->station->id;
         $this->stationDetails = Station::where('id',  $this->task->station_id)->first();
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;
-        $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
+        $this->selectedMainAlarm = optional($this->task->main_alarm)->name;
         $this->selectedEngineer = optional($this->task->engineer)->id;
-        // $this->area = optional($this->task->engineer)->area ? $this->task->engineer->area : $this->setArea();
+        // Set the Area based on the Department of the authenticated User.
         $this->setArea();
         $this->getEmail();
-        $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('area', $this->area)->get();
+        $controlCenter = $this->stationDetails->control;
+        $this->engineers = Engineer::where('department_id', Auth::user()->department_id);
+
+        if ($this->area !== 3) {
+            $this->engineers->where('area', $this->area);
+        }
+
+        $this->engineers = $this->engineers->get();
         $this->problem = $this->task->problem;
         $this->notes = $this->task->notes;
         $this->voltage = Equip::where('station_id', $this->task->station->id)->distinct()->pluck('voltage_level');
@@ -176,9 +182,9 @@ class EditTask extends Component
 
         if ($controlCenter === 'JAHRA CONTROL CENTER' || $controlCenter === 'TOWN CONTROL CENTER') {
             $this->area = 1;
-        } elseif ($controlCenter === 'SHUAIBA CONTROL CENTER') {
+        } elseif ($controlCenter === 'SHUAIBA CONTROL CENTER' || $controlCenter === 'JABRIYA CONTROL CENTER') {
             $this->area = 2;
-        } elseif ($controlCenter === 'JABRIYA CONTROL CENTER') {
+        } else {
             $this->area = 3;
         }
     }
@@ -285,6 +291,7 @@ class EditTask extends Component
             // If selectedEquip is not empty, set $equip_number to the selected value
             $selectedEquipArr = explode(" - ", $this->selectedEquip);
             $equip_number = $selectedEquipArr[0];
+            $equip_name = $selectedEquipArr[1];
         } elseif (!empty($this->selectedTransformer)) {
             // If selectedTransformer is not empty, set $equip_number to the selected value
             $equip_number = $this->selectedTransformer;
@@ -310,7 +317,7 @@ class EditTask extends Component
         $this->task->update([
             'station_id' =>  $this->station_id,
             'voltage_level' => $this->selectedVoltage,
-            'equip_number' => $equip_number,
+            'equip_number' =>  $equip_number . ' - ' . $equip_name,
             'problem' => $this->problem,
             'work_type' => $this->work_type,
             'notes' => $this->notes,
@@ -331,18 +338,6 @@ class EditTask extends Component
                 'status' => 'pending'
             ]);
         }
-
-
-        $section_task = SectionTask::create([
-            'main_tasks_id' => $main_task_id,
-            'department_id' => Auth::user()->department_id,
-            'eng_id' => $this->selectedEngineer,
-            'date' => $date,
-            'action_take' => null,
-            'status' => 'update',
-            'engineer-notes' => null,
-            'user_id' => Auth::user()->id,
-        ]);
         foreach ($this->photos as $photo) {
             // $photo->store('photos');
             $name = $photo->getClientOriginalName();
@@ -360,7 +355,6 @@ class EditTask extends Component
             // Notification::send($user, new TaskReport($this->task, $this->photos));
         }
         session()->flash('success', 'تم التعديل بنجاح');
-
         return redirect("/dashboard/admin");
     }
 }

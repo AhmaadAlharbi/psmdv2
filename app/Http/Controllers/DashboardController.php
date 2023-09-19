@@ -89,7 +89,7 @@ class DashBoardController extends Controller
         })->where('status', 'completed')->get();
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
-        $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->count();
+        $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
         $incomingTasks = TaskConversions::whereHas('mainTask', function ($query) {
             $query->where('status', 'pending');
         })->where('destination_department', $departmentId)->get();
@@ -221,6 +221,9 @@ class DashBoardController extends Controller
         $main_task = MainTask::findOrFail($id);
         $section_task = SectionTask::where('main_tasks_id', $id)->first();
         $taskConverted = TaskConversions::where('main_tasks_id', $id)->first();
+        $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
+            ->where('main_tasks_id', $id)
+            ->first();
         if ($taskConverted) {
             $taskConverted->update([
                 'status' => 'completed'
@@ -235,6 +238,17 @@ class DashBoardController extends Controller
             if ($taskConverted->source_department === 1) {
                 $taskSoruce->update([
                     'status' => 'completed',
+                    'eng_id' => Auth::user()->id,
+                ]);
+                SectionTask::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => 1,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $request->action_take,
+                    'status' => 'completed',
+                    'engineer-notes' => $request->notes,
+                    'user_id' => Auth::user()->id,
+                    'date' => $date,
                 ]);
             }
             if ($taskConverted->source_department === Auth::user()->department_id) {
@@ -275,6 +289,10 @@ class DashBoardController extends Controller
             ]);
             $main_task->update([
                 'status' => 'completed',
+            ]);
+            $departmentTask->update([
+                'status' => 'completed',
+
             ]);
         }
 
@@ -317,7 +335,7 @@ class DashBoardController extends Controller
         $isAdmin = Auth()->user()->role->title == 'Admin';
         $tasks = $isAdmin ? $this->getAdminTasks($status, $currentMonth) : $this->getEngineerTasks($status);
 
-        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status'));
     }
 
     private function getAdminTasks($status, $currentMonth)

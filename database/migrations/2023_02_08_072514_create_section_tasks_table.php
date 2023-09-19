@@ -23,6 +23,7 @@ class CreateSectionTasksTable extends Migration
             $table->string('action_take')->nullable();
             $table->string('status')->nullable();
             $table->string('engineer-notes')->nullable();
+            $table->boolean('approved')->default(false);
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
             $table->foreign('main_tasks_id')

@@ -129,13 +129,12 @@
     @endif
     @foreach($tasks as $task)
     <div class="col-12 col-sm-12 col-lg-6 col-xl-4 my-2">
-        <div class="card {{$task->main_task->status =='pending'  ? 'card-danger' : 'card-success'}} h-100 ">
+        <div class="card {{$task->status =='pending'  ? 'card-danger' : 'card-success'}} h-100 ">
 
             <div class="card-body  ">
                 <ul class="list-group   text-center">
 
-                    <li
-                        class="list-group-item {{ ($task->main_task->status == 'pending') ? 'bg-danger': 'bg-success' }}">
+                    <li class="list-group-item {{ ($task->status == 'pending') ? 'bg-danger': 'bg-success' }}">
                         Task #
                         {{$task->main_task->id}}
                     </li>
@@ -188,9 +187,20 @@
                 @if($task->status === 'completed')
                 <div class="col">
                     <a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}" type="button"
-                        class="btn btn-outline-success  button-icon "><i class="si si-notebook px-2"
-                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
-                            aria-label="si-notebook"></i>Report</a>
+                        class="btn btn-success  button-icon "><i class="si si-notebook px-2" data-bs-toggle="tooltip"
+                            title="" data-bs-original-title="si-notebook"
+                            aria-label="si-notebook"></i>{{Auth::user()->department->name}} Report </a>
+                    @if($task->source_department !== 1 && $task->source_department )
+                    @if( $task->source_department !== Auth::user()->department_id)
+                    <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->source_department])}}"
+                            class="btn btn-dark">Report {{$task->department->name}} </a></td>
+                    @else
+                    <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->destination_department])}}"
+                            class="btn btn-dark">Report {{$task->toDepartment->name}} </a></td>
+                    @endif
+                    @endif
+
+
                 </div>
                 @endif
 

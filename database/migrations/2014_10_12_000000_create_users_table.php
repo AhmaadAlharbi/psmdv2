@@ -21,11 +21,9 @@ return new class extends Migration
             $table->string('password');
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
-
+            $table->boolean('approved')->default(false);
             $table->rememberToken();
             $table->timestamps();
-
-
             $table->foreign('department_id')
                 ->references('id')
                 ->on('departments');

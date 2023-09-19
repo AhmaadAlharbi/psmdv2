@@ -164,12 +164,15 @@
                                 <div class="text-muted">Completed</div>
                                 <div>{{ $completedTasksInDay }}</div>
                             </div>
-                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning ht-20"
-                                style="width: {{ $totalTasksInWeek > 0 ? min(100, ($completedTasksInWeek / $totalTasksInWeek) * 100) : 0 }}%;">
-                                <span class="tx-18">
-                                    {{ $totalTasksInWeek > 0 ? number_format(min(100, ($completedTasksInWeek /
-                                    $totalTasksInWeek) * 100), 2) : 0 }}%
-                                </span>
+                            <div class="progress ht-20 mt-4">
+
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary ht-20"
+                                    style="width: {{ $totalTasksInDay > 0 ? ($completedTasksInDay / $totalTasksInDay) * 100 : 0 }}%;">
+                                    <span class="tx-18">
+                                        {{ number_format($totalTasksInDay > 0 ? ($completedTasksInDay /
+                                        $totalTasksInDay) * 100 : 0, 2) }}%
+                                    </span>
+                                </div>
                             </div>
 
                         </div><!-- col -->
@@ -238,19 +241,9 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">Secondary Table</h4>
-                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                            class="mdi mdi-dots-horizontal text-gray"></i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Another
-                            Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Something Else
-                            Here</a>
-                    </div>
+                    <h4 class="card-title mg-b-0">المهمات المنشئة - Local Tasks</h4>
+
                 </div>
-                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Secondary Table.. <a href="javascript:void(0);">Learn
-                        more</a></p>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -293,25 +286,12 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">Info Table</h4>
-                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                            class="mdi mdi-dots-horizontal text-gray"></i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Another
-                            Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Something Else
-                            Here</a>
-                    </div>
+                    <h4 class="card-title mg-b-0">المهمات الواردة - Incoming Tasks</h4>
                 </div>
-                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Info Table.. <a href="javascript:void(0);">Learn
-                        more</a>
-                </p>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table
-                        class="table table-vcenter table-bordered text-nowrap mb-0 table-info align-items-center mb-0">
+                    <table class="table table-vcenter table-bordered text-nowrap table-info align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -343,20 +323,8 @@
         {{-- outgoing tasks--}}
         <div class="card">
             <div class="card-header pb-0">
-                <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">Warning Table</h4>
-                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                            class="mdi mdi-dots-horizontal text-gray"></i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Another
-                            Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Something Else
-                            Here</a>
-                    </div>
-                </div>
-                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Warning Table.. <a href="javascript:void(0);">Learn
-                        more</a></p>
+                <h4 class="card-title mg-b-0">Outgoing Tasks - المهمات المرسلة</h4>
+
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -400,19 +368,11 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">Success Table</h4>
-                    <a href="javascript:void(0);" class="tx-inverse" data-bs-toggle="dropdown"><i
-                            class="mdi mdi-dots-horizontal text-gray"></i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="javascript:void(0);">Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Another
-                            Action</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Something Else
-                            Here</a>
-                    </div>
+                    <h4 class="card-title mg-b-0">المهمات المنجزة - Completed Tasks</h4>
+
+
                 </div>
-                <p class="tx-12 tx-gray-500 mb-2">Example of Valex Success Table.. <a href="javascript:void(0);">Learn
-                        more</a></p>
+
             </div>
             <div class="card-body">
                 <div class="table-responsive">

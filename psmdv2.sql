@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 17, 2023 at 12:06 PM
+-- Generation Time: Sep 19, 2023 at 01:19 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.9
 
@@ -81,10 +81,17 @@ CREATE TABLE `department_task_assignment` (
 --
 
 INSERT INTO `department_task_assignment` (`id`, `department_id`, `main_tasks_id`, `eng_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 1, 'completed', '2023-09-16 21:00:00', '2023-09-17 06:10:13'),
-(2, 2, 2, 1, 'completed', '2023-09-16 21:00:00', '2023-09-17 07:15:53'),
-(3, 2, 3, 1, 'pending', '2023-09-16 07:19:38', '2023-09-17 07:19:38'),
-(6, 1, 7, NULL, 'pending', '2023-09-17 08:30:48', '2023-09-17 08:30:48');
+(1, 2, 1, 50, 'completed', '2023-09-17 08:36:03', '2023-09-19 08:36:03'),
+(2, 2, 2, 50, 'completed', '2023-09-19 08:43:50', '2023-09-19 08:44:47'),
+(3, 2, 3, 50, 'completed', '2023-09-12 08:47:41', '2023-09-19 08:48:08'),
+(4, 2, 4, NULL, 'pending', '2023-09-19 09:01:55', '2023-09-19 09:01:55'),
+(5, 2, 5, 59, 'completed', '2023-09-18 09:04:16', '2023-09-19 09:05:13'),
+(6, 2, 6, 56, 'completed', '2023-09-18 09:12:02', '2023-09-19 09:13:07'),
+(11, 1, 10, 48, 'completed', '2023-08-20 12:24:16', '2023-09-19 12:33:02'),
+(12, 2, 10, 48, 'completed', '2023-08-20 12:24:16', '2023-09-19 12:33:02'),
+(15, 1, 12, 5, 'completed', '2023-09-13 13:00:30', '2023-09-19 13:03:07'),
+(16, 2, 12, 5, 'completed', '2023-09-19 13:02:25', '2023-09-19 13:03:07'),
+(17, 2, 13, 50, 'pending', '2023-09-19 13:07:07', '2023-09-19 13:07:07');
 
 -- --------------------------------------------------------
 
@@ -107,7 +114,12 @@ CREATE TABLE `engineers` (
 --
 
 INSERT INTO `engineers` (`id`, `user_id`, `department_id`, `area`, `shift`, `created_at`, `updated_at`) VALUES
-(1, 1, 2, '1', '0', '2023-09-17 05:02:54', '2023-09-17 05:02:54');
+(1, 50, 2, '1', '0', '2023-09-19 08:34:30', '2023-09-19 08:34:30'),
+(2, 59, 2, '2', '0', '2023-09-19 09:02:22', '2023-09-19 09:03:00'),
+(3, 39, 2, '1', '0', '2023-09-19 09:06:44', '2023-09-19 09:06:44'),
+(4, 56, 2, '1', '0', '2023-09-19 09:09:35', '2023-09-19 09:09:35'),
+(5, 48, 2, '2', '0', '2023-09-19 12:05:38', '2023-09-19 12:16:12'),
+(6, 5, 2, '2', '0', '2023-09-19 13:01:40', '2023-09-19 13:01:49');
 
 -- --------------------------------------------------------
 
@@ -24419,55 +24431,55 @@ CREATE TABLE `main_alarm` (
 --
 
 INSERT INTO `main_alarm` (`id`, `department_id`, `name`, `created_at`, `updated_at`) VALUES
-(3, 2, 'Auto reclosure', NULL, NULL),
-(4, 2, 'Flag Relay Replacement', NULL, NULL),
-(5, 2, 'Protection Clearance feeder', NULL, NULL),
-(6, 2, 'Transformer Clearance', NULL, NULL),
-(7, 2, 'mw reading wrong transformer', NULL, NULL),
-(8, 2, 'mv reading wrong transformer', NULL, NULL),
-(9, 2, 'kv reading wrong transformer', NULL, NULL),
-(10, 2, 'Dist Prot Main Alaram', NULL, NULL),
-(11, 2, 'Dist.Prot.Main B Alarm', NULL, NULL),
-(12, 2, 'Pilot Cable Fault Alarm', NULL, NULL),
-(13, 2, 'Pilot cable Superv.Supply Fail Alarm', NULL, NULL),
-(14, 2, 'mw reading showing wrong', NULL, NULL),
-(15, 2, 'mv reading showing wrong', NULL, NULL),
-(16, 2, 'kv reading showing wrong', NULL, NULL),
-(17, 2, 'ampere reading showing wrong', NULL, NULL),
-(18, 2, 'BB reading showing wrong', NULL, NULL),
-(19, 2, 'BB KV reading showing wrong', NULL, NULL),
-(20, 2, 'Transformer out of step Alarm', NULL, NULL),
-(21, 2, 'DC Supply 1 & 2 Fail Alarm', NULL, NULL),
-(22, 2, 'General Alarm 300KV', NULL, NULL),
-(23, 2, 'General Alarm 132KV', NULL, NULL),
-(24, 2, 'General Alarm 33KV', NULL, NULL),
-(25, 2, 'General Alarm 11KV', NULL, NULL),
-(26, 2, 'B/Bar Protection Fail Alarm', NULL, NULL),
-(27, 2, 'Shunt Reactor Restricted Earth Earth Fault Realy', NULL, NULL),
-(28, 2, 'Shunt Reactor Over Current', NULL, NULL),
-(29, 2, 'Shunt Reactor Clearance', NULL, NULL),
-(30, 2, 'Shunt Reactor Earth Fault', NULL, NULL),
-(31, 2, 'Breaker Open / close undefined', NULL, NULL),
-(32, 2, 'B/Bar Isolator open / close D.S', NULL, NULL),
-(33, 2, 'Line Isolator Open / close D.S', NULL, NULL),
-(34, 5, 'Transformer Tubing SF6 Gas Pressure Low Alarm', NULL, NULL),
-(35, 5, 'Bus Bar SF6 Gas Pressure Low Alarm', NULL, NULL),
-(36, 5, 'Alternating Current Supply Failure Alarm', NULL, NULL),
-(37, 5, 'Main Air tank Pressure Low (Compressed Air Supply Failure) Alarm', NULL, NULL),
-(38, 5, 'Door intrusion Detection Alarm', NULL, NULL),
-(39, 5, 'General Alarm 33KV', NULL, NULL),
-(40, 5, 'General Alarm 11KV', NULL, NULL),
-(41, 5, 'Room Temperature Alarm (SS Control)', NULL, NULL),
-(42, 5, 'Bus Bar SF6 Gas Pressure Low Trip', NULL, NULL),
-(43, 5, 'Bay SF6 Gas Pressure Low Trip', NULL, NULL),
-(44, 5, 'Transformer Tubing SF6 Gas Pressure Low Alarm', NULL, NULL),
-(45, 5, 'Bus Bar SF6 Gas Pressure Low Alarm', NULL, NULL),
-(46, 5, 'Alternating Current Supply Failure Alarm', NULL, NULL),
-(47, 3, 'DC Supply Failure', NULL, NULL),
-(48, 3, 'Main Failure', NULL, NULL),
-(49, 3, 'Low Voltage', NULL, NULL),
-(50, 3, 'High Voltage', NULL, NULL),
-(51, 1, 'kkklok', '2023-09-17 08:10:28', '2023-09-17 08:10:28');
+(1, 2, 'Auto reclosure', NULL, NULL),
+(2, 2, 'Flag Relay Replacement', NULL, NULL),
+(3, 2, 'Protection Clearance feeder', NULL, NULL),
+(4, 2, 'Transformer Clearance', NULL, NULL),
+(5, 2, 'mw reading wrong transformer', NULL, NULL),
+(6, 2, 'mv reading wrong transformer', NULL, NULL),
+(7, 2, 'kv reading wrong transformer', NULL, NULL),
+(8, 2, 'Dist Prot Main Alaram', NULL, NULL),
+(9, 2, 'Dist.Prot.Main B Alarm', NULL, NULL),
+(10, 2, 'Pilot Cable Fault Alarm', NULL, NULL),
+(11, 2, 'Pilot cable Superv.Supply Fail Alarm', NULL, NULL),
+(12, 2, 'mw reading showing wrong', NULL, NULL),
+(13, 2, 'mv reading showing wrong', NULL, NULL),
+(14, 2, 'kv reading showing wrong', NULL, NULL),
+(15, 2, 'ampere reading showing wrong', NULL, NULL),
+(16, 2, 'BB reading showing wrong', NULL, NULL),
+(17, 2, 'BB KV reading showing wrong', NULL, NULL),
+(18, 2, 'Transformer out of step Alarm', NULL, NULL),
+(19, 2, 'DC Supply 1 & 2 Fail Alarm', NULL, NULL),
+(20, 2, 'General Alarm 300KV', NULL, NULL),
+(21, 2, 'General Alarm 132KV', NULL, NULL),
+(22, 2, 'General Alarm 33KV', NULL, NULL),
+(23, 2, 'General Alarm 11KV', NULL, NULL),
+(24, 2, 'B/Bar Protection Fail Alarm', NULL, NULL),
+(25, 2, 'Shunt Reactor Restricted Earth Earth Fault Realy', NULL, NULL),
+(26, 2, 'Shunt Reactor Over Current', NULL, NULL),
+(27, 2, 'Shunt Reactor Clearance', NULL, NULL),
+(28, 2, 'Shunt Reactor Earth Fault', NULL, NULL),
+(29, 2, 'Breaker Open / close undefined', NULL, NULL),
+(30, 2, 'B/Bar Isolator open / close D.S', NULL, NULL),
+(31, 2, 'Line Isolator Open / close D.S', NULL, NULL),
+(32, 5, 'Transformer Tubing SF6 Gas Pressure Low Alarm', NULL, NULL),
+(33, 5, 'Bus Bar SF6 Gas Pressure Low Alarm', NULL, NULL),
+(34, 5, 'Alternating Current Supply Failure Alarm', NULL, NULL),
+(35, 5, 'Main Air tank Pressure Low (Compressed Air Supply Failure) Alarm', NULL, NULL),
+(36, 5, 'Door intrusion Detection Alarm', NULL, NULL),
+(37, 5, 'General Alarm 33KV', NULL, NULL),
+(38, 5, 'General Alarm 11KV', NULL, NULL),
+(39, 5, 'Room Temperature Alarm (SS Control)', NULL, NULL),
+(40, 5, 'Bus Bar SF6 Gas Pressure Low Trip', NULL, NULL),
+(41, 5, 'Bay SF6 Gas Pressure Low Trip', NULL, NULL),
+(42, 5, 'Transformer Tubing SF6 Gas Pressure Low Alarm', NULL, NULL),
+(43, 5, 'Bus Bar SF6 Gas Pressure Low Alarm', NULL, NULL),
+(44, 5, 'Alternating Current Supply Failure Alarm', NULL, NULL),
+(45, 3, 'DC Supply Failure', NULL, NULL),
+(46, 3, 'Main Failure', NULL, NULL),
+(47, 3, 'Low Voltage', NULL, NULL),
+(48, 3, 'High Voltage', NULL, NULL),
+(49, 1, 'other', '2023-09-19 12:05:13', '2023-09-19 12:05:13');
 
 -- --------------------------------------------------------
 
@@ -24498,10 +24510,15 @@ CREATE TABLE `main_tasks` (
 --
 
 INSERT INTO `main_tasks` (`id`, `refNum`, `station_id`, `voltage_level`, `equip_number`, `date`, `problem`, `work_type`, `notes`, `status`, `user_id`, `main_alarm_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '2023/09-4772', 1, '132KV', 'E(7) - BS2', '2023-09-17', 'fdsfsd', 'Inspection', 'sdf', 'completed', 1, 17, '2023-09-17 05:03:09', '2023-09-17 06:10:13', NULL),
-(2, '2023/09-2139', 646, '132 KV', 'E(2) - TR1 30 MVA', '2023-09-17', 'dasdsa', 'Clearance', 'sadsd', 'completed', 1, 5, '2023-09-17 06:52:48', '2023-09-17 07:15:53', NULL),
-(3, '2023/09-6067', 188, '33KV', 'H(3) - BS1', '2023-09-17', 'awdwadwadwad', 'Maintenance', NULL, 'pending', 1, 8, '2023-09-17 07:19:38', '2023-09-17 07:19:38', NULL),
-(7, '2023/09-3900', 647, '132 KV', 'E(3) - Bus/Section #1', '2023-09-17', 'awdadadad', 'Maintenance', NULL, 'pending', 2, 51, '2023-09-17 08:30:48', '2023-09-17 08:30:48', NULL);
+(1, '2023/09-9555', 272, '132KV', 'E(4) - SHKNAW', '2023-09-19', 'PCFA is appeared for the A/M F from both sides at 6:49 Hr . PME has to follow ', 'Clearance', NULL, 'completed', 68, 3, '2023-09-17 08:36:03', '2023-09-19 08:37:14', NULL),
+(2, '2023/09-2227', 556, '132KV', 'KIFN\"B\"132KV - ', '2023-09-19', 'PCFA is appeared for the A/M F from both sides at 6:49 Hr . PME has to follow ', 'Clearance', NULL, 'completed', 68, 3, '2023-09-19 08:43:50', '2023-09-19 08:44:47', NULL),
+(3, '2023/09-1331', 426, '132KV', 'E(6) - BS2', '2023-09-19', 'Protection clearance is required for the A/M BS (Tripped, isolated since \n29/07/2023) . Requested by Jahra DCC . PME has to follow .', 'Clearance', NULL, 'completed', 68, 3, '2023-09-12 08:47:41', '2023-09-19 08:48:08', NULL),
+(4, '2023/09-3013', 430, '300 KV', 'D(3) - SPARE', '2023-09-19', 'During the closing of 45MVAR Shunt Reactor # 3 by NCC, the mentioned shunt \nreactor is tripped on Sh. Reactor. Also 300 Tr.# 3 is tripped on same time. PME has \nto follow', 'Clearance', NULL, 'pending', 68, 26, '2023-09-19 09:01:55', '2023-09-19 09:01:55', NULL),
+(5, '2023/09-4994', 253, '11KV', 'K (3) - SPARE3', '2023-09-18', 'Potection clearance is required for the mentioned panels. Requested by planning \nand following up department. PME has to follow', 'Clearance', NULL, 'completed', 68, 3, '2023-09-18 09:04:16', '2023-09-19 09:05:13', NULL),
+(6, '2023/09-2438', 559, '11KV', '11 KV Panel # 2 - ', '2023-09-19', 'Protection clearance are required for the A/M Panel . Please check the attached \nletter from Planing and Following up Dept ', 'Clearance', NULL, 'completed', 68, 3, '2023-09-18 09:12:02', '2023-09-19 09:13:07', NULL),
+(10, '2023/09-5618', 247, '33KV', 'H(6)', '2023-09-19', 'Protection clearance is required for the A/M F . Requested by CME Hamed \nAlwoinah (55308585) . PME has to follow ', 'Clearance', NULL, 'completed', 68, 3, '2023-08-20 12:24:16', '2023-09-19 12:33:02', NULL),
+(12, '2023/09-1537', 444, '132KV', 'E(1) - SSPS1', '2023-09-13', 'PCFA appears and disappears several times for the A/M F . Please check the \nattached letter from Shub S/stn Dept . PME has to follow .', 'Clearance', NULL, 'completed', 68, 3, '2023-09-13 13:00:30', '2023-09-19 13:03:07', NULL),
+(13, '2023/09-7566', 1, '132KV', 'E(2) - 45TR1', '2023-09-19', NULL, NULL, NULL, 'pending', 68, 2, '2023-09-19 13:07:07', '2023-09-19 13:07:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -24520,24 +24537,24 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(32, '2013_02_08_072515_create_roles_table', 1),
-(33, '2013_02_08_072516_create_departments_table', 1),
-(34, '2013_02_08_072517_create_stations_table', 1),
-(35, '2013_02_08_072521_create_main_alarm_table', 1),
-(36, '2014_10_12_000000_create_users_table', 1),
-(37, '2014_10_12_100000_create_password_resets_table', 1),
-(38, '2015_02_08_072519_create_area_table', 1),
-(39, '2015_02_08_072520_create_shift_table', 1),
-(40, '2019_08_19_000000_create_failed_jobs_table', 1),
-(41, '2019_12_14_000001_create_personal_access_tokens_table', 1),
-(42, '2023_02_08_072512_create_engineers_table', 1),
-(43, '2023_02_08_072513_create_main_tasks_table', 1),
-(44, '2023_02_08_072514_create_section_tasks_table', 1),
-(45, '2023_02_08_072518_create_task_attachments_table', 1),
-(46, '2023_02_21_203855_add_deleted_at_column_to_section_tasks_table', 1),
-(47, '2023_09_15_231957_create_department_task_assignment_table', 1),
-(48, '2023_09_15_232314_create_task_conversions_table', 1),
-(49, '2023_09_17_144928_create_tasks_timeline_table', 2);
+(1, '2013_02_08_072515_create_roles_table', 1),
+(2, '2013_02_08_072516_create_departments_table', 1),
+(3, '2013_02_08_072517_create_stations_table', 1),
+(4, '2013_02_08_072521_create_main_alarm_table', 1),
+(5, '2014_10_12_000000_create_users_table', 1),
+(6, '2014_10_12_100000_create_password_resets_table', 1),
+(7, '2015_02_08_072519_create_area_table', 1),
+(8, '2015_02_08_072520_create_shift_table', 1),
+(9, '2019_08_19_000000_create_failed_jobs_table', 1),
+(10, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(11, '2023_02_08_072512_create_engineers_table', 1),
+(12, '2023_02_08_072513_create_main_tasks_table', 1),
+(13, '2023_02_08_072514_create_section_tasks_table', 1),
+(14, '2023_02_08_072518_create_task_attachments_table', 1),
+(15, '2023_02_21_203855_add_deleted_at_column_to_section_tasks_table', 1),
+(16, '2023_09_15_231957_create_department_task_assignment_table', 1),
+(17, '2023_09_15_232314_create_task_conversions_table', 1),
+(18, '2023_09_17_144928_create_tasks_timeline_table', 1);
 
 -- --------------------------------------------------------
 
@@ -24612,20 +24629,35 @@ CREATE TABLE `section_tasks` (
   `user_id` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `approved` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `section_tasks`
 --
 
-INSERT INTO `section_tasks` (`id`, `main_tasks_id`, `department_id`, `eng_id`, `date`, `action_take`, `status`, `engineer-notes`, `user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 2, 1, '2023-09-17', NULL, 'pending', NULL, 1, '2023-09-17 05:03:09', '2023-09-17 05:03:09', NULL),
-(2, 1, 2, 1, '2023-09-17', 'done', 'completed', NULL, 1, '2023-09-17 06:10:13', '2023-09-17 06:10:13', NULL),
-(3, 2, 2, 1, '2023-09-17', NULL, 'pending', NULL, 1, '2023-09-17 06:52:48', '2023-09-17 06:52:48', NULL),
-(4, 2, 2, 1, '2023-09-17', 'adadadadw', 'completed', NULL, 1, '2023-09-17 07:15:53', '2023-09-17 07:15:53', NULL),
-(5, 3, 2, 1, '2023-09-17', NULL, 'pending', NULL, 1, '2023-09-17 07:19:38', '2023-09-17 07:19:38', NULL),
-(8, 7, 2, NULL, '2023-09-17', NULL, 'pending', NULL, 2, '2023-09-17 08:30:48', '2023-09-17 08:30:48', NULL);
+INSERT INTO `section_tasks` (`id`, `main_tasks_id`, `department_id`, `eng_id`, `date`, `action_take`, `status`, `engineer-notes`, `user_id`, `created_at`, `updated_at`, `deleted_at`, `approved`) VALUES
+(1, 1, 2, 50, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 08:36:03', '2023-09-19 08:36:03', NULL, 0),
+(2, 1, 2, 50, '2023-09-19', 'Visit the S/S for PCFA . I just cleared the alarm and it’s clear\r\n\r\nDCC INFORMED', 'completed', NULL, 50, '2023-09-19 08:37:14', '2023-09-19 08:37:14', NULL, 0),
+(3, 2, 2, 50, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 08:43:50', '2023-09-19 08:43:50', NULL, 0),
+(4, 2, 2, 50, '2023-09-19', 'Visit the S/S for PCFA. The alarm clear by it self when I press the test button.\r\n\r\nDCC INFORMED', 'completed', NULL, 50, '2023-09-19 08:44:47', '2023-09-19 08:44:47', NULL, 0),
+(5, 3, 2, 50, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 08:47:41', '2023-09-19 08:47:41', NULL, 0),
+(6, 3, 2, 50, '2023-09-19', 'Visit the S/S for clearance. All protection relays are clear \r\n\r\nDCC INFORMED', 'completed', NULL, 50, '2023-09-19 08:48:08', '2023-09-19 08:48:08', NULL, 0),
+(7, 4, 2, NULL, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 09:01:55', '2023-09-19 09:01:55', NULL, 0),
+(8, 5, 2, 59, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 09:04:16', '2023-09-19 09:04:16', NULL, 0),
+(9, 5, 2, 59, '2023-09-19', 'Protection is clear for the mentioned feeders.\r\nDCC informed.', 'completed', NULL, 59, '2023-09-19 09:05:13', '2023-09-19 09:05:13', NULL, 0),
+(10, 6, 2, 56, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 09:12:02', '2023-09-19 09:12:02', NULL, 0),
+(11, 6, 2, 56, '2023-09-19', 'Checked the protection relays and it is clear', 'completed', NULL, 56, '2023-09-19 09:13:07', '2023-09-19 09:13:07', NULL, 0),
+(17, 10, 2, NULL, '2023-09-19', NULL, 'pending', NULL, 69, '2023-09-19 12:24:16', '2023-09-19 12:24:16', NULL, 0),
+(18, 10, 2, 48, '2023-09-19', NULL, 'update', NULL, 68, '2023-09-19 12:25:30', '2023-09-19 12:25:30', NULL, 0),
+(19, 10, 2, 48, '2023-09-19', NULL, 'update', NULL, 68, '2023-09-19 12:25:58', '2023-09-19 12:25:58', NULL, 0),
+(21, 10, 1, 48, '2023-09-19', 'Protection are Clear . DCC informed', 'completed', NULL, 48, '2023-09-19 12:33:02', '2023-09-19 12:33:02', NULL, 0),
+(22, 10, 2, 48, '2023-09-19', 'Protection are Clear . DCC informed', 'completed', NULL, 48, '2023-09-19 12:33:02', '2023-09-19 12:33:02', NULL, 0),
+(26, 12, 2, NULL, '2023-09-19', NULL, 'pending', NULL, 69, '2023-09-19 13:00:30', '2023-09-19 13:00:30', NULL, 0),
+(27, 12, 1, 5, '2023-09-19', 'Visted the S/S to check the SOLKOR N  and the main Protection relays found  clear and working with no problem , follow up by telemetry , DCC informed.', 'completed', NULL, 5, '2023-09-19 13:03:07', '2023-09-19 13:03:07', NULL, 0),
+(28, 12, 2, 5, '2023-09-19', 'Visted the S/S to check the SOLKOR N  and the main Protection relays found  clear and working with no problem , follow up by telemetry , DCC informed.', 'completed', NULL, 5, '2023-09-19 13:03:07', '2023-09-19 13:03:07', NULL, 0),
+(29, 13, 2, 50, '2023-09-19', NULL, 'pending', NULL, 68, '2023-09-19 13:07:07', '2023-09-19 13:07:07', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -25425,6 +25457,15 @@ CREATE TABLE `task_attachments` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `task_attachments`
+--
+
+INSERT INTO `task_attachments` (`id`, `main_tasks_id`, `department_id`, `file`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 5, 2, 'KHIT-M (DONE).pdf', 68, '2023-09-19 09:04:16', '2023-09-19 09:04:16'),
+(2, 6, 2, 'SHKN-A   (P) 2.pdf', 68, '2023-09-19 09:12:02', '2023-09-19 09:12:02'),
+(3, 6, 2, 'file 12.pdf', 68, '2023-09-19 09:12:02', '2023-09-19 09:12:02');
+
 -- --------------------------------------------------------
 
 --
@@ -25436,6 +25477,7 @@ CREATE TABLE `task_conversions` (
   `main_tasks_id` bigint UNSIGNED DEFAULT NULL,
   `source_department` bigint UNSIGNED DEFAULT NULL,
   `destination_department` bigint UNSIGNED DEFAULT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -25444,8 +25486,9 @@ CREATE TABLE `task_conversions` (
 -- Dumping data for table `task_conversions`
 --
 
-INSERT INTO `task_conversions` (`id`, `main_tasks_id`, `source_department`, `destination_department`, `created_at`, `updated_at`) VALUES
-(3, 7, 1, 2, '2023-09-17 08:30:48', '2023-09-17 08:30:48');
+INSERT INTO `task_conversions` (`id`, `main_tasks_id`, `source_department`, `destination_department`, `status`, `created_at`, `updated_at`) VALUES
+(2, 10, 1, 2, 'completed', '2023-09-19 12:24:16', '2023-09-19 12:30:33'),
+(3, 12, 1, 2, 'completed', '2023-09-19 13:00:30', '2023-09-19 13:03:07');
 
 -- --------------------------------------------------------
 
@@ -25463,16 +25506,84 @@ CREATE TABLE `users` (
   `role_id` bigint UNSIGNED DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `approved` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `department_id`, `role_id`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'ahmad zaid ali alharbi', 'azaalharbi@mew.gov.kw', NULL, '$2y$10$0rnDNCa8uwPfwhy6TzkrPO0B6u618YKgel7a1vu5C/PT6EDBfpiCK', 2, 2, NULL, '2023-09-17 05:01:58', '2023-09-17 05:01:58'),
-(2, 'admin edara 1 1', 'adminedara@mew.gov.kw', NULL, '$2y$10$PJNQGV3/3MfgAA3dz67JGO1cAxSy7NzgeAL.wpdvye1NgW0ZOVmYC', 1, 2, NULL, '2023-09-17 08:09:09', '2023-09-17 08:09:09');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `department_id`, `role_id`, `remember_token`, `created_at`, `updated_at`, `approved`) VALUES
+(1, 'Abdllah Suleiman Haddad', 'analhaddad@mew.gov.kw', NULL, '$2y$10$jpcEpIQ8e9xpA7V3kxDYa.JNBULXQ2zN61R8j6Z.20VOe/wdXQAJu', 2, 4, NULL, NULL, NULL, 0),
+(2, 'Abdul Rahman A A Al Kandari', 'aadalkanderi@mew.gov.kw', NULL, '$2y$10$uMzMMaGXf7L/5I.GBIfzJeEd1xAaFlxG1u1d.rreSYMkO7ndOuWJe', 2, 4, NULL, NULL, NULL, 0),
+(3, 'Abdullah Esam Yaqoub Al Shatti', 'aeyalshatti@mew.gov.kw', NULL, '$2y$10$MPjHdzD19uqtijltnOOOhOWpLGVbrOKzodD7UG/rKqfLHJmLxTcoe', 2, 4, NULL, NULL, NULL, 0),
+(4, 'Abdullah Hassan Al-Huamidi', 'aaalhumaidi@mew.gov.kw', NULL, '$2y$10$mLbtDXMo8LOtvdIojcNMd.KPwoJCTZ76erbOr7gzTlysTG30QhDVa', 2, 4, NULL, NULL, NULL, 0),
+(5, 'ABDULLAH M S AL JAWISSRI', 'amaljuwaisri@mew.gov.kw', NULL, '$2y$10$KcifDXBDwKK47eX5gfOtcu.aynq9S0/yQvOBmOHn2YzxqIHiznB7i', 2, 4, NULL, NULL, NULL, 0),
+(6, 'Abdullah Mahammad Almazdi', 'amalmzdi@mew.gov.kw', NULL, '$2y$10$qvAuq3JP2g23l1qTiQzSfeSF04lNdca6D1ZUJLSxE5uA0AyhOrXRO', 2, 4, NULL, NULL, NULL, 0),
+(7, 'Ahmad AbdulRahim Yousef', 'auyousef@mew.gov.kw', NULL, '$2y$10$.j5rhPc9Bun99QoOlHRUHO2Vo3TjBK2h2EqPsyolVOJ86blsonm/m', 2, 4, NULL, NULL, NULL, 0),
+(8, 'Ahmad Ibrahim Khaled Alqabandi', 'ahmadalaqabandi@mew.gov.kw', NULL, '$2y$10$x7arzDwMoBz2scsR.cFV8eKX4c5s9QmhzF3eqXjYl9d6ivF48B.tW', 2, 4, NULL, NULL, NULL, 0),
+(9, 'Ahmad Mahmoud Baqer', 'ambaqer@mew.gov.kw', NULL, '$2y$10$vhQxaSW6azQNOdOIq8rfrOVn5EGVCMWysJPdpuD8id2hoBrZC7Ixy', 2, 4, NULL, NULL, NULL, 0),
+(10, 'Ahmad Mutheeb mohammad AlOtaibi', 'atalotaibi@mew.gov.kw', NULL, '$2y$10$EjqQqVslWkWOPj9.f5jJSO3kaSIehl99NOB1nCQ341qJZM3zLdPBu', 2, 4, NULL, NULL, NULL, 0),
+(11, 'Ahmed Awad Al Azmi', 'aawsalazmi@mew.gov.kw', NULL, '$2y$10$QkI1iH.it2YRfgWcSTUUU.qBeCXu5P/QXqHUPtFOiRilCxh8NjPg6', 2, 4, NULL, NULL, NULL, 0),
+(12, 'Ahmed Bader Ali Al Maayouf', 'ahmadMaayouf@mew.gov.kw', NULL, '$2y$10$j8qhNu3A4b2Sms1IENvMXuhql0/Qqg8Wa8ucMIjOIeJ.VD5MZaMpS', 2, 4, NULL, NULL, NULL, 0),
+(13, 'Ali Hamoud Al-Mutairi', 'ahoalmutairi@mew.gov.kw', NULL, '$2y$10$30pGlHsT30h9tEbuNvTt.e1FstgJkLU9fSHo9Cyk.HuLSAjVwFC36', 2, 4, NULL, NULL, NULL, 0),
+(14, 'Ali Hussain Mohammad Ali Haidar', 'ahsali@mew.gov.kw', NULL, '$2y$10$Kx6vcff.9UZpN6xpFvCzROI3/MR7IGTbxz1Dg8JGJpkPhlHxIvUF2', 2, 4, NULL, NULL, NULL, 0),
+(15, 'Ali Ismail AL-Feli', 'aialfaili@mew.gov.kw', NULL, '$2y$10$yCPwioYqbqmHpJ.Hv8GZju3FqNPFhlaFvq06EqNApePmz1TMIPWhy', 2, 4, NULL, NULL, NULL, 0),
+(16, 'Ali Jassim Al-Baghli', 'ajalbaghli@mew.gov.kw', NULL, '$2y$10$h9fxd.MpiSdHe4dghk6r6OZ0ix83IUefIg436Tpg3HeQxrqCzGXbS', 2, 4, NULL, NULL, NULL, 0),
+(17, 'Ali Mahdi Boualiyan', 'amboolyan@mew.gov.kw', NULL, '$2y$10$42.HsVTRwwI296aEcyj0q.xBQcWBLPDQPpe/VGp0/h6AYuHySRLFO', 2, 4, NULL, NULL, NULL, 0),
+(18, 'Ali Mohammad Abdullah Al Sahhaf', 'alialsahhaf@mew.gov.kw', NULL, '$2y$10$qAoLt6ewEJiM5agJVB7PL.4bjeUOG1RQ5tioydhUaxanZxDqDHi5e', 2, 4, NULL, NULL, NULL, 0),
+(19, 'Ali Saleh Alqattan', 'asaalqatan@mew.gov.kw', NULL, '$2y$10$HF6azSNE9SWU4vcHc2K7aOgaoeZuFAUJDXvZC.lTLzwb9zFgHUMYm', 2, 4, NULL, NULL, NULL, 0),
+(20, 'Amer H M Alansari', 'amhmalansari@mew.gov.kw', NULL, '$2y$10$d7EgMi1zRhTLfSqMBkMfceVyaIE4TXU3mJjz8L1mqeTSvvYwKuMJW', 2, 4, NULL, NULL, NULL, 0),
+(21, 'Ammar Khalid Al-Ammary', 'akalamari@mew.gov.kw', NULL, '$2y$10$88Wh4p4xibr.PDopg.nameVrTkwOIjGWm3P0lRXNBakWKTe1jWhBi', 2, 4, NULL, NULL, NULL, 0),
+(22, 'BADER ABDEL SALAM KHEDER MILAD', 'bameelad@mew.gov.kw', NULL, '$2y$10$SZAwfdjGjxI/rBYqFInbx.TE4IcjfVhMoN96sEDDBYCEhBWRqLwTm', 2, 4, NULL, NULL, NULL, 0),
+(23, 'Eid  MUTHEEB MOHAMMAD AL OTAIBI', 'eid@mew.gov.kw', NULL, '$2y$10$0Ntub2g1FlRSBfMV04U4POYJxyvTqesZwP7YrALudobpDX5v3qX/6', 2, 4, NULL, NULL, NULL, 0),
+(24, 'Essa Abdul Wahab Mater', 'eaalmatar@mew.gov.kw', NULL, '$2y$10$5aNag3XdnRvQktjy4zCA6OlyLVYuV9nAPM4Ki5IAH0e5.jtyLzjEi', 2, 4, NULL, NULL, NULL, 0),
+(25, 'FAHAd A J ALKOUT', 'fmalkhout@mew.gov.kw', NULL, '$2y$10$BzFb2P3.Yq19GIT7ZTYj1eoSGKm31VMTCx4A.67zmXzncdUqqf3hG', 2, 4, NULL, NULL, NULL, 0),
+(26, 'FAHAD MUTHEEB MOHAMMAD AL OTAIBI', 'fmalotaybi@mew.gov.kw', NULL, '$2y$10$9WU.Yu0Vabyun/W9iTWmi.RY.mOdyESN1rgirTIzPs/vkD.a/FSWm', 2, 4, NULL, NULL, NULL, 0),
+(27, 'Fahad S A Al Rashidi', 'fgalrheshedi@mew.gov.kw', NULL, '$2y$10$OLXOpJZv7cJeMR1ja6a5guKcH1N.3JdjkUiS8R6HwKEMfxRXWMzdG', 2, 4, NULL, NULL, NULL, 0),
+(28, 'Fahd A R Shateel', 'fashatil@mew.gov.kw', NULL, '$2y$10$Y7eS2p04OItTkD.4Dlt5re.tMoVN6YvIQiLfdmTYG54X2kDudnAi2', 2, 4, NULL, NULL, NULL, 0),
+(29, 'FAISAL METLEA AZZAB AL OTAIBI', 'fmazalotaibi@mew.gov.kw', NULL, '$2y$10$EhsHvHyMggYG93oXv5CWRuiLFMSxmGiWieAIusxwkLK/BTGqDrvkS', 2, 4, NULL, NULL, NULL, 0),
+(30, 'FAWAZ SUHAIL ASWAD', 'fuaswad@mew.gov.kw', NULL, '$2y$10$sRfyPihKd9ptf4shBgAKw.rz50y/dFUbdT5Z/ueYR31.PEp3NWzH.', 2, 4, NULL, NULL, NULL, 0),
+(31, 'Hamad Salah Abdullah Abdulmalek', 'hamadabdulmaleck@mew.gov.kw', NULL, '$2y$10$XkmPSBHgJs591zBlHJBiG.3Almr3rS2k116dNmkvUZIcngjLd5v1q', 2, 4, NULL, NULL, NULL, 0),
+(32, 'Hussain Khaled Ahmad Dehrab', 'hamaddehrab@mew.gov.kw', NULL, '$2y$10$W8m3AorAgHUBQH4EJxx9t.SK/TDT9SiyoYWsXqoDcppdtNRzrzhFK', 2, 4, NULL, NULL, NULL, 0),
+(33, 'Ibrahem M H Alqallaf', 'imhalqalaf@mew.gov.kw', NULL, '$2y$10$hZQtiLvk5OBe91TokBoi6O9poluUOpUdyinsWU.nogVkjh5DJoi/W', 2, 4, NULL, NULL, NULL, 0),
+(34, 'Ibrahim Khalil Alrabiah', 'ikalrabiah@mew.gov.kw', NULL, '$2y$10$DoeZ7ZdmQFJaESGwlpxRiOkMiDukc/7tcBxLyTUoml/dWwN4qYDyK', 2, 4, NULL, NULL, NULL, 0),
+(35, 'Ibrahim Waleed Ibrahim Almufarrej', 'iwalmufarrej@mew.gov.kw', NULL, '$2y$10$.Oz/alhJF5.KtSMFld8Qgutf5r3pASwxxkn5uDh1gPsK1FGDckwae', 2, 4, NULL, NULL, NULL, 0),
+(36, 'JASSIM SALEM JASSIM HADDAD AL KANDARI', 'jsalkandari@mew.gov.kw', NULL, '$2y$10$IOCf86jgk3ltxYxs6rNNyeBWWMarabjhcvkpVBREkVEpTbxvUuQWe', 2, 4, NULL, NULL, NULL, 0),
+(37, 'KHALED MEJBEL AL AZMI', 'kmjalazmi@mew.gov.kw', NULL, '$2y$10$HfrySAPCxZ.xxC3qB6Sq.utO6xXe1MorUzdI0sm3tCj3HMvWiCULy', 2, 4, NULL, NULL, NULL, 0),
+(38, 'Khaled Mohammad Abbas Alkandari', 'khaled@mew.gov.kw', NULL, '$2y$10$b/aeydx5HTm4euyeOPtUreA0QTv9GBckzyoJYDe/61tf/4eJYTKQy', 2, 4, NULL, NULL, NULL, 0),
+(39, 'Khaleel M KH Al Qallaf', 'kmkalqallaf@mew.gov.kw', NULL, '$2y$10$MDpUyUurtXRz9SS1ypJKmOqE2wksqL3nQVV7zuQ/AMmqVp3zIXH7G', 2, 4, NULL, NULL, NULL, 0),
+(40, 'KHALIL SAYED E KH ALQALLAF', 'ksealqallafufhhj@mew.gov.kw', NULL, '$2y$10$H74.4L4ftp/PR4AVRtRSA.FSSLx9uz1232XV3.4ccZSXuG24kmbFO', 2, 4, NULL, NULL, NULL, 0),
+(41, 'Mahdi F A Bushehri', 'mahdi1@mew.gov.kw', NULL, '$2y$10$vuBlHGguapC8EZ9c7pHfoeA8YPWgQIY8MYi/3KKJE3hAO5cxsjaSy', 2, 4, NULL, NULL, NULL, 0),
+(42, 'Meshari Mohammad Ali ASAD Abdulraheem', 'mmaabdulraheem@mew.gov.kw', NULL, '$2y$10$i44AnB8emLzUqXLgO2DSK.hKpavch/dFqOGA2w4xI4HUdq6TnpB..', 2, 4, NULL, NULL, NULL, 0),
+(43, 'Mishal Al-Saeed', 'mishal@mew.gov.kw', NULL, '$2y$10$R.o02Z8XiJjeliDekvJDVuOxj99/1XmwVWzhirRJeUupd..GiCHUi', 2, 4, NULL, NULL, NULL, 0),
+(44, 'Mishari Khaled Al-Tawari', 'mkaltuwari@mew.gov.kw', NULL, '$2y$10$38Z3meJXkBPBpcfOrLetgOZx.Fq8qwAjRahvXwD0uSkkC9jIxqnNW', 2, 4, NULL, NULL, NULL, 0),
+(45, 'Moh.Behbehani', 'mubehbehani@mew.gov.kw', NULL, '$2y$10$vZARL1EJPP94aAQnghTJHuhYbVqcZxMtAUq/cItBPHrRtEyMVa1X6', 2, 4, NULL, NULL, NULL, 0),
+(46, 'Mohamed Awad Anzi', 'mwalenizi@mew.gov.kw', NULL, '$2y$10$krcPkTZgyQHWogvqHesA.OMRddF/VJllST/WS0WwvONbSKpMntO9S', 2, 4, NULL, NULL, NULL, 0),
+(47, 'Mohammad Ahmad Ghuloum Mohammad', 'mahamohammad@mew.gov.kw', NULL, '$2y$10$kXfSceCSBorP18VTLXSapevDnkAClB7v9EazhbkX/QVJIqYrDQ0Z.', 2, 4, NULL, NULL, NULL, 0),
+(48, 'MOHAMMAD HASHEM MOUSA AL MOUSAWI', 'MHMALMOUSAWII@mew.gov.kw', NULL, '$2y$10$5x20Abx1Owg72KeW.k87OeqvcwFx8p/Xu/eXVvk60dAwg4yJsRZnK', 2, 4, NULL, NULL, NULL, 0),
+(49, 'Mohammad Mubarak Mohammad Al Mutairi', 'mommalmutairi@mew.gov.kw', NULL, '$2y$10$vH7L0p.TLoeGbe8mp3gLLe32bGqKDIcO5ukY32r5ABIGts0CA5S3e', 2, 4, NULL, NULL, NULL, 0),
+(50, 'Mohammad Yousef Ali Abdullah Ali Dashti', 'mydashti@mew.gov.kw', NULL, '$2y$10$R6KSUtzG6oI8nT4X5Ymwt.egcC1y/YEn5BJ9eK9hoD2fose3M5nQa', 2, 4, NULL, NULL, NULL, 0),
+(51, 'Mohammed Abdullah Shihab', 'mbshehab@mew.gov.kw', NULL, '$2y$10$pVkT1XnH6fue1KxKrX3bU.q3YEa.2spd1lKK9E.7AMeGRSQ4WCr5q', 2, 4, NULL, NULL, NULL, 0),
+(52, 'Naser Salem Saket Alenezi', 'naser@mew.gov.kw', NULL, '$2y$10$jWLEGJ4ZrMRsN2PABbeLke5dAVlXa5gu980s/dWbh38rOUquJLHOO', 2, 4, NULL, NULL, NULL, 0),
+(53, 'Nasser Shafi Mohammed Al-Ajmi', 'nsoalajmi@mew.gov.kw', NULL, '$2y$10$CWziLOiHVPsW6f7JPmJn2e.dGh/jYADKzkj0lwbC2Wm0O.XYR0ozu', 2, 4, NULL, NULL, NULL, 0),
+(54, 'OTHMAN SAAD AL LOGHANI', 'osalloughani@mew.gov.kw', NULL, '$2y$10$LHVlmeigUgi5HGi.OrUMBewLKMH7cvyCAO0S2mX7Q2CiDv1J469XO', 2, 4, NULL, NULL, NULL, 0),
+(55, 'Rassam Taqi Mohammad Al Harbi', 'Rassam@mew.gov.kw', NULL, '$2y$10$vVulwg2jt80DxBoyup72qukq9ecSOjmUlPsE3tXDZiq8hfXqoSd7K', 2, 4, NULL, NULL, NULL, 0),
+(56, 'Saleh Abdullmuhsin Al-Bader', 'sbalbader@mew.gov.kw', NULL, '$2y$10$vp9noOZT1rtKu6ZHGk3g6eX2mxpbB8mqgCyUHweZYgC4MP662G5qm', 2, 4, NULL, NULL, NULL, 0),
+(57, 'Salem R Al Enzi', 'sraalenizi@mew.gov.kw', NULL, '$2y$10$GUhPcTEB.oRc3c77FOJyqun89RcLeVZbdvJDAWirNsc/L7YJO1W76', 2, 4, NULL, NULL, NULL, 0),
+(58, 'SAUD FAYEZ HASAN ALKANDARI', 'sfalkanderi@mew.gov.kw', NULL, '$2y$10$Oo79TQFs77BL2Iz73y7JJ.02hJdFn9NrgPkbi/7u6YLdTgm.2cp1K', 2, 4, NULL, NULL, NULL, 0),
+(59, 'Yousef A S Rashed', 'yarashed@mew.gov.kw', NULL, '$2y$10$7XmxgSlC0JBHi7rl3JzWaueJhXy6sveuRt58NeJidBKdg/9j7jSLK', 2, 4, NULL, NULL, NULL, 0),
+(60, 'Yousef Abdulkareem abd al sayed', 'yaabdalsayed@mew.gov.kw', NULL, '$2y$10$itDsX4f6W3GoPfV4.6Xfl.YRaqXOtQ4hWt6PypuuLO.dbpkGIns5m', 2, 4, NULL, NULL, NULL, 0),
+(61, 'Yousef Habeb alhamad', 'yaalhamad@mew.gov.kw', NULL, '$2y$10$vDz4lRPxkOoZ7t3g.1TvcullMZkPA6L6BK2sXMfK77yx5KSfMmgku', 2, 4, NULL, NULL, NULL, 0),
+(62, 'Yousef Marzouk Al Otaibi', 'yralotaibi@mew.gov.kw', NULL, '$2y$10$dq.oKDltqrgwUwCEYPwf5.mTQx8wlu9vJ/ogleyjbfWl2obw6pmLC', 2, 4, NULL, NULL, NULL, 0),
+(63, 'Elaf Raji Al-Mutairi', 'elaf@mew.gov.kw', NULL, '$2y$10$99pTnDKKUGJMs8B1Vjr5beODevXPXRvvj/WIIsrH6w.nu/YdOW2Hy', 2, 4, NULL, NULL, NULL, 0),
+(64, 'Lulwah Waleed Alibrahim', 'lwaalibrahim@mew.gov.kw', NULL, '$2y$10$VjLVLML20YsKK6uD5d9ui.DOS15Yxl1cijpSzoq3d84IMosWXIvRm', 2, 4, NULL, NULL, NULL, 0),
+(65, 'REEM TALAL JEAIDAN AL ENEZI', 'rtjalenizi@mew.gov.kw', NULL, '$2y$10$v2hDkYm4yOCSGt27gylG4uh98QdE/fL/ZAJuSuxIDTVz/0yMzTBRW', 2, 4, NULL, NULL, NULL, 0),
+(66, 'SHADAN WALEED ABDULLAH AL SANOUSI', 'swaalsanoosi@mew.gov.kw', NULL, '$2y$10$5u7KhBWsGyBz6sned1x3s.6pu2uASMaVmAldXxnmIGEqaubur8IzO', 2, 4, NULL, NULL, NULL, 0),
+(67, 'Zahraa N F Rustom', 'znrestom@mew.gov.kw', NULL, '$2y$10$1m6Rz7F/OX6KwhEhdXlq1Ow3xR8MOJkKTjukjbW1oTPD4m/5xl.Nm', 2, 4, NULL, NULL, NULL, 0),
+(68, 'Ahmad Zaid Ali Alharbi', 'azaalharbi@mew.gov.kw', NULL, '$2y$10$5PsOR61XdGjVHqMy5IjAzOsl8eZRjDlrGRdr3M3ElTbDYK10b6OyG', 2, 2, NULL, '2023-09-19 08:26:42', '2023-09-19 08:26:42', 0),
+(69, 'P S M D', 'psmd@mew.gov.kw', NULL, '$2y$10$ndf9xnRXApbOiXxQQpFd0Ow77QQPBylFWYq1dbKTt33X0eqjVHLJy', 1, 2, NULL, '2023-09-19 12:02:12', '2023-09-19 12:02:12', 0);
 
 --
 -- Indexes for dumped tables
@@ -25640,13 +25751,13 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT for table `department_task_assignment`
 --
 ALTER TABLE `department_task_assignment`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `engineers`
 --
 ALTER TABLE `engineers`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `equip`
@@ -25664,19 +25775,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `main_alarm`
 --
 ALTER TABLE `main_alarm`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `main_tasks`
 --
 ALTER TABLE `main_tasks`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -25694,7 +25805,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `section_tasks`
 --
 ALTER TABLE `section_tasks`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `shift`
@@ -25718,7 +25829,7 @@ ALTER TABLE `tasks_timeline`
 -- AUTO_INCREMENT for table `task_attachments`
 --
 ALTER TABLE `task_attachments`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `task_conversions`
@@ -25730,7 +25841,7 @@ ALTER TABLE `task_conversions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- Constraints for dumped tables
