@@ -164,15 +164,14 @@
                                 <div class="text-muted">Completed</div>
                                 <div>{{ $completedTasksInDay }}</div>
                             </div>
-                            <div class="progress ht-20 mt-4">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary ht-20"
-                                    style="width: {{ $totalTasksInDay > 0 ? ($completedTasksInDay / $totalTasksInDay) * 100 : 0 }}%;">
-                                    <span class="tx-18">
-                                        {{ number_format($totalTasksInDay > 0 ? ($completedTasksInDay /
-                                        $totalTasksInDay) * 100 : 0, 2) }}%
-                                    </span>
-                                </div>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning ht-20"
+                                style="width: {{ $totalTasksInWeek > 0 ? min(100, ($completedTasksInWeek / $totalTasksInWeek) * 100) : 0 }}%;">
+                                <span class="tx-18">
+                                    {{ $totalTasksInWeek > 0 ? number_format(min(100, ($completedTasksInWeek /
+                                    $totalTasksInWeek) * 100), 2) : 0 }}%
+                                </span>
                             </div>
+
                         </div><!-- col -->
                         <div class="col border-start text-center">
                             <div class="fw-bold tx-20">
@@ -183,12 +182,13 @@
                             </div>
                             <div class="progress ht-20 mt-4">
                                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning ht-20"
-                                    style="width: {{ min(100, ($completedTasksInWeek / $totalTasksInWeek) * 100) }}%;">
+                                    style="width: {{ $totalTasksInWeek > 0 ? min(100, ($completedTasksInWeek / $totalTasksInWeek) * 100) : 0 }}%;">
                                     <span class="tx-18">
-                                        {{ number_format(min(100, ($completedTasksInWeek /
-                                        $totalTasksInWeek) * 100), 2) }}%
+                                        {{ $totalTasksInWeek > 0 ? number_format(min(100, ($completedTasksInWeek /
+                                        $totalTasksInWeek) * 100), 2) : 0 }}%
                                     </span>
                                 </div>
+
                             </div>
                         </div><!-- col -->
 
@@ -272,13 +272,15 @@
                                 <td class="text-lg">{{$task->main_task->station->SSNAME}}</td>
                                 <td class="text-lg">{{$task->main_task->main_alarm->name}}</td>
                                 @if($task->eng_id)
-                                <td class="text-lg">{{$task->engineer->name}}</td>
+                                <td class="text-lg">{{$task->engineer->name}} - {{$task->engineer->department->name}}
+                                </td>
                                 @else
                                 <td>-</td>
                                 @endif
 
                                 <td class="text-lg">{{$task->created_at}}</td>
-                                <td class="text-lg"><button class="btn btn-light">View</button></td>
+                                <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                        class="btn btn-light">View</a></td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -359,7 +361,7 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table
-                        class="table table-vcenter table-bordered text-nowrap mb-0 table-warning align-items-center mb-0">
+                        class="table table-vcenter table-bordered text-nowrap  table-warning align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -367,6 +369,7 @@
                                 <th>FROM</th>
                                 <th>TO</th>
                                 <th>Date</th>
+                                <th>Status</th>
                                 <th>OPERATION</th>
                             </tr>
                         </thead>
@@ -378,7 +381,14 @@
                                 <td>{{$task->department->name}}</td>
                                 <td>{{$task->toDepartment->name}}</td>
                                 <td>{{$task->created_at}}</td>
-                                <td><a href="" class="btn btn-light">View</a></td>
+                                @if($task->status === 'pending')
+                                <td class="bg-danger"> {{$task->status}} </td>
+                                @else
+                                <td class="bg-success">{{$task->status}}</td>
+                                @endif
+                                <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->destination_department])}}"
+                                        class="btn btn-light">View</a></td>
+
                             </tr>
                             @endforeach
                         </tbody>
@@ -415,6 +425,7 @@
                                 <th>ENGINEER</th>
                                 <th>Department</th>
                                 <th>Action Take</th>
+                                <th>Date</th>
                                 <th>Report</th>
                             </tr>
                         </thead>
@@ -427,6 +438,7 @@
                                 <td>{{$task->engineer->name}}</td>
                                 <td>{{$task->engineer->department->name}}</td>
                                 <td>{{$task->action_take}}</td>
+                                <td>{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}"
                                         type="button" class="btn btn-outline-success  button-icon "><i
                                             class="si si-notebook px-2" data-bs-toggle="tooltip" title=""

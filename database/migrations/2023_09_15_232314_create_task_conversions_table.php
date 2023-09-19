@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('main_tasks_id')->nullable();
             $table->unsignedBigInteger('source_department')->nullable();
             $table->unsignedBigInteger('destination_department')->nullable();
+            $table->String('status');
             $table->foreign('main_tasks_id')
                 ->references('id')
                 ->on('main_tasks')

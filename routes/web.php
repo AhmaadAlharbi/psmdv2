@@ -284,6 +284,7 @@ Route::get('/add-task', [DashBoardController::class, 'add_task'])->name('dashboa
 Route::get('/engineer-task-page/{task}', [DashBoardController::class, 'engineerTaskPage'])->name('dashboard.engineerTaskPage')->middleware('auth');
 Route::post('/submit-engineer-report/{id}', [DashBoardController::class, 'submitEngineerReport'])->name('dashboard.submitEngineerReport');
 Route::get('/report-page/{id}', [DashBoardController::class, 'reportPage'])->name('dashboard.reportPage');
+Route::get('/report-page/{main_task_id}/{department_id}', [DashBoardController::class, 'reportDepartment'])->name('dashboard.reportDepartment');
 Route::get('/tasks/{status}', [DashBoardController::class, 'showTasks'])->name('dashboard.showTasks');
 Route::get('/search/station', [DashBoardController::class, 'searchStation'])->name('dashboard.searchStation');
 Route::get('/search/engineer-tasks', [DashBoardController::class, 'engineerTasks'])->name('dashboard.engineerTasks');

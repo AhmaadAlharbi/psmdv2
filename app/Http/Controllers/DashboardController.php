@@ -97,6 +97,7 @@ class DashBoardController extends Controller
             $query->where('status', 'pending');
         })->where('source_department', $departmentId)->get();
 
+
         $currentWeekStart = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
         $currentWeekEnd = now()->endOfWeek(Carbon::SUNDAY)->toDateString();
 
@@ -217,38 +218,50 @@ class DashBoardController extends Controller
     public function submitEngineerReport(Request $request, $id)
     {
         $date =  Carbon::now();
-
         $main_task = MainTask::findOrFail($id);
         $section_task = SectionTask::where('main_tasks_id', $id)->first();
         $taskConverted = TaskConversions::where('main_tasks_id', $id)->first();
         if ($taskConverted) {
+            $taskConverted->update([
+                'status' => 'completed'
+            ]);
             $taskSoruce = department_task_assignment::where('department_id', $taskConverted->source_department)
                 ->where('main_tasks_id', $id)
                 ->first();
             $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
                 ->where('main_tasks_id', $id)
                 ->first();
-            $taskSoruce->update([
-                'status' => 'completed',
-            ]);
-            $taskDestination->update([
-                'status' => 'completed',
-            ]);
-            // Define the common data for the section tasks
-            $sectionTaskData = [
+            //check if Edara sent this tasks 
+            if ($taskConverted->source_department === 1) {
+                $taskSoruce->update([
+                    'status' => 'completed',
+                ]);
+            }
+            if ($taskConverted->source_department === Auth::user()->department_id) {
+                $taskSoruce->update([
+                    'status' => 'completed',
+                ]);
+            }
+            if ($taskConverted->destination_department === Auth::user()->department_id) {
+                $taskDestination->update([
+                    'status' => 'completed'
+                ]);
+            }
+            if ($taskDestination->status === 'completed' && $taskSoruce->status === 'completed') {
+                $main_task->update([
+                    'status' => 'completed',
+                ]);
+            }
+            SectionTask::create([
                 'main_tasks_id' => $id,
+                'department_id' => Auth::user()->department_id,
                 'eng_id' => Auth::user()->id,
                 'action_take' => $request->action_take,
                 'status' => 'completed',
                 'engineer-notes' => $request->notes,
                 'user_id' => Auth::user()->id,
                 'date' => $date,
-            ];
-
-            // Create section tasks for the source and destination departments
-            foreach ([$taskConverted->source_department, $taskConverted->destination_department] as $departmentId) {
-                SectionTask::create(array_merge(['department_id' => $departmentId], $sectionTaskData));
-            }
+            ]);
         } else {
             SectionTask::create([
                 'main_tasks_id' => $id,
@@ -260,10 +273,11 @@ class DashBoardController extends Controller
                 'user_id' => Auth::user()->id,
                 'date' => $date
             ]);
+            $main_task->update([
+                'status' => 'completed',
+            ]);
         }
-        $main_task->update([
-            'status' => 'completed',
-        ]);
+
 
         return redirect("/dashboard/user");
     }
@@ -276,6 +290,19 @@ class DashBoardController extends Controller
             ->where('status', 'completed')
             ->first();
         $files = TaskAttachment::where('main_tasks_id', $id)->get();
+
+        if (!$section_task) {
+            abort(404);
+        }
+        return view('dashboard.reportPage', compact('files', 'section_task'));
+    }
+    public function reportDepartment($main_task_id, $department_id)
+    {
+        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
+            ->where('department_id', $department_id)
+            ->where('status', 'completed')
+            ->first();
+        $files = TaskAttachment::where('main_tasks_id', $main_task_id)->get();
 
         if (!$section_task) {
             abort(404);
