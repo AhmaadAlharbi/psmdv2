@@ -25,8 +25,11 @@
                 <div class="invoice-header">
                     <h1 class="invoice-title"> <img class="mew-logo rounded "
                             src="https://www.mew.gov.kw/images/mew_ar.svg" alt="mew logo"></h1>
+
                     <div class="billed-from">
-                        <h6>Primary substance maintenance Department</h6>
+                        <h1 class="invoice-title">Primary substance maintenance Department</h1>
+
+                        <h6 class="mt-2">{{$section_task->department->name}}</h6>
                         <p>Trouble Shooting Report<br>
                             Ref.No: {{ $section_task->main_task->refNum }}
                         </p>

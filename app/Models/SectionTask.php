@@ -27,4 +27,8 @@ class SectionTask extends Model
         return $this->belongsTo(User::class, 'eng_id');
         //goes to section task table and see the value of eng_id
     }
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }
