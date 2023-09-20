@@ -435,7 +435,6 @@ class DashBoardController extends Controller
         }
         if ($request->has('engineer') && $request->engineer != ''  && !empty($request->engineer)) {
             $engineer = User::where('name', $request->engineer)->pluck('id')->first();
-            dd($engineer);
             $query->where('eng_id', $engineer);
         }
         if ($request->has('task_Date') && $request->has('task_Date2')) {

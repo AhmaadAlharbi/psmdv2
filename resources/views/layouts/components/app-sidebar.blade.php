@@ -39,10 +39,10 @@
 							<path d="M5 5h4v6H5zm10 8h4v6h-4zM5 17h4v2H5zM15 5h4v2h-4z" opacity=".3" />
 							<path
 								d="M3 13h8V3H3v10zm2-8h4v6H5V5zm8 16h8V11h-8v10zm2-8h4v6h-4v-6zM13 3v6h8V3h-8zm6 4h-4V5h4v2zM3 21h8v-6H3v6zm2-4h4v2H5v-2z" />
-						</svg><span class="side-menu__label">الرئيسية</span></a>
+						</svg><span class="side-menu__label">Dashboard</span></a>
 
 				</li>
-				<li class="side-item side-item-category">الأعطال</li>
+				<li class="side-item side-item-category">Alerts</li>
 				<li class="slide">
 					<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><svg
 							xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
@@ -54,16 +54,16 @@
 							<circle cx="8.5" cy="9.5" r="1.5" />
 							<path
 								d="M12 16c-1.48 0-2.75-.81-3.45-2H6.88c.8 2.05 2.79 3.5 5.12 3.5s4.32-1.45 5.12-3.5h-1.67c-.69 1.19-1.97 2-3.45 2zm-.01-14C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
-						</svg><span class="side-menu__label">متابعة الأعطال</span><i
+						</svg><span class="side-menu__label">Alert Tracking</span><i
 							class="angle fe fe-chevron-down"></i></a>
 					<ul class="slide-menu">
 						<li class="side-menu__label1"><a href="javascript:void(0);">Icons</a></li>
-						<li><a class="slide-item" href="{{route('dashboard.add_task')}}">اصدار أمر العمل</a></li>
-						<li><a class="slide-item" href="{{route('dashboard.showTasks',['status'=>'pending'])}}">الأعطال
-								الغير
-								منجزة</a></li>
+						<li><a class="slide-item" href="{{route('dashboard.add_task')}}">Task Assignment</a></li>
+						<li><a class="slide-item" href="{{route('dashboard.showTasks',['status'=>'pending'])}}">
+
+								Pending Tasks</a></li>
 						<li><a class="slide-item"
-								href="{{route('dashboard.showTasks',['status'=>'completed'])}}">الأعطال المنجزة</a></li>
+								href="{{route('dashboard.showTasks',['status'=>'completed'])}}">Completed Tasks</a></li>
 
 					</ul>
 				</li>
@@ -74,12 +74,12 @@
 							<path d="M19 5H5v14h14V5zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" opacity=".3" />
 							<path
 								d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm2 0h14v14H5V5zm2 5h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z" />
-						</svg><span class="side-menu__label">متابعة الموظفين</span><i
+						</svg><span class="side-menu__label">Employee Monitoring</span><i
 							class="angle fe fe-chevron-down"></i></a>
 					<ul class="slide-menu">
 						<li class="side-menu__label1"><a href="javascript:void(0);">Charts</a></li>
-						<li><a class="slide-item" href="{{route('dashboard.usersList')}}">جدول الموظفين </a></li>
-						<li><a class="slide-item" href="{{route('dashboard.engineersList')}}">جدول المهندسين </a></li>
+						<li><a class="slide-item" href="{{route('dashboard.usersList')}}">Employees</a></li>
+						<li><a class="slide-item" href="{{route('dashboard.engineersList')}}">Engineers</a></li>
 					</ul>
 				</li>
 				{{-- <li class="side-item side-item-category">WEB APPS</li>

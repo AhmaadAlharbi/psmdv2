@@ -19,16 +19,16 @@ class DepartmentSeeder extends Seeder
             'name' => 'ادارة صيانة محطات التحويل الرئيسية'
         ]);
         DB::table('departments')->insert([
-            'name' => 'الوقاية'
+            'name' => 'Protection Department'
         ]);
         DB::table('departments')->insert([
-            'name' => 'البطاريات'
+            'name' => 'Batteries Department'
         ]);
         DB::table('departments')->insert([
-            'name' => 'المحولات'
+            'name' => 'Transformers Department'
         ]);
         DB::table('departments')->insert([
-            'name' => 'صيانة المعدات'
+            'name' => 'Switchgears Department'
         ]);
     }
 }

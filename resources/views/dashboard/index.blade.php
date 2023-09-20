@@ -11,7 +11,7 @@
 
     <div class="my-auto">
         <div class="d-flex">
-            <h4 class="content-title mb-0 my-auto">لوحة التحكم</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
+            <h4 class="content-title mb-0 my-auto">Dashboard</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
                 {{Auth::user()->department->name}}</span>
 
         </div>
@@ -54,7 +54,7 @@
     </div>
     @endif --}}
 
-    <div class="col-xl-3 col-lg-6 col-md-6 ">
+    <div class="col-xl-4 col-lg-6 col-md-6 ">
 
         <a href="{{route('dashboard.engineersList')}}">
             <div class="card  bg-primary-gradient">
@@ -64,7 +64,7 @@
                             <i class="icon icon-people"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3 ">عدد المهندسين </h5>
+                            <h5 class="tx-18 tx-white-8 mb-3 ">Engineers</h5>
                             <h2 class="counter mb-0 text-white">{{$engineersCount}}</h2>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
             </div>
         </a>
     </div>
-    <div class="col-xl-3 col-lg-6 col-md-6">
+    <div class="col-xl-4 col-lg-6 col-md-6">
         <a href="{{route('dashboard.showTasks',['status'=>'pending'])}}">
             <div class="card  bg-danger-gradient">
                 <div class="card-body">
@@ -81,7 +81,7 @@
                             <i class="icon icon-rocket"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">عدد الأعطال الغير منجزة</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Pending Tasks</h5>
                             <h2 class="counter mb-0 text-white">{{$pendingTasksCount}}</h2>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
             </div>
         </a>
     </div>
-    <div class="col-xl-3 col-lg-6 col-md-6">
+    <div class="col-xl-4 col-lg-6 col-md-6">
         <a href="{{route('dashboard.showTasks',['status'=>'completed'])}}">
             <div class="card  bg-success-gradient">
                 <div class="card-body">
@@ -98,7 +98,7 @@
                             <i class="icon icon-docs"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">عدد الأعطال المنجزة</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Completed Tasks</h5>
                             <h2 class="counter mb-0 text-white">{{$completedTasksCount}}</h2>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
             </div>
         </a>
     </div>
-    <div class="col-xl-3 col-lg-6 col-md-6">
+    <div class="col-xl-6 col-lg-3 col-md-6">
         <a href="{{route('dashboard.archive')}}">
 
             <div class="card  bg-warning-gradient">
@@ -116,7 +116,7 @@
                             <i class="icon icon-emotsmile"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">ارشيف التقارير</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Reports Archive</h5>
                             <h2 class="counter mb-0 text-white">{{$completedTasksCount}}</h2>
                         </div>
                     </div>
@@ -124,9 +124,8 @@
             </div>
         </a>
     </div>
-    <div class="col-xl-3 col-lg-6 col-md-6">
+    <div class="col-xl-6 col-lg-3 col-md-6">
         <a href="{{route('dashboard.showTasks',['status'=>'mutual-tasks'])}}">
-
             <div class="card  bg-purple-gradient">
                 <div class="card-body">
                     <div class="counter-status d-flex md-mb-0">
@@ -134,7 +133,7 @@
                             <i class="icon icon-emotsmile"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">مهمات مشتركة مع الاقسام</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Shared Department Missions</h5>
                             <h2 class="counter mb-0 text-white">{{$mutualTasksCount}}</h2>
                         </div>
                     </div>
@@ -194,9 +193,6 @@
 
                             </div>
                         </div><!-- col -->
-
-
-
                         <div class="col border-start text-center">
                             <div class="fw-bold tx-20">
                                 <div class="text-danger"> This Month Tasks</div>
@@ -263,8 +259,12 @@
                             @foreach($pendingTasks as $task)
                             <tr>
                                 <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
-                                <td class="text-lg">{{$task->main_task->station->SSNAME}}</td>
+                                <td class="text-lg"> {{$task->main_task->station->SSNAME}} </td>
+                                @if(isset($task->main_task->main_alarm_id))
                                 <td class="text-lg">{{$task->main_task->main_alarm->name}}</td>
+                                @else
+                                <td>-</td>
+                                @endisset
                                 @if($task->eng_id)
                                 <td class="text-lg">{{$task->engineer->name}} - {{$task->engineer->department->name}}
                                 </td>

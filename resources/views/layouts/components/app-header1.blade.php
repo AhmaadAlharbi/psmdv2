@@ -314,7 +314,7 @@
 
 						<li class=" main-profile-menu nav nav-item nav-link mt-2">
 							<a href="{{route('engineer.logout')}}"><i class="bx bx-log-out"></i>
-								تسجيل خروج</a>
+								Log out</a>
 						</li>
 
 					</ul>

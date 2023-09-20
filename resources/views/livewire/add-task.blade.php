@@ -10,7 +10,7 @@
     <form wire:submit.prevent="submit">
 
         <div class="text-center ">
-            <label for=" ssname">المهمة تتبع قسم</label>
+            <label for=" ssname">Departmental Task</label>
 
             <select name="department" wire:model="selectedDepartment" class="form-control">
                 <option selected value="{{Auth::user()->department_id}}">{{Auth::user()->department->name}}</option>
@@ -18,7 +18,7 @@
                 <option value="{{$department->id}}">{{$department->name}}</option>
                 @endforeach
             </select>
-            <label for=" ssname">يرجى اختيار اسم المحطة</label>
+            <label for=" ssname" class="mt-2">Please Choose a Station Name.</label>
             @if($selectedStation == null)
 
             <input list="ssnames" wire:change="getStationInfo" class="form-control " wire:model="selectedStation"
@@ -79,8 +79,6 @@
                     </ul>
 
                     <ul class=" list-group ">
-
-
                       
                         <li class=" list-group-item disabled font-italic list-group-item-secondary">Make :
                             {{$stationDetails->COMPANY_MAKE}}
@@ -138,7 +136,7 @@
                         <option value="other">other</option>
                     </select>
                     @if($selectedEquip === 'other')
-                    <label for="">Enter equip number and name | ادخل رقم المعده واسمها</label>
+                    <label for="">Enter equip number and name</label>
                     <input type="text" wire:model="otherEquip" class="form-control">
                     @endif
                 </div>
@@ -153,7 +151,7 @@
                     <option value="other">other</option>
                 </select>
                 @if($selectedTransformer === 'other')
-                <label for="">Enter equip number and name | ادخل رقم المعده واسمها</label>
+                <label for="">Enter equip number and name</label>
                 <input type="text" wire:model="selectedTransformer" class="form-control">
                 @endif
                 @endif
@@ -165,9 +163,9 @@
 
 
             <div class="">
-                <label for="inputName" class="control-label">اسم المهندس</label>
+                <label for="inputName" class="control-label">Please select an engineer</label>
                 <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
-                    class="form-control engineerSelect my-4">
+                    class="form-control engineerSelect m-1">
                     <option value="">-</option>
                     @foreach($engineers as $engineer)
                     <option value="{{$engineer->user->id}}">{{$engineer->user->name}}</option>
@@ -187,7 +185,7 @@
                 <input wire:model="engineerEmail" type="text" class="form-control" name="eng_email" id="eng_name_email"
                     readonly>
             </div>
-            <label for="" class="mt-2">نوع المهمة</label>
+            <label for="" class="mt-2">Task Type</label>
             <select name="work_type" wire:model="work_type" name="work_type" class="form-control">
                 <option value="">-</option>
                 <option value="Clearance">Clearance</option>
@@ -201,22 +199,22 @@
             <label for="problem" class="control-label mt-4"> Nature of Fault</label>
             <textarea list="problems" wire:model="problem" class="form-control " rows="3" name="problem"
                 id="problem"></textarea>
-            <label for="exampleTextarea" class="mt-3">ملاحظات</label>
+            <label for="exampleTextarea" class="mt-3">Notes</label>
             <textarea class="form-control" wire:model="notes" id="exampleTextarea" name="notes" rows="3"></textarea>
             @error('photos.*') <span class="error">{{ $message }}</span> @enderror
 
             <div id="attachment">
                 <input class="form-control form-control-lg" id="formFileLg" type="file" wire:model="photos" multiple>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary" id="but4">ارسال
-                        البيانات</button>
+                    <button type="submit" class="btn btn-primary" id="but4">Submit
+                    </button>
                     <script>
                         const btnid = document.getElementById('but4');
                                 btnid.addEventListener('click', () => {
                                     let timerInterval
                                     Swal.fire({
-                                        title: 'جاري ارسال البيانات',
-                                        html: 'يرجى الانتظار وعدم اغلاق الصفحة',
+                                        title: 'Sending Data...',
+                                        html: 'Please wait and do not close the page'
                                         timer: 60000,
                                         timerProgressBar: true,
                                         didOpen: () => {

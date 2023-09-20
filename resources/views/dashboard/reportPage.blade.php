@@ -10,15 +10,7 @@
     }
 
 
-    #table1,
-    #table2 {
-        direction: ltr;
-    }
 
-    .ssname-table {
-        direction: ltr;
-
-    }
 
     #table0 th,
     #table1 th,

@@ -25,7 +25,7 @@
     @livewireStyles
 </head>
 
-<body class="rtl main-body app sidebar-mini">
+<body class="main-body app sidebar-mini">
 
     <!-- Loader -->
     <div id="global-loader">
