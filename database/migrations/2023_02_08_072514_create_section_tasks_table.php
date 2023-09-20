@@ -20,7 +20,7 @@ class CreateSectionTasksTable extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('eng_id')->nullable();
             $table->date('date')->nullable();
-            $table->string('action_take')->nullable();
+            $table->text('action_take')->nullable()->change();
             $table->string('status')->nullable();
             $table->string('engineer-notes')->nullable();
             $table->boolean('approved')->default(false);

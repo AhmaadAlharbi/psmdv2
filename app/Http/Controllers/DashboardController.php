@@ -308,7 +308,7 @@ class DashBoardController extends Controller
         if (!$section_task) {
             abort(404);
         }
-        return view('dashboard.reportPage', compact('files', 'section_task'));
+        return view('dashboard.reportPage2', compact('files', 'section_task'));
     }
     public function reportDepartment($main_task_id, $department_id)
     {
