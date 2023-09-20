@@ -171,11 +171,11 @@
                         <a class="btn btn-dark" href="{{route('dashboard.editTask', ['id' => $task->id])}}">تعديل</a>
                     </div>
                     <div class="col">
-                        <form method="post" action="{{route('task.destroy', ['id' => $task->id])}}"
-                            id="delete-form-{{ $task->id }}">
+                        <form method="post" action="{{route('task.destroy', ['id' => $task->main_task->id])}}"
+                            id="delete-form-{{ $task->main_task->id }}">
                             @csrf
                             @method('DELETE')
-                            <button type="button" onclick="deleteRecord({{ $task->id }})"
+                            <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
                                 class="btn btn-outline-danger">حذف المهمة</button>
 
                         </form>

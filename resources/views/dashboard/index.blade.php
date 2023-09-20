@@ -241,15 +241,16 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">المهمات المنشئة - Local Tasks</h4>
+                    <h4 class="card-title mg-b-0">المهمات المنشئة - Local Tasks <br> <span
+                            class="badge bg-danger me-1">Pending</span></h4>
 
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-vcenter table-bordered text-nowrap table-danger align-items-center mb-0">
+                    <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
-                            <tr>
+                            <tr class=" bg-warning-gradient">
                                 <th class="text-lg">ID</th>
                                 <th class="text-lg">STATION</th>
                                 <th class="text-lg">Main Alarm</th>
@@ -273,7 +274,7 @@
 
                                 <td class="text-lg">{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-light">View</a></td>
+                                        class="btn btn-warning-gradient">View</a></td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -283,6 +284,7 @@
             </div>
         </div>
         {{-- incoming table--}}
+        @if(isset($incomingTasks) && count($incomingTasks) > 0)
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
@@ -291,9 +293,10 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-vcenter table-bordered text-nowrap table-info align-items-center mb-0">
+                    <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
-                            <tr>
+                            <tr class="bg-info-gradient">
+
                                 <th>ID</th>
                                 <th>STATION</th>
                                 <th>FROM</th>
@@ -311,7 +314,7 @@
                                 <td>{{$task->toDepartment->name}}</td>
                                 <td>{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-light">View</a></td>
+                                        class="btn btn-info-gradient">View</a></td>
                             </tr>
                             @endforeach
 
@@ -320,7 +323,9 @@
                 </div>
             </div>
         </div>
+        @endif
         {{-- outgoing tasks--}}
+        @if(isset($outgoing) && count($outgoing) > 0)
         <div class="card">
             <div class="card-header pb-0">
                 <h4 class="card-title mg-b-0">Outgoing Tasks - المهمات المرسلة</h4>
@@ -328,10 +333,9 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table
-                        class="table table-vcenter table-bordered text-nowrap  table-warning align-items-center mb-0">
+                    <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
-                            <tr>
+                            <tr class="bg-warning-gradient">
                                 <th>ID</th>
                                 <th>STATION</th>
                                 <th>FROM</th>
@@ -355,7 +359,7 @@
                                 <td class="bg-success">{{$task->status}}</td>
                                 @endif
                                 <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->destination_department])}}"
-                                        class="btn btn-light">View</a></td>
+                                        class="btn btn-warning-gradient">View</a></td>
 
                             </tr>
                             @endforeach
@@ -364,6 +368,7 @@
                 </div>
             </div>
         </div>
+        @endif
         {{-- green table--}}
         <div class="card">
             <div class="card-header pb-0">
@@ -374,17 +379,16 @@
                 </div>
 
             </div>
-            <div class="card-body">
+            <div class="card-body ">
                 <div class="table-responsive">
-                    <table class="table table-vcenter table-bordered text-nowrap table-success align-items-center mb-0">
+                    <table
+                        class="table table-vcenter table-striped table-bordered text-nowrap  align-items-center mb-0">
                         <thead>
-                            <tr>
+                            <tr class="bg-success-gradient">
                                 <th>ID</th>
                                 <th>STATION</th>
                                 <th>Main alarm</th>
                                 <th>ENGINEER</th>
-                                <th>Department</th>
-                                <th>Action Take</th>
                                 <th>Date</th>
                                 <th>Report</th>
                             </tr>
@@ -396,11 +400,9 @@
                                 <td>{{$task->main_task->station->SSNAME}}</td>
                                 <td>{{$task->main_task->main_alarm->name}}</td>
                                 <td>{{$task->engineer->name}}</td>
-                                <td>{{$task->engineer->department->name}}</td>
-                                <td>{{$task->action_take}}</td>
                                 <td>{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}"
-                                        type="button" class="btn btn-outline-success  button-icon "><i
+                                        type="button" class="btn btn-success-gradient  button-icon "><i
                                             class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
                                             data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a>
                                 </td>

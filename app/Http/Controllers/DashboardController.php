@@ -23,20 +23,16 @@ class DashBoardController extends Controller
 
     public function index()
     {
-
-
         $departmentId = Auth::user()->department_id;
         //get tasks count for day , week and month
         // Get tasks count for a specific day
         // Get total tasks count for a specific day
         $totalTasksInDay = department_task_assignment::where('department_id', $departmentId)
             ->whereDate('created_at', now()->toDateString())->count();
-
         // Get completed tasks count for a specific day
         $completedTasksInDay = department_task_assignment::where('department_id', $departmentId)
             ->whereDate('created_at', now()->toDateString())
             ->where('status', 'completed')
-
             ->count();
         // Get total tasks count for the current week (assuming the week starts on Sunday)
         $totalTasksInWeek = department_task_assignment::where('department_id', $departmentId)
@@ -76,7 +72,7 @@ class DashBoardController extends Controller
         // Get the latest pending main tasks in the user's department, including those that were previously in the user's department
         $pendingTasks = department_task_assignment::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('status', 'pending')->get();
+        })->where('status', 'pending')->latest()->get();
 
         // Get the number of completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasksCount = SectionTask::where(function ($query) use ($departmentId) {
@@ -86,7 +82,7 @@ class DashBoardController extends Controller
         // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('status', 'completed')->get();
+        })->where('status', 'completed')->latest()->get();
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
@@ -466,16 +462,16 @@ class DashBoardController extends Controller
     public function destroy($id)
     {
         $task = MainTask::findOrFail($id);
-
+        $departmentTask = department_task_assignment::where('main_tasks_id', $id)
+            ->where('department_id', Auth::user()->department_id)
+            ->first();
         if ($task) {
-            if ($task->previous_department_id && $task->previous_department_id !== Auth::user()->department_id) {
-                $task->department_id = $task->previous_department_id;
-                $task->save();
-                return redirect()->back()->with('success', 'تم تغيير قسم المهمة بنجاح');
-            }
             if ($task->department_id === Auth::user()->department_id) {
                 $task->delete();
                 return redirect()->back()->with('success', 'تم الحذف بنجاح');
+            } else {
+                $departmentTask->delete();
+                return redirect()->back()->with('success', 'تم حذف المهمة من القسم بنجاح');
             }
         }
 
