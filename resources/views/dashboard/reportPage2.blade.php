@@ -36,7 +36,7 @@
                     <div class="col-md ">
                         <label class="tx-gray-600">Task Details</label>
                         <div class="">
-                            <h1>{{ $section_task->main_task->station->SSNAME }}</h1>
+                            <h1 class="fw-bold">{{ $section_task->main_task->station->SSNAME }}</h1>
                             <p class="font-italic tx-15"> @isset($section_task->main_task->main_alarm_id)
                                 {{$section_task->main_task->main_alarm->name}}
                                 @endisset<br>
@@ -87,28 +87,26 @@
                                     </div><!-- invoice-notes -->
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="valign-middle " colspan="2">
-                                    <div class="invoice-notes text-right">
-                                        <label class="main-content-label tx-16">Engineer
-                                        </label>
-                                        <p class="tx-20 text-dark">
-                                            {{
-                                            $section_task->engineer->name }} <br>
 
-                                        </p>
-                                        <p class="tx-20 text-dark font-italic">
-                                            {{
-                                            $section_task->engineer->email }} <br>
-
-                                        </p>
-                                    </div><!-- invoice-notes -->
-                                </td>
-                            </tr>
 
 
                         </tbody>
                     </table>
+                    <div class="invoice-notes mt-5 "
+                        style="display: flex;flex-direction:column;  align-items:flex-end;">
+                        <label class="main-content-label tx-16 mt-2">Engineer
+                        </label>
+                        <p class="tx-20 text-dark">
+                            {{
+                            $section_task->engineer->name }} <br>
+
+                        </p>
+                        <p class="tx-20 text-dark font-italic">
+                            {{
+                            $section_task->engineer->email }} <br>
+
+                        </p>
+                    </div><!-- invoice-notes -->
                 </div>
 
 
