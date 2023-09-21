@@ -325,17 +325,16 @@
         </div>
         @endif
         {{-- outgoing tasks--}}
-        @if(isset($outgoing) && count($outgoing) > 0)
+        @if(isset($outgoingTasks) && count($outgoingTasks) > 0)
         <div class="card">
             <div class="card-header pb-0">
                 <h4 class="card-title mg-b-0">Outgoing Tasks - المهمات المرسلة</h4>
-
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
-                            <tr class="bg-warning-gradient">
+                            <tr class="bg-pink-gradient">
                                 <th>ID</th>
                                 <th>STATION</th>
                                 <th>FROM</th>
@@ -354,12 +353,13 @@
                                 <td>{{$task->toDepartment->name}}</td>
                                 <td>{{$task->created_at}}</td>
                                 @if($task->status === 'pending')
-                                <td class="bg-danger"> {{$task->status}} </td>
+                                <td> <span class="badge bg-danger me-1">Pendng</span></td>
                                 @else
-                                <td class="bg-success">{{$task->status}}</td>
+                                <td> <span class="badge bg-success me-1">Done</span>
+                                </td>
                                 @endif
                                 <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->destination_department])}}"
-                                        class="btn btn-warning-gradient">View</a></td>
+                                        class="btn btn-pink">View</a></td>
 
                             </tr>
                             @endforeach

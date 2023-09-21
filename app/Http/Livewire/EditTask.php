@@ -2,26 +2,27 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Support\Facades\Notification;
-
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use App\Models\Station;
-use App\Models\department_task_assignment;
-use App\Models\Equip;
-use App\Models\MainAlarm;
-use App\Models\MainTask;
-use App\Models\TaskAttachment;
-use App\Models\SectionTask;
-use App\Models\Engineer;
-use App\Models\Department;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use DateTime;
+
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Equip;
+use App\Models\Station;
+use Livewire\Component;
+use App\Models\Engineer;
+use App\Models\MainTask;
+use App\Models\MainAlarm;
+use App\Models\Department;
+use App\Models\SectionTask;
+use Illuminate\Http\Request;
+use Livewire\WithFileUploads;
+use App\Models\TaskAttachment;
+use App\Models\TaskConversions;
+use App\Notifications\TaskReport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Notifications\TaskReport;
+use App\Models\department_task_assignment;
+use Illuminate\Support\Facades\Notification;
 
 class EditTask extends Component
 {
@@ -74,7 +75,7 @@ class EditTask extends Component
         $this->stationDetails = Station::where('id',  $this->task->station_id)->first();
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;
-        $this->selectedMainAlarm = optional($this->task->main_alarm)->name;
+        $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
         $this->selectedEngineer = optional($this->task->engineer)->id;
         // Set the Area based on the Department of the authenticated User.
         $this->setArea();
@@ -93,7 +94,7 @@ class EditTask extends Component
         $this->selectedEquip = $this->task->equip_number;
         // $this->selectedTransformer = $this->task->equip_number;
         $this->departments = Department::where('name', '!=', Auth::user()->department->name)->get();
-        $this->selectedDepartment =  $this->task->department_id;
+        $this->selectedDepartment = Auth::user()->department_id;
         $this->equip = Equip::where('station_id', $this->task->station->id)->where('voltage_level', $this->selectedVoltage)->get();
     }
 
@@ -330,14 +331,44 @@ class EditTask extends Component
         $department_task->update([
             'eng_id' => $this->selectedEngineer,
         ]);
-        if ($department_task->department_id !== Auth::user()->department_id) {
-            department_task_assignment::create([
-                'department_id' => Auth::user()->department_id,
+
+        // Check if the selected department is different from the user's department
+        if ($this->selectedDepartment != Auth::user()->department_id) {
+            // Create a conversion record
+            $converted_task = TaskConversions::create([
+                'main_tasks_id' => $main_task_id,
+                'source_department' => Auth::user()->department_id,
+                'destination_department' => $this->selectedDepartment,
+            ]);
+
+            // Create a new department task assignment for the selected department
+            $departmentTask = department_task_assignment::create([
+                'department_id' => $this->selectedDepartment,
                 'main_tasks_id' => $main_task_id,
                 'eng_id' => $this->selectedEngineer,
                 'status' => 'pending'
             ]);
+        } else {
+            // Update the existing department task assignment for the user's department
+            $userDepartmentTask = department_task_assignment::where('main_tasks_id', $main_task_id)
+                ->where('department_id', Auth::user()->department_id)
+                ->first();
+
+            if ($userDepartmentTask) {
+                $userDepartmentTask->update([
+                    'eng_id' => $this->selectedEngineer,
+                ]);
+            } else {
+                // Create a new department task assignment for the user's department
+                $userDepartmentTask = department_task_assignment::create([
+                    'department_id' => Auth::user()->department_id,
+                    'main_tasks_id' => $main_task_id,
+                    'eng_id' => $this->selectedEngineer,
+                    'status' => 'pending'
+                ]);
+            }
         }
+
         foreach ($this->photos as $photo) {
             // $photo->store('photos');
             $name = $photo->getClientOriginalName();

@@ -88,7 +88,9 @@ class DashBoardController extends Controller
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
         $incomingTasks = TaskConversions::whereHas('mainTask', function ($query) {
             $query->where('status', 'pending');
-        })->where('destination_department', $departmentId)->get();
+        })->where('destination_department', $departmentId)
+            ->where('status', 'pending')
+            ->get();
         $outgoingTasks = TaskConversions::whereHas('mainTask', function ($query) {
             $query->where('status', 'pending');
         })->where('source_department', $departmentId)->get();
