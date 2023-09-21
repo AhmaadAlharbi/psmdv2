@@ -250,6 +250,7 @@
                                 <th class="text-lg">ID</th>
                                 <th class="text-lg">STATION</th>
                                 <th class="text-lg">Main Alarm</th>
+                                <th class="text-lg">Status</th>
                                 <th class="text-lg">ENGINEER</th>
                                 <th class="text-lg">DATE</th>
                                 <th class="text-lg">OPERATION</th>
@@ -265,6 +266,7 @@
                                 @else
                                 <td>-</td>
                                 @endisset
+                                <td>{{$task->status}}</td>
                                 @if($task->eng_id)
                                 <td class="text-lg">{{$task->engineer->name}} - {{$task->engineer->department->name}}
                                 </td>
@@ -388,6 +390,7 @@
                                 <th>ID</th>
                                 <th>STATION</th>
                                 <th>Main alarm</th>
+                                <th>Status</th>
                                 <th>ENGINEER</th>
                                 <th>Date</th>
                                 <th>Report</th>
@@ -399,6 +402,7 @@
                                 <th scope="row">{{ $loop->iteration }}</th>
                                 <td>{{$task->main_task->station->SSNAME}}</td>
                                 <td>{{$task->main_task->main_alarm->name}}</td>
+                                <td>{{$task->status}}</td>
                                 <td>{{$task->engineer->name}}</td>
                                 <td>{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}"

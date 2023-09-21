@@ -85,12 +85,59 @@
                             <div class="card">
                                 <div class="card-header border-bottom-0">
                                     <h2 class="card-title">Action Take</h2>
+
                                 </div>
-                                <form
-                                    action="{{ route('dashboard.submitEngineerReport', ['id' => $tasks->main_tasks_id]) }}"
-                                    enctype="multipart/form-data" method="post" autocomplete="off">
-                                    @csrf
-                                    <div class="card-body">
+
+                                <div class="card-body">
+                                    <form
+                                        action="{{ route('dashboard.submitEngineerReport', ['id' => $tasks->main_tasks_id]) }}"
+                                        enctype="multipart/form-data" method="post" autocomplete="off">
+                                        @csrf
+                                        <div class="form-label">Task status</div>
+                                        <div class="custom-controls-stacked mt-3">
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="action_take_status" value="completed" checked>
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-success">Completed</span>
+                                            </label>
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="action_take_status" value="Responsibility of another entity">
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-success">Responsibility
+                                                    of another entity</span>
+                                            </label>
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="action_take_status" value="Under warranty">
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-success">Under
+                                                    warranty</span>
+                                            </label>
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="action_take_status" value="Spare parts not available">
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-danger">Spare
+                                                    parts not available</span>
+                                            </label>
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="action_take_status" value="Awaiting repairs">
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-danger">Awaiting
+                                                    repairs</span>
+                                            </label>
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="action_take_status"
+                                                    value="Transferring the task to another engineer">
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-danger">Transferring
+                                                    the task to another engineer.</span>
+                                            </label>
+                                        </div>
                                         <textarea class="content5" name="action_take"></textarea>
                                         <div id="attachmentFile"
                                             class="e d-flex flex-column align-items-start justify-content-start">
@@ -108,7 +155,7 @@
                                             </div><br>
                                         </div>
                                         <button class="btn btn-info">Submit Report</button>
-                                    </div>
+                                </div>
                                 </form>
 
 
