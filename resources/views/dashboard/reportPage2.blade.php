@@ -111,8 +111,40 @@
                         </p>
                     </div><!-- invoice-notes -->
                 </div>
+                <h4 class="d-print-none">Shared Reports</h4>
 
+                <div class="table-responsive border d-print-none mt-4">
 
+                    <table class="table mg-b-0 text-md-nowrap">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Department</th>
+                                <th>Engineer</th>
+                                <th>Date</th>
+                                <th>Report</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($sections_tasks as $task)
+                            <tr>
+                                <th scope="row">{{$loop->iteration}}</th>
+                                <td>{{$task->department->name}}</td>
+                                <td>{{$task->engineer->name}}</td>
+                                <td>{{$task->created_at}}</td>
+                                <td>
+                                    <a class="btn btn-success"
+                                        href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}">
+                                        Report
+                                    </a>
+                                </td>
+
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </div>
                 <div class="print-button-container">
                     <a href="javascript:void(0);" class="btn btn-info float-end mt-3 ms-2"
                         onclick="printContent('printable-content');">
@@ -126,6 +158,7 @@
         </div>
     </div>
 </div>
+
 <!-- row closed -->
 
 @endsection

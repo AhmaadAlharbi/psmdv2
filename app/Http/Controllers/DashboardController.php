@@ -301,30 +301,54 @@ class DashBoardController extends Controller
 
     public function reportPage($id)
     {
-        $section_task = SectionTask::where('main_tasks_id', $id)
+        list($section_task, $files, $sections_tasks) = $this->getReportData($id);
+        if (!$section_task) {
+            abort(404);
+        }
+        return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
+    }
+
+    public function reportDepartment($main_task_id, $department_id)
+    {
+        list($section_task, $files, $sections_tasks) = $this->getReportData($main_task_id);
+        if (!$section_task) {
+            abort(404);
+        }
+        return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
+    }
+
+    private function getReportData($main_task_id)
+    {
+        $shared_reports = TaskConversions::where('main_tasks_id', $main_task_id)
+            ->where('status', 'completed')
+            ->where(function ($query) {
+                $query->where('source_department', Auth::user()->department_id)
+                    ->orWhere('destination_department', Auth::user()->department_id);
+            })
+            ->first();
+
+        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
             ->where('department_id', Auth::user()->department_id)
             ->where('status', 'completed')
             ->first();
-        $files = TaskAttachment::where('main_tasks_id', $id)->get();
 
-        if (!$section_task) {
-            abort(404);
-        }
-        return view('dashboard.reportPage2', compact('files', 'section_task'));
-    }
-    public function reportDepartment($main_task_id, $department_id)
-    {
-        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
-            ->where('department_id', $department_id)
-            ->where('status', 'completed')
-            ->first();
         $files = TaskAttachment::where('main_tasks_id', $main_task_id)->get();
 
-        if (!$section_task) {
-            abort(404);
+        $sections_tasks = [];
+        if ($shared_reports) {
+            $sections_tasks = SectionTask::where('main_tasks_id', $main_task_id)
+                ->where(function ($query) use ($shared_reports) {
+                    $query->where('department_id', $shared_reports->source_department)
+                        ->orWhere('department_id', $shared_reports->destination_department);
+                })
+                ->where('status', 'completed')
+                ->get();
         }
-        return view('dashboard.reportPage', compact('files', 'section_task'));
+
+        return [$section_task, $files, $sections_tasks];
     }
+
+
     public function showTasks($status)
     {
         $stations = Station::all();
