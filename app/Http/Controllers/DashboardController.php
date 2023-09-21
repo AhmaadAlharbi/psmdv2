@@ -323,7 +323,9 @@ class DashBoardController extends Controller
             ->where('status', 'completed')
             ->where(function ($query) {
                 $query->where('source_department', Auth::user()->department_id)
-                    ->orWhere('destination_department', Auth::user()->department_id);
+                    ->where('source_department', '<>', 1)
+                    ->orWhere('destination_department', Auth::user()->department_id)
+                    ->where('destination_department', '<>', 1);
             })
             ->first();
 
@@ -347,6 +349,7 @@ class DashBoardController extends Controller
 
         return [$section_task, $files, $sections_tasks];
     }
+
 
 
     public function showTasks($status)

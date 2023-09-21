@@ -111,6 +111,7 @@
                         </p>
                     </div><!-- invoice-notes -->
                 </div>
+                @if(count($sections_tasks) >0)
                 <h4 class="d-print-none">Shared Reports</h4>
 
                 <div class="table-responsive border d-print-none mt-4">
@@ -126,9 +127,15 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                            $i=1
+                            @endphp
                             @foreach($sections_tasks as $task)
+                            @if($task->department_id !== 1 && $task->id !== $section_task->id)
                             <tr>
-                                <th scope="row">{{$loop->iteration}}</th>
+                                <th scope="row">
+                                    {{$i++}}
+                                </th>
                                 <td>{{$task->department->name}}</td>
                                 <td>{{$task->engineer->name}}</td>
                                 <td>{{$task->created_at}}</td>
@@ -138,13 +145,14 @@
                                         Report
                                     </a>
                                 </td>
-
                             </tr>
+                            @endif
                             @endforeach
-
                         </tbody>
+
                     </table>
                 </div>
+                @endif
                 <div class="print-button-container">
                     <a href="javascript:void(0);" class="btn btn-info float-end mt-3 ms-2"
                         onclick="printContent('printable-content');">
