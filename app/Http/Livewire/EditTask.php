@@ -72,6 +72,7 @@ class EditTask extends Component
         $this->main_alarms = MainAlarm::where('department_id', 2)->get();
         $this->task = MainTask::find($this->task_id);
         $this->station_id =  $this->task->station->id;
+        $this->selectedStation = Station::where('id', $this->station_id)->value('SSNAME');
         $this->stationDetails = Station::where('id',  $this->task->station_id)->first();
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;

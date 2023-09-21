@@ -84,7 +84,9 @@
                                         </label>
                                         <p class="tx-20 text-dark">
                                             @if (isset($section_task->action_take))
-                                            {{ $section_task->action_take }}
+
+                                            {!! $section_task->action_take !!}
+
                                             @endif
                                         </p>
                                     </div><!-- invoice-notes -->
@@ -131,7 +133,7 @@
                             $i=1
                             @endphp
                             @foreach($sections_tasks as $task)
-                            @if($task->department_id !== 1 && $task->id !== $section_task->id)
+                            @if($task->department_id !== 1 )
                             <tr>
                                 <th scope="row">
                                     {{$i++}}

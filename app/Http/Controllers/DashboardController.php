@@ -211,10 +211,11 @@ class DashBoardController extends Controller
         if ($tasks->eng_id !== Auth::user()->id) {
             return view('dashboard.unauthorized');
         }
-        return view('dashboard.engineerTaskPage', compact('tasks', 'files'));
+        return view('dashboard.engineerTaskPage2', compact('tasks', 'files'));
     }
     public function submitEngineerReport(Request $request, $id)
     {
+        $actionTake = $request->input('action_take');
         $date =  Carbon::now();
         $main_task = MainTask::findOrFail($id);
         $section_task = SectionTask::where('main_tasks_id', $id)->first();
@@ -242,7 +243,7 @@ class DashBoardController extends Controller
                     'main_tasks_id' => $id,
                     'department_id' => 1,
                     'eng_id' => Auth::user()->id,
-                    'action_take' => $request->action_take,
+                    'action_take' => $actionTake,
                     'status' => 'completed',
                     'engineer-notes' => $request->notes,
                     'user_id' => Auth::user()->id,
@@ -268,7 +269,7 @@ class DashBoardController extends Controller
                 'main_tasks_id' => $id,
                 'department_id' => Auth::user()->department_id,
                 'eng_id' => Auth::user()->id,
-                'action_take' => $request->action_take,
+                'action_take' => $actionTake,
                 'status' => 'completed',
                 'engineer-notes' => $request->notes,
                 'user_id' => Auth::user()->id,
@@ -320,12 +321,11 @@ class DashBoardController extends Controller
     private function getReportData($main_task_id)
     {
         $shared_reports = TaskConversions::where('main_tasks_id', $main_task_id)
+
             ->where('status', 'completed')
             ->where(function ($query) {
                 $query->where('source_department', Auth::user()->department_id)
-                    ->where('source_department', '<>', 1)
-                    ->orWhere('destination_department', Auth::user()->department_id)
-                    ->where('destination_department', '<>', 1);
+                    ->orWhere('destination_department', Auth::user()->department_id);
             })
             ->first();
 

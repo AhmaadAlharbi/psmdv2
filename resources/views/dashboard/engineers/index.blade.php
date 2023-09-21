@@ -184,7 +184,7 @@
                         <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
 
                         <li class="list-group-item bg-light" style="font-size:16px;"><strong>Action Take<br></strong>
-                            {{$task->action_take}}
+                            {!!$task->action_take!!}
                         </li>
                         <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
                             <li class="list-group-item text-dark bg-light"><strong>Engineer <br></strong>
