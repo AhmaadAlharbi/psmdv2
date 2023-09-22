@@ -302,4 +302,5 @@ Route::get('engineers-list/update/{id}', [EngineersController::class, 'toggleEng
 Route::get('/users-list', [UserController::class, 'usersList'])->name('dashboard.usersList');
 Route::delete('/tasks/{id}/delete', [DashBoardController::class, 'destroy'])->name('task.destroy');
 Route::delete('/section-tasks/{id}/delete', [DashBoardController::class, 'destroySectionTasks'])->name('sectionTasks.destroy');
+Route::get('/dashboard/admin/timeline/{id}', [DashBoardController::class, 'timeline'])->name('dashboard.timeline');
 require __DIR__ . '/auth.php';

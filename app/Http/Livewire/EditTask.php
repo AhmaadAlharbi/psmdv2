@@ -14,6 +14,7 @@ use App\Models\MainTask;
 use App\Models\MainAlarm;
 use App\Models\Department;
 use App\Models\SectionTask;
+use App\Models\TaskTimeline;
 use Illuminate\Http\Request;
 use Livewire\WithFileUploads;
 use App\Models\TaskAttachment;
@@ -61,6 +62,7 @@ class EditTask extends Component
     public $otherMainAlarm = '';
     public $otherVoltage = '';
     public $otherEquip = '';
+    public $departmentTask = '';
     public function __construct($task_id)
     {
         $this->task_id = $task_id;
@@ -71,13 +73,14 @@ class EditTask extends Component
         $this->stations = Station::all();
         $this->main_alarms = MainAlarm::where('department_id', 2)->get();
         $this->task = MainTask::find($this->task_id);
+        $this->departmentTask = department_task_assignment::where('main_tasks_id', $this->task_id)->where('department_id', Auth::user()->department_id)->first();
         $this->station_id =  $this->task->station->id;
         $this->selectedStation = Station::where('id', $this->station_id)->value('SSNAME');
         $this->stationDetails = Station::where('id',  $this->task->station_id)->first();
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;
         $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
-        $this->selectedEngineer = optional($this->task->engineer)->id;
+        $this->selectedEngineer = $this->departmentTask->eng_id;
         // Set the Area based on the Department of the authenticated User.
         $this->setArea();
         $this->getEmail();
@@ -327,11 +330,33 @@ class EditTask extends Component
             'main_alarm_id' => $mainAlarmId,
             'user_id' => Auth::user()->id,
         ]);
+        $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
+        $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
         $main_task_id = $this->task->id;
-        $department_task = department_task_assignment::where('main_tasks_id', $main_task_id)->first();
-        $department_task->update([
-            'eng_id' => $this->selectedEngineer,
-        ]);
+
+        $department_task = department_task_assignment::where('main_tasks_id', $main_task_id)
+            ->where('department_id', Auth::user()->department_id)
+            ->first();
+
+        if ($this->selectedEngineer !== $department_task->eng_id) {
+            $department_task->update([
+                'eng_id' => $this->selectedEngineer,
+            ]);
+            TaskTimeline::create([
+                'main_tasks_id' => $main_task_id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Updated Engineer',
+                'Action' => 'The Department has assined Engineer ' . $selectedEngineerName . " by " . Auth::user()->name
+            ]);
+        } else {
+            TaskTimeline::create([
+                'main_tasks_id' => $main_task_id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Updated Task',
+                'action' => "The task has been Updated by " . Auth::user()->name . " from  " . Auth::user()->department->name
+            ]);
+        }
+
 
         // Check if the selected department is different from the user's department
         if ($this->selectedDepartment != Auth::user()->department_id) {

@@ -11,12 +11,13 @@ use App\Models\MainTask;
 use App\Models\MainAlarm;
 use App\Models\Department;
 use App\Models\SectionTask;
+use App\Models\TaskTimeline;
 use Illuminate\Http\Request;
 use App\Models\TaskAttachment;
+use App\Models\TaskConversions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\department_task_assignment;
-use App\Models\TaskConversions;
 
 class DashBoardController extends Controller
 {
@@ -544,5 +545,12 @@ class DashBoardController extends Controller
             return redirect()->back()->with('success', 'تم الحذف بنجاح');
         }
         return redirect()->back()->with('error', 'Record not found.');
+    }
+    public function timeline($id)
+    {
+        $main_task = MainTask::findOrFail($id);
+        $departmentTask = department_task_assignment::where('main_tasks_id', $id)->get();
+        $tasksTracking = TaskTimeline::where('main_tasks_id', $id)->get();
+        return view('dashboard.timeline', compact('main_task', 'tasksTracking'));
     }
 }

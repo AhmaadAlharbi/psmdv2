@@ -2,28 +2,29 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Support\Facades\Notification;
-
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use App\Models\Station;
-use App\Models\Equip;
-use App\Models\MainAlarm;
-use App\Models\MainTask;
-use App\Models\TaskAttachment;
-use App\Models\SectionTask;
-use App\Models\Engineer;
-use App\Models\Department;
-use App\Models\department_task_assignment;
-use App\Models\TaskConversions;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use DateTime;
-use Illuminate\Support\Facades\Storage;
-use App\Notifications\TaskReport;
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Equip;
+use App\Models\Station;
+use Livewire\Component;
+use App\Models\Engineer;
+use App\Models\MainTask;
+use App\Models\MainAlarm;
+use App\Models\Department;
+use App\Models\SectionTask;
+use App\Models\TaskTimeline;
+use Illuminate\Http\Request;
+use Livewire\WithFileUploads;
+use App\Models\TaskAttachment;
+use App\Models\TaskConversions;
+use App\Notifications\TaskReport;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
+use App\Models\department_task_assignment;
+use Illuminate\Support\Facades\Notification;
 
 
 class AddTask extends Component
@@ -302,12 +303,26 @@ class AddTask extends Component
             'user_id' => Auth::user()->id,
         ]);
 
+        $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
+        $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
         $main_task_id = MainTask::latest()->first()->id;
+        TaskTimeline::create([
+            'main_tasks_id' => $main_task_id,
+            'department_id' => Auth::user()->department_id,
+            'status' => 'created',
+            'action' => "The task has been assigned by " . Auth::user()->name . "from the " . Auth::user()->department->name
+        ]);
         if ($this->selectedDepartment !== Auth::user()->department_id) {
             $converted_task = TaskConversions::create([
                 'main_tasks_id' => $main_task_id,
                 'source_department' => Auth::user()->department_id,
                 'destination_department' => $this->selectedDepartment,
+            ]);
+            TaskTimeline::create([
+                'main_tasks_id' => $main_task_id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Converted',
+                'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName . " by " . Auth::user()->name
             ]);
             $departmentTask = department_task_assignment::create([
                 'department_id' => Auth::user()->department_id,
@@ -322,18 +337,13 @@ class AddTask extends Component
                 'eng_id' => $this->selectedEngineer,
                 'status' => 'pending'
             ]);
+            TaskTimeline::create([
+                'main_tasks_id' => $main_task_id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Assined Engineer',
+                'Action' => 'The Department has assined Engineer ' . $selectedEngineerName . " by " . Auth::user()->name
+            ]);
         }
-
-        $section_task = SectionTask::create([
-            'main_tasks_id' => $main_task_id,
-            'department_id' => $this->selectedDepartment,
-            'eng_id' => $this->selectedEngineer,
-            'date' => $this->date,
-            'action_take' => null,
-            'status' => 'pending',
-            'engineer-notes' => null,
-            'user_id' => Auth::user()->id,
-        ]);
         foreach ($this->photos as $photo) {
             // $photo->store('photos');
             $name = $photo->getClientOriginalName();
