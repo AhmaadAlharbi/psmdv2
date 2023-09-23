@@ -377,13 +377,27 @@ class DashBoardController extends Controller
         return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
     }
 
+    // public function reportDepartment($main_task_id, $department_id)
+    // {
+    //     list($section_task, $files, $sections_tasks) = $this->getReportData($main_task_id);
+    //     if (!$section_task) {
+    //         abort(404);
+    //     }
+    //     return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
+    // }
+
     public function reportDepartment($main_task_id, $department_id)
     {
-        list($section_task, $files, $sections_tasks) = $this->getReportData($main_task_id);
-        if (!$section_task) {
-            abort(404);
-        }
-        return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
+        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
+            ->where('department_id', $department_id)
+            ->where('isCompleted', "1")
+            ->first();
+
+        $sections_tasks = SectionTask::where('main_tasks_id', $main_task_id)
+            ->where('isCompleted', "1")
+            ->where('department_id', "!=", $department_id)
+            ->get();
+        return view('dashboard.reportPage2', compact('section_task', 'sections_tasks'));
     }
 
     private function getReportData($main_task_id)

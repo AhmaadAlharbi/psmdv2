@@ -74,14 +74,18 @@
                                 </p>
                                 <span class="ms-auto"><i class="fe fe-calendar text-muted me-1"></i>{{ $task->created_at
                                     }}</span>
+
                             </div>
+                            @if($task->status == 'Adding Report')
+                            <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
+                                type="button" class="btn btn-success-gradient  button-icon "><i
+                                    class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
+                                    data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a>
+                            @endif
                         </div>
                     </div>
                     @endforeach
-                    <a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}" type="button"
-                        class="btn btn-success-gradient button-icon "><i class="si si-notebook px-2"
-                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
-                            aria-label="si-notebook"></i>Report</a>
+
                 </div>
             </div>
         </div>

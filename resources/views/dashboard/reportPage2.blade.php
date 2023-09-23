@@ -142,7 +142,7 @@
                                 <td>{{$task->engineer->name}}</td>
                                 <td>{{$task->created_at}}</td>
                                 <td>
-                                    <a class="btn btn-success"
+                                    <a class="btn btn-outline-info"
                                         href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}">
                                         Report
                                     </a>
@@ -156,7 +156,7 @@
                 </div>
                 @endif
                 <div class="print-button-container">
-                    <a href="javascript:void(0);" class="btn btn-info float-end mt-3 ms-2"
+                    <a href="javascript:void(0);" class="btn btn-dark float-end mt-3 ms-2"
                         onclick="printContent('printable-content');">
                         <i class="mdi mdi-printer me-1"></i>Print
                     </a>
