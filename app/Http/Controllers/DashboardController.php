@@ -83,7 +83,7 @@ class DashBoardController extends Controller
         // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('isCompleted', '1')->latest()->get();
+        })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
@@ -107,9 +107,12 @@ class DashBoardController extends Controller
             ->groupBy('eng_id')
             ->selectRaw('eng_id, COUNT(*) as completed_tasks_this_week')
             ->get();
+        $pendingReportsCount = SectionTask::where('department_id', Auth::user()->department_id)
+            ->where('isCompleted', "1")
+            ->where('approved', 0)
+            ->count();
 
-
-        return view('dashboard.index', compact('outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        return view('dashboard.index', compact('pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
 
     // return MainTask::with('station')->whereHas('station', function ($query) {
@@ -368,23 +371,6 @@ class DashBoardController extends Controller
     }
 
 
-    public function reportPage($id)
-    {
-        list($section_task, $files, $sections_tasks) = $this->getReportData($id);
-        if (!$section_task) {
-            abort(404);
-        }
-        return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
-    }
-
-    // public function reportDepartment($main_task_id, $department_id)
-    // {
-    //     list($section_task, $files, $sections_tasks) = $this->getReportData($main_task_id);
-    //     if (!$section_task) {
-    //         abort(404);
-    //     }
-    //     return view('dashboard.reportPage2', compact('files', 'section_task', 'sections_tasks'));
-    // }
 
     public function reportDepartment($main_task_id, $department_id)
     {
@@ -399,41 +385,27 @@ class DashBoardController extends Controller
             ->get();
         return view('dashboard.reportPage2', compact('section_task', 'sections_tasks'));
     }
-
-    private function getReportData($main_task_id)
+    public function pendingReports()
     {
-        $shared_reports = TaskConversions::where('main_tasks_id', $main_task_id)
-
-            ->where('status', 'completed')
-            ->where(function ($query) {
-                $query->where('source_department', Auth::user()->department_id)
-                    ->orWhere('destination_department', Auth::user()->department_id);
-            })
-            ->first();
-
-        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
-            ->where('department_id', Auth::user()->department_id)
-            ->where('isCompleted', '1')
-            ->first();
-
-        $files = TaskAttachment::where('main_tasks_id', $main_task_id)->get();
-
-        $sections_tasks = [];
-        if ($shared_reports) {
-            $sections_tasks = SectionTask::where('main_tasks_id', $main_task_id)
-                ->where(function ($query) use ($shared_reports) {
-                    $query->where('department_id', $shared_reports->source_department)
-                        ->orWhere('department_id', $shared_reports->destination_department);
-                })
-                ->where('status', 'completed')
-                ->get();
-        }
-
-        return [$section_task, $files, $sections_tasks];
+        $tasks = SectionTask::where('department_id', Auth::user()->department_id)
+            ->where('isCompleted', "1")
+            ->where('approved', 0)
+            ->paginate(6);
+        $stations = Station::all();
+        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
-
-
-
+    public function approveReports($id)
+    {
+        $report = SectionTask::findOrFail($id);
+        $approve_value = $report->approved;
+        if (Auth::user()->department_id === $report->department_id) {
+            $report->update([
+                'approved' => !$approve_value
+            ]);
+            return back();
+        }
+    }
     public function showTasks($status)
     {
         $stations = Station::all();

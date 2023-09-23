@@ -111,6 +111,19 @@
                             $section_task->engineer->email }} <br>
 
                         </p>
+                        @if ($section_task->department_id === Auth::user()->department_id && Auth::user()->role_id ==
+                        "2")
+                        <form method="POST" action="{{route('dashboard.approveReports',$section_task->id)}}">
+                            @csrf
+                            <button
+                                class="btn float-end mt-3 ms-2 d-none-print {{$section_task->approved == '0' ? 'btn-success' : 'btn-info'}}">
+                                <i class="fa fa-check-circle"></i> {{ $section_task->approved == '0' ? 'Approve Report'
+                                :
+                                'Cancel Approval' }}
+                            </button>
+                        </form>
+                        @endif
+
                     </div><!-- invoice-notes -->
                 </div>
                 @if(count($sections_tasks) >0)
@@ -160,6 +173,7 @@
                         onclick="printContent('printable-content');">
                         <i class="mdi mdi-printer me-1"></i>Print
                     </a>
+
                 </div>
 
 

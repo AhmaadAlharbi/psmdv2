@@ -185,11 +185,11 @@
 
                 </div>
                 @endif
-                @if($task->status === 'completed')
+                @if($task->isCompleted === '1')
                 <div class="col">
-                    <a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}" type="button"
-                        class="btn btn-success  button-icon "><i class="si si-notebook px-2" data-bs-toggle="tooltip"
-                            title="" data-bs-original-title="si-notebook"
+                    <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
+                        type="button" class="btn btn-success  button-icon "><i class="si si-notebook px-2"
+                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
                             aria-label="si-notebook"></i>{{Auth::user()->department->name}} Report </a>
                     @if($task->source_department !== 1 && $task->source_department )
                     @if( $task->source_department !== Auth::user()->department_id)

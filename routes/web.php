@@ -303,4 +303,7 @@ Route::get('/users-list', [UserController::class, 'usersList'])->name('dashboard
 Route::delete('/tasks/{id}/delete', [DashBoardController::class, 'destroy'])->name('task.destroy');
 Route::delete('/section-tasks/{id}/delete', [DashBoardController::class, 'destroySectionTasks'])->name('sectionTasks.destroy');
 Route::get('/dashboard/admin/timeline/{id}', [DashBoardController::class, 'timeline'])->name('dashboard.timeline');
+Route::get('/admin/reports/pending-approval', [DashboardController::class, 'pendingReports'])->name('dashboard.pendingReports');
+Route::post('admin/dashboard/reports/approve/{id}', [DashboardController::class, 'approveReports'])->name('dashboard.approveReports');
+
 require __DIR__ . '/auth.php';

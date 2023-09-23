@@ -212,6 +212,25 @@
                         </div><!-- col -->
                     </div><!-- row -->
                 </div>
+
+            </div>
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="card-title pb-0 mb-2">Pending Reports</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col text-center">
+                            <h3>Reports Ready for Approval ({{$pendingReportsCount}}) </h3>
+                            <a href="{{route('dashboard.pendingReports')}}" class="btn btn-dark">Check Pending
+                                Reports</a>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <li class="icons-list-item"><i class="fa fa-hourglass-end text-danger"></i></li>
+                            </div>
+
+                        </div>
+                    </div><!-- row -->
+                </div>
             </div>
         </div>
         <div class="col">
