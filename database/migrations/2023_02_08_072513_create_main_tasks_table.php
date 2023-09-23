@@ -25,6 +25,7 @@ class CreateMainTasksTable extends Migration
             $table->String('work_type')->nullable();
             $table->text('notes')->nullable();
             $table->string('status')->nullable();
+            $table->enum('isCompleted', ['0', '1'])->default('0');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('main_alarm_id')->nullable();
             $table->timestamps();

@@ -56,7 +56,7 @@
                 <div class="vtimeline">
                     @foreach($tasksTracking as $key => $task)
                     <div
-                        class="timeline-wrapper {{ $key % 2 === 0 ? 'timeline-wrapper-primary' : 'timeline-wrapper-secondary timeline-inverted' }} ">
+                        class="timeline-wrapper {{ $key % 2 === 0 ? 'timeline-wrapper-warning' : 'timeline-wrapper-info timeline-inverted' }} ">
                         <div class="timeline-badge {{ $key % 2 === 0 ? 'success' : 'info' }}">
 
                         </div>
@@ -66,15 +66,22 @@
                             </div>
                             <div class="timeline-body">
                                 <p>{{ $task->action }}</p>
+
                             </div>
                             <div class="timeline-footer d-flex align-items-center flex-wrap">
+                                <p class="text-secondary">{{$task->user->name}} <br>
+                                    {{$task->user->department->name}}
+                                </p>
                                 <span class="ms-auto"><i class="fe fe-calendar text-muted me-1"></i>{{ $task->created_at
                                     }}</span>
                             </div>
                         </div>
                     </div>
                     @endforeach
-
+                    <a href="{{route('dashboard.reportPage',['id'=>$task->main_tasks_id])}}" type="button"
+                        class="btn btn-success-gradient button-icon "><i class="si si-notebook px-2"
+                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
+                            aria-label="si-notebook"></i>Report</a>
                 </div>
             </div>
         </div>

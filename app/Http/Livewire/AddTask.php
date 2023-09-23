@@ -304,25 +304,32 @@ class AddTask extends Component
         ]);
 
         $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
-        $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
+        if ($this->selectedEngineer) {
+            $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
+        } else {
+            $selectedEngineerName = null;
+        }
         $main_task_id = MainTask::latest()->first()->id;
         TaskTimeline::create([
             'main_tasks_id' => $main_task_id,
             'department_id' => Auth::user()->department_id,
             'status' => 'created',
-            'action' => "The task has been assigned by " . Auth::user()->name . "from the " . Auth::user()->department->name
+            'action' => "The task has been assigned by " . Auth::user()->department->name,
+            'user_id' => Auth::user()->id
         ]);
         if ($this->selectedDepartment !== Auth::user()->department_id) {
             $converted_task = TaskConversions::create([
                 'main_tasks_id' => $main_task_id,
                 'source_department' => Auth::user()->department_id,
                 'destination_department' => $this->selectedDepartment,
+                'status' => 'pending'
             ]);
             TaskTimeline::create([
                 'main_tasks_id' => $main_task_id,
                 'department_id' => Auth::user()->department_id,
                 'status' => 'Converted',
-                'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName . " by " . Auth::user()->name
+                'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
+                'user_id' => Auth::user()->id
             ]);
             $departmentTask = department_task_assignment::create([
                 'department_id' => Auth::user()->department_id,
@@ -341,7 +348,8 @@ class AddTask extends Component
                 'main_tasks_id' => $main_task_id,
                 'department_id' => Auth::user()->department_id,
                 'status' => 'Assined Engineer',
-                'Action' => 'The Department has assined Engineer ' . $selectedEngineerName . " by " . Auth::user()->name
+                'Action' => 'The Department has assined Engineer ' . $selectedEngineerName,
+                'user_id' => Auth::user()->id
             ]);
         }
         foreach ($this->photos as $photo) {

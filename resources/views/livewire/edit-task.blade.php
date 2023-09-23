@@ -164,6 +164,7 @@
                     <label for="inputName" class="control-label">اسم المهندس</label>
                     <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
                         class="form-control engineerSelect my-4">
+                        <option value="-">-</option>
                         @foreach($engineers as $engineer)
                         <option value="{{$engineer->user->id}}">{{$engineer->user->name}}</option>
                         @endforeach

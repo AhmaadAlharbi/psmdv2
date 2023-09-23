@@ -553,6 +553,14 @@ class UserSeeder extends Seeder
                 3 => '2',
                 4 => '0',
             ),
+            67 =>
+            array(
+                0 => 'Ahmad Alharbi',
+                1 => '12345678',
+                2 => 'azaalharbi@mew.gov.kw',
+                3 => '2',
+                4 => '2',
+            ),
         );
 
         for ($i = 0; $i < count($names); $i++) {

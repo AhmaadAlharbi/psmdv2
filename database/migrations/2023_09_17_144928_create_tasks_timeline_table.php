@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->string('status');
             $table->String('action');
+            $table->unsignedBigInteger('user_id')->nullable();
+
             $table->foreign('main_tasks_id')
                 ->references('id')
                 ->on('main_tasks')
@@ -26,6 +28,9 @@ return new class extends Migration
             $table->foreign('department_id')
                 ->references('id')
                 ->on('departments');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users');
             $table->timestamps();
         });
     }

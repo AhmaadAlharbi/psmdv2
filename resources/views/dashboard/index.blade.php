@@ -323,6 +323,8 @@
                                 <td>{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
                                         class="btn btn-info-gradient">View</a></td>
+                                <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
+                                    class="btn btn-secondary">History</a>
                             </tr>
                             @endforeach
 
@@ -366,8 +368,8 @@
                                 <td> <span class="badge bg-success me-1">Done</span>
                                 </td>
                                 @endif
-                                <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->destination_department])}}"
-                                        class="btn btn-pink">View</a></td>
+                                <td> <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
+                                        class="btn btn-secondary">History</a></td>
 
                             </tr>
                             @endforeach
@@ -407,7 +409,11 @@
                             <tr>
                                 <th scope="row">{{ $loop->iteration }}</th>
                                 <td>{{$task->main_task->station->SSNAME}}</td>
-                                <td>{{$task->main_task->main_alarm->name}}</td>
+                                <td>
+                                    @isset($task->main_alarm_id)
+                                    {{$task->main_task->main_alarm->name}}
+                                    @endisset
+                                </td>
                                 <td>{{$task->status}}</td>
                                 <td>{{$task->engineer->name}}</td>
                                 <td>{{$task->created_at}}</td>
@@ -415,6 +421,8 @@
                                         type="button" class="btn btn-success-gradient  button-icon "><i
                                             class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
                                             data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a>
+                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
+                                        class="btn btn-secondary">History</a>
                                 </td>
                             </tr>
                             @endforeach

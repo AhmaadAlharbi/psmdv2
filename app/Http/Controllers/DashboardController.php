@@ -92,14 +92,12 @@ class DashBoardController extends Controller
         })->where('destination_department', $departmentId)
             ->where('status', 'pending')
             ->get();
-        $outgoingTasks = TaskConversions::whereHas('mainTask', function ($query) {
-            $query->where('status', 'pending');
-        })->where('source_department', $departmentId)->get();
-
-
+        // $outgoingTasks = TaskConversions::whereHas('mainTask', function ($query) {
+        //     $query->where('status', 'pending');
+        // })->where('source_department', $departmentId)->get();
+        $outgoingTasks = TaskConversions::where('status', 'pending')->where('source_department', $departmentId)->get();
         $currentWeekStart = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
         $currentWeekEnd = now()->endOfWeek(Carbon::SUNDAY)->toDateString();
-
         $tasksByEngineerThisWeek = SectionTask::whereBetween('date', [$currentWeekStart, $currentWeekEnd])
             ->groupBy('eng_id')
             ->selectRaw('eng_id, COUNT(*) as total_tasks_this_week')
@@ -221,50 +219,61 @@ class DashBoardController extends Controller
         $date =  Carbon::now();
         $main_task = MainTask::findOrFail($id);
         $section_task = SectionTask::where('main_tasks_id', $id)->first();
-        $taskConverted = TaskConversions::where('main_tasks_id', $id)->first();
+        $taskConverted = TaskConversions::where('main_tasks_id', $id)
+            ->where('source_department', Auth::user()->department_id)
+            ->OrWhere('destination_department', Auth::user()->department_id)
+            ->first();
         $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->where('main_tasks_id', $id)
             ->first();
         if ($taskConverted) {
-            $taskConverted->update([
-                'status' => 'completed'
-            ]);
             $taskSoruce = department_task_assignment::where('department_id', $taskConverted->source_department)
-                ->where('main_tasks_id', $id)
+                ->where('main_tasks_id', $id) //PSMD
                 ->first();
             $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
-                ->where('main_tasks_id', $id)
+                ->where('main_tasks_id', $id) //Proteciton first time
                 ->first();
             //check if Edara sent this tasks 
             if ($taskConverted->source_department === 1) {
                 $taskSoruce->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+                ]);
+                $taskConverted->update([
                     'status' => 'completed',
-                    'eng_id' => Auth::user()->id,
                 ]);
                 SectionTask::create([
                     'main_tasks_id' => $id,
                     'department_id' => 1,
                     'eng_id' => Auth::user()->id,
                     'action_take' => $actionTake,
-                    'status' => 'completed',
+                    'status' => $status_raidoBtn,
                     'engineer-notes' => $request->notes,
                     'user_id' => Auth::user()->id,
                     'date' => $date,
+                    'isCompleted' => "1"
                 ]);
             }
             if ($taskConverted->source_department === Auth::user()->department_id) {
                 $taskSoruce->update([
-                    'status' => 'completed',
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+                ]);
+                $taskConverted->update([
+                    'status' => 'completed'
                 ]);
             }
             if ($taskConverted->destination_department === Auth::user()->department_id) {
                 $taskDestination->update([
-                    'status' => 'completed'
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+
                 ]);
             }
             if ($taskDestination->status === 'completed' && $taskSoruce->status === 'completed') {
                 $main_task->update([
-                    'status' => 'completed',
+                    'status' => $status_raidoBtn,
+                    "isCompleted" => "1"
                 ]);
             }
             SectionTask::create([
@@ -272,10 +281,21 @@ class DashBoardController extends Controller
                 'department_id' => Auth::user()->department_id,
                 'eng_id' => Auth::user()->id,
                 'action_take' => $actionTake,
-                'status' => 'completed',
+                'status' => $status_raidoBtn,
                 'engineer-notes' => $request->notes,
                 'user_id' => Auth::user()->id,
                 'date' => $date,
+                'isCompleted' => "1"
+            ]);
+            TaskTimeline::create([
+                'main_tasks_id' => $id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Adding Report',
+                'action' => "The Report has been added",
+                'user_id' => Auth::user()->id
+            ]);
+            $departmentTask->update([
+                'status' => 'completed',
             ]);
         } else {
             if (
@@ -293,6 +313,13 @@ class DashBoardController extends Controller
                     'date' => $date,
                     'isCompleted' => "1"
                 ]);
+                TaskTimeline::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => 'Adding Report',
+                    'action' => "The Report has been added",
+                    'user_id' => Auth::user()->id
+                ]);
                 $main_task->update([
                     'status' => $status_raidoBtn,
                     'isCompleted' => "1"
@@ -300,6 +327,13 @@ class DashBoardController extends Controller
                 $departmentTask->update([
                     'status' => $status_raidoBtn,
                     'isCompleted' => "1"
+                ]);
+                TaskTimeline::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => $status_raidoBtn,
+                    'action' => "The status has been updated",
+                    'user_id' => Auth::user()->id
                 ]);
             } else {
                 SectionTask::create([
@@ -312,6 +346,13 @@ class DashBoardController extends Controller
                     'user_id' => Auth::user()->id,
                     'date' => $date,
                     'isCompleted' => "0"
+                ]);
+                TaskTimeline::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => $status_raidoBtn,
+                    'action' => "The status has been updated",
+                    'user_id' => Auth::user()->id
                 ]);
                 $main_task->update([
                     'status' => $status_raidoBtn,
@@ -358,7 +399,7 @@ class DashBoardController extends Controller
 
         $section_task = SectionTask::where('main_tasks_id', $main_task_id)
             ->where('department_id', Auth::user()->department_id)
-            ->where('status', 'completed')
+            ->where('isCompleted', '1')
             ->first();
 
         $files = TaskAttachment::where('main_tasks_id', $main_task_id)->get();
@@ -549,8 +590,8 @@ class DashBoardController extends Controller
     public function timeline($id)
     {
         $main_task = MainTask::findOrFail($id);
-        $departmentTask = department_task_assignment::where('main_tasks_id', $id)->get();
-        $tasksTracking = TaskTimeline::where('main_tasks_id', $id)->get();
+        $departmentTask = department_task_assignment::where('main_tasks_id', $id)->orderBy('id', 'DESC')->get();
+        $tasksTracking = TaskTimeline::where('main_tasks_id', $id)->orderBy('id', 'DESC')->get();
         return view('dashboard.timeline', compact('main_task', 'tasksTracking'));
     }
 }

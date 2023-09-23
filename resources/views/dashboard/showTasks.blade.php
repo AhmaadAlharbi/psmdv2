@@ -139,7 +139,7 @@
                         {{$task->main_task->id}}
                     </li>
                     <li class="list-group-item ">{{$task->main_task->created_at}} -
-                        {{$task->department->name}}</li>
+                        {{$task->toDepartment->name}}</li>
                     <li class="list-group-item "> <strong>Station<br>
                         </strong>
                         <span style="font-size:22px; font-wieght:bold;">{{$task->main_task->station->SSNAME}}</span>

@@ -25,6 +25,7 @@ class CreateSectionTasksTable extends Migration
             $table->string('engineer-notes')->nullable();
             $table->boolean('approved')->default(false);
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->enum('isCompleted', ['0', '1'])->default('0');
             $table->timestamps();
             $table->foreign('main_tasks_id')
                 ->references('id')
