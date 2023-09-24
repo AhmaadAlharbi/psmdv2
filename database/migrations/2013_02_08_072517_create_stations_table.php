@@ -13,8 +13,6 @@ class CreateStationsTable extends Migration
      */
     public function up()
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('stations', function (Blueprint $table) {
             $table->id();
             $table->string('SSNAME');
@@ -27,8 +25,6 @@ class CreateStationsTable extends Migration
             $table->string('pm')->nullable();
             $table->timestamps();
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

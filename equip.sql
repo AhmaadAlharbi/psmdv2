@@ -1,45 +1,5 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3306
--- Generation Time: Sep 17, 2023 at 04:14 AM
--- Server version: 8.0.30
--- PHP Version: 8.1.9
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `psmd2023`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `equip`
---
-
-CREATE TABLE `equip` (
-  `id` int NOT NULL,
-  `station_id` bigint UNSIGNED DEFAULT NULL,
-  `voltage_level` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `equip_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `equip_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `equip`
---
-
-INSERT INTO `equip` (`id`, `station_id`, `voltage_level`, `equip_number`, `equip_name`) VALUES
+INSERT INTO `equips` (`id`, `station_id`, `voltage_level`, `equip_number`, `equip_name`) VALUES
 (1, 1, '132KV', 'E(1)', 'RDTNA1'),
 (2, 1, '132KV', 'E(2)', '45TR1'),
 (3, 1, '132KV', 'E(3)', 'BS1'),
@@ -24303,7 +24263,7 @@ INSERT INTO `equip` (`id`, `station_id`, `voltage_level`, `equip_number`, `equip
 --
 -- Indexes for table `equip`
 --
-ALTER TABLE `equip`
+ALTER TABLE `equips`
   ADD PRIMARY KEY (`id`),
   ADD KEY `equip_station_id_foreign` (`station_id`);
 
@@ -24314,7 +24274,7 @@ ALTER TABLE `equip`
 --
 -- AUTO_INCREMENT for table `equip`
 --
-ALTER TABLE `equip`
+ALTER TABLE `equips`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24385;
 
 --

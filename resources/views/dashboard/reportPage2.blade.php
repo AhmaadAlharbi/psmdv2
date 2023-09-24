@@ -82,7 +82,7 @@
                                     <div class="invoice-notes">
                                         <label class="main-content-label tx-16">Action Take
                                         </label>
-                                        <p class="tx-20 text-dark">
+                                        <p class=" text-dark">
                                             @if (isset($section_task->action_take))
 
                                             {!! $section_task->action_take !!}
