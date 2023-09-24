@@ -40,7 +40,7 @@
                         <label class="tx-gray-600">Task Details</label>
                         <div class="">
                             <h1 class="fw-bold">{{ $section_task->main_task->station->SSNAME }}</h1>
-                            <p class="font-italic tx-15"> @isset($section_task->main_task->main_alarm_id)
+                            <p class="font-italic tx-15"> @isset($section_task->main_alarm_id)
                                 {{$section_task->main_task->main_alarm->name}}
                                 @endisset<br>
                                 Equip : {{ $section_task->main_task->equip_number }}<br>
@@ -112,7 +112,7 @@
 
                         </p>
                         @if ($section_task->department_id === Auth::user()->department_id && Auth::user()->role_id ==
-                        "2")
+                        "2" && Auth::user()->department_id !== 1)
                         <form method="POST" action="{{route('dashboard.approveReports',$section_task->id)}}">
                             @csrf
                             <button
@@ -126,7 +126,7 @@
 
                     </div><!-- invoice-notes -->
                 </div>
-                @if(count($sections_tasks) >0)
+                @if(count($sections_tasks) > 0 && Auth::user()->department_id !== 1)
                 <h4 class="d-print-none">Shared Reports</h4>
 
                 <div class="table-responsive border d-print-none mt-4">

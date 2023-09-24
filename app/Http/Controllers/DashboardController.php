@@ -110,6 +110,7 @@ class DashBoardController extends Controller
         $pendingReportsCount = SectionTask::where('department_id', Auth::user()->department_id)
             ->where('isCompleted', "1")
             ->where('approved', 0)
+            ->where('department_id', '!=', 1)
             ->count();
 
         return view('dashboard.index', compact('pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
@@ -250,11 +251,12 @@ class DashBoardController extends Controller
                     'department_id' => 1,
                     'eng_id' => Auth::user()->id,
                     'action_take' => $actionTake,
+                    'main_alarm_id' => $main_task->main_alarm_id,
                     'status' => $status_raidoBtn,
                     'engineer-notes' => $request->notes,
                     'user_id' => Auth::user()->id,
                     'date' => $date,
-                    'isCompleted' => "1"
+                    'isCompleted' => "1",
                 ]);
             }
             if ($taskConverted->source_department === Auth::user()->department_id) {
@@ -284,6 +286,7 @@ class DashBoardController extends Controller
                 'department_id' => Auth::user()->department_id,
                 'eng_id' => Auth::user()->id,
                 'action_take' => $actionTake,
+                'main_alarm_id' => $main_task->main_alarm_id,
                 'status' => $status_raidoBtn,
                 'engineer-notes' => $request->notes,
                 'user_id' => Auth::user()->id,
@@ -310,6 +313,7 @@ class DashBoardController extends Controller
                     'department_id' => Auth::user()->department_id,
                     'eng_id' => Auth::user()->id,
                     'action_take' => $request->action_take,
+                    'main_alarm_id' => $main_task->main_alarm_id,
                     'status' =>  $status_raidoBtn,
                     'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
                     'user_id' => Auth::user()->id,
@@ -344,6 +348,7 @@ class DashBoardController extends Controller
                     'department_id' => Auth::user()->department_id,
                     'eng_id' => Auth::user()->id,
                     'action_take' => $request->action_take,
+                    'main_alarm_id' => $main_task->main_alarm_id,
                     'status' => $status_raidoBtn,
                     'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
                     'user_id' => Auth::user()->id,
@@ -390,6 +395,7 @@ class DashBoardController extends Controller
         $tasks = SectionTask::where('department_id', Auth::user()->department_id)
             ->where('isCompleted', "1")
             ->where('approved', 0)
+            ->where('department_id', '!=', 1)
             ->paginate(6);
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
@@ -399,10 +405,21 @@ class DashBoardController extends Controller
     {
         $report = SectionTask::findOrFail($id);
         $approve_value = $report->approved;
+        $sharedTask = TaskConversions::where('main_tasks_id', $report->main_tasks_id)
+            ->first();
         if (Auth::user()->department_id === $report->department_id) {
             $report->update([
                 'approved' => !$approve_value
             ]);
+            if ($sharedTask) {
+                $sharedTaskReport =  SectionTask::where('department_id', $sharedTask->source_department)
+                    ->where('main_tasks_id', $report->main_tasks_id)
+                    ->where('isCompleted', "1")
+                    ->first();
+                $sharedTaskReport->update([
+                    'approved' => !$approve_value
+                ]);
+            }
             return back();
         }
     }

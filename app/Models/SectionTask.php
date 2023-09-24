@@ -17,6 +17,10 @@ class SectionTask extends Model
     {
         return $this->belongsTo(MainTask::class, 'main_tasks_id');
     }
+    public function main_alarm()
+    {
+        return $this->belongsTo(MainAlarm::class, 'main_alarm_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

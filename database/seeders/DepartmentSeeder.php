@@ -16,7 +16,7 @@ class DepartmentSeeder extends Seeder
     public function run()
     {
         DB::table('departments')->insert([
-            'name' => 'ادارة صيانة محطات التحويل الرئيسية'
+            'name' => 'PSMD'
         ]);
         DB::table('departments')->insert([
             'name' => 'Protection Department'

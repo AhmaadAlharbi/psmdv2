@@ -20,7 +20,8 @@ class CreateSectionTasksTable extends Migration
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('eng_id')->nullable();
             $table->date('date')->nullable();
-            $table->text('action_take')->nullable()->change();
+            $table->text('action_take');
+            $table->unsignedBigInteger('main_alarm_id')->nullable();
             $table->string('status')->nullable();
             $table->string('engineer-notes')->nullable();
             $table->boolean('approved')->default(false);
@@ -30,6 +31,10 @@ class CreateSectionTasksTable extends Migration
             $table->foreign('main_tasks_id')
                 ->references('id')
                 ->on('main_tasks')
+                ->onDelete('cascade');
+            $table->foreign('main_alarm_id')
+                ->references('id')
+                ->on('main_alarm')
                 ->onDelete('cascade');
             $table->foreign('department_id')
                 ->references('id')
