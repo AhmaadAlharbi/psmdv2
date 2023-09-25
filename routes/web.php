@@ -305,5 +305,7 @@ Route::delete('/section-tasks/{id}/delete', [DashBoardController::class, 'destro
 Route::get('/dashboard/admin/timeline/{id}', [DashBoardController::class, 'timeline'])->name('dashboard.timeline');
 Route::get('/admin/reports/pending-approval', [DashboardController::class, 'pendingReports'])->name('dashboard.pendingReports');
 Route::post('admin/dashboard/reports/approve/{id}', [DashboardController::class, 'approveReports'])->name('dashboard.approveReports');
-
+Route::get('/dashbaord/user/engineer-tasks/{status}', [DashBoardController::class, 'ShowTasksEngineer'])->name('dashboard.ShowTasksEngineer');
+Route::get('/dashboard/user/request-to-update-report/{main_task_id}', [DashBoardController::class, 'requestToUpdateReport'])->name('dashboard.requestToUpdateReport');
+Route::patch('/dashboard/user/update-report/{main_task_id}', [DashBoardController::class, 'updateReport'])->name('dashboard.updateReport');
 require __DIR__ . '/auth.php';

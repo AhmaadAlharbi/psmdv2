@@ -54,7 +54,7 @@
         </a>
     </div>
     <div class="col-xl-4 col-lg-6 col-md-6">
-        <a href="{{route('dashboard.showTasks',['status'=>'completed'])}}">
+        <a href="{{route('dashboard.ShowTasksEngineer',['status'=>'completed'])}}">
             <div class="card  bg-success-gradient">
                 <div class="card-body">
                     <div class="counter-status d-flex md-mb-0">

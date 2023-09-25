@@ -200,6 +200,11 @@
                             class="btn btn-dark">Report {{$task->toDepartment->name}} </a></td>
                     @endif
                     @endif
+                    @if($task->eng_id === Auth::user()->id)
+                    <a href="{{route('dashboard.requestToUpdateReport',$task->main_tasks_id)}}" class="btn btn-dark">
+                        Request to
+                        update report </a>
+                    @endif
 
 
                 </div>

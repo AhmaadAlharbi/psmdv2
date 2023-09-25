@@ -401,6 +401,31 @@ class DashBoardController extends Controller
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
+    public function requestToUpdateReport($main_task_id)
+    {
+        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
+            ->where('department_id', Auth::user()->department_id)
+            ->where('isCompleted', "1")
+            ->first();
+
+        return view('dashboard.reportPageEdit', compact('section_task'));
+    }
+    public function updateReport(Request $request, $main_task_id)
+    {
+        $actionTake = $request->input('action_take');
+
+        $engineerReports = SectionTask::where('main_tasks_id', $main_task_id)
+            ->where('eng_id', Auth::user()->id)
+            ->where('isCompleted', "1")
+            ->get();
+        foreach ($engineerReports as $report) {
+            $report->action_take = $actionTake; // Corrected the assignment operator from => to =
+            $report->approved = false;
+            $report->save(); // Save the updated report
+
+        }
+        return redirect()->back(); // Redirect back after processing
+    }
     public function approveReports($id)
     {
         $report = SectionTask::findOrFail($id);
@@ -433,6 +458,14 @@ class DashBoardController extends Controller
 
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status'));
     }
+    public function ShowTasksEngineer($status)
+    {
+        $stations = Station::all();
+        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+        $currentMonth = Carbon::now()->month;
+        $tasks = $this->getEngineerTasks($status);
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status'));
+    }
 
     private function getAdminTasks($status, $currentMonth)
     {
@@ -457,7 +490,6 @@ class DashBoardController extends Controller
                 abort(403);
         }
     }
-
     private function getEngineerTasks($status)
     {
         switch ($status) {
@@ -466,7 +498,8 @@ class DashBoardController extends Controller
                     ->where('status', 'pending')
                     ->paginate(6);
             case 'completed':
-                return MainTask::where('eng_id', Auth::user()->id)
+                return department_task_assignment::where('eng_id', Auth::user()->id)
+                    ->where('department_id', Auth::user()->department_id)
                     ->where('status', 'completed')
                     ->latest()->paginate(6);
             case 'all':
