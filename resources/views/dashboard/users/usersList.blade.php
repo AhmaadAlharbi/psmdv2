@@ -49,7 +49,7 @@
                                 <th class="wd-lg-20p"><span>الاسم</span></th>
                                 <th class="wd-lg-20p"><span>القسم</span></th>
                                 <th class="wd-lg-20p"><span>Status</span></th>
-                                <th class="wd-lg-20p">Action</th>
+                                <th class="wd-lg-20p">Operations</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,51 +75,24 @@
                                 </td>
 
                                 <td>
+                                    <div class="btn-group ms-2  mt-2 mb-2">
+                                        <div class="dropdown">
+                                            <button aria-expanded="false" aria-haspopup="true"
+                                                class="btn ripple btn-primary" data-bs-toggle="dropdown"
+                                                type="button"><i class="fe fe-settings"></i><i
+                                                    class="fas fa-caret-down ms-1"></i></button>
+                                            <div class="dropdown-menu tx-13">
 
-                                    <a href="{{route('engineer.edit',['id'=>$user->id])}} "
-                                        class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="edit">
-                                        <i class="las la-pen"></i>
-                                    </a>
-                                    @if($user->role->title == 'Admin')
+                                                <a href="{{route('engineer.edit',['id'=>$user->id])}}"
+                                                    class="dropdown-item">Update User</a>
+                                                <a class="dropdown-item"
+                                                    href="{{route('user.update',['id'=>$user->id])}}">Assign to
+                                                    Engineers</a>
+                                                <a class="dropdown-item" href="javascript:void(0);">Assign to Admins</a>
+                                                <a class="dropdown-item" href="javascript:void(0);">Delete User</a>
 
-                                    <a href="{{route('user.update',['id'=>$user->id])}} "
-                                        class="btn btn-sm btn-warning " data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="delete admin">
-                                        <i class="fa fa-user-times"></i>
-                                    </a>
-
-                                    @else
-                                    <a href="{{route('user.update',['id'=>$user->id])}} "
-                                        class="btn btn-sm btn-outline-warning " data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="set admin">
-                                        <i class="fa fa-user-plus"></i>
-
-                                    </a>
-
-                                    @endif
-                                    @if($user->engineer)
-                                    <a href="{{route('engineerList.toggle',['id'=>$user->id])}} "
-                                        class="btn btn-sm btn-success " data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="unset engineer">
-                                        <i class="fa fa-user-times"></i>
-
-                                    </a>
-                                    @else
-                                    <a href="{{route('engineerList.toggle',['id'=>$user->id])}} "
-                                        class="btn btn-sm btn-outline-success " data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="set engineer">
-                                        <i class="fa fa-user-plus"></i>
-
-                                    </a>
-                                    @endif
-
-                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
-                                        title="" data-bs-original-title="delete">
-                                        <i class="las la-trash"></i>
-
-                                    </a>
-
+                                            </div>
+                                        </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -166,4 +139,5 @@
         @endif
     });
 </script>
+
 @endsection

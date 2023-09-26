@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('equips', function (Blueprint $table) {
+        Schema::create('equip', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('station_id')->nullable();
             $table->string('voltage_level')->nullable();
