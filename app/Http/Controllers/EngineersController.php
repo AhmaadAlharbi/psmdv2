@@ -21,8 +21,9 @@ class EngineersController extends Controller
         $engineers = Engineer::when(Auth::user()->department_id !== 1, function ($query) {
             return $query->where('department_id', Auth::user()->department_id);
         })->get();
+        $users = User::where('department_id', Auth::user()->department_id)->orderBy('name')->get();
 
-        return view('dashboard.engineers.engineersList', compact('engineers'));
+        return view('dashboard.engineers.engineersList', compact('engineers', 'users'));
     }
     public function engineerProfile($id)
     {
@@ -125,5 +126,26 @@ class EngineersController extends Controller
             ]);
             return redirect()->back()->with('success', 'تم إضافة المهندس');
         }
+    }
+    public function addEngineer(Request $request)
+    {
+        $user_id = $request->userId;
+        $areas = $request->area;
+        $shifts = $request->shift;
+        $user = User::findOrFail($user_id);
+        if (!$user) {
+            abort(404);
+        }
+        foreach ($areas as $area) {
+            foreach ($shifts as $shift) {
+                Engineer::create([
+                    'user_id' => $user_id,
+                    'department_id' => Auth::user()->department_id,
+                    'area' => $area,
+                    'shift' => $shift
+                ]);
+            }
+        }
+        return back();
     }
 }

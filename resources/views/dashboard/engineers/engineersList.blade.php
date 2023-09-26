@@ -14,34 +14,7 @@
                 Userlist</span>
         </div>
     </div>
-    <div class="d-flex my-xl-auto right-content">
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-info btn-icon me-2 btn-b"><i
-                    class="mdi mdi-filter-variant"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-danger btn-icon me-2"><i class="mdi mdi-star"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-warning  btn-icon me-2"><i class="mdi mdi-refresh"></i></button>
-        </div>
-        <div class="mb-xl-0">
-            <div class="btn-group dropdown">
-                <button type="button" class="btn btn-primary">14 Aug 2019</button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                    id="dropdownMenuDate" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate"
-                    x-placement="bottom-end">
-                    <a class="dropdown-item" href="javascript:void(0);">2015</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2016</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2017</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2018</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 <!-- breadcrumb -->
 
@@ -52,7 +25,91 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">جدول المهندسين</h3>
+                <h3 class="card-title">Engineers List</h3>
+
+                <a class="btn ripple btn-teal" data-bs-target="#select2modal" data-bs-toggle="modal" href="">Add
+                    Engineer</a>
+                <!-- Basic modal -->
+                <div class="modal" id="select2modal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content modal-content-demo">
+                            <div class="modal-header">
+                                <h6 class="modal-title">Add Engineers</h6><button aria-label="Close" class="close"
+                                    data-bs-dismiss="modal" type="button"><span
+                                        aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{route('addEngineer')}}" method="POST">
+                                    @csrf
+                                    <div>
+                                        <h6>Add Engineer</h6>
+                                        <!-- Select2 -->
+                                        <!-- Select dropdown for engineers -->
+                                        <select id="usersSelect"
+                                            class="form-control select2-show-search select2-dropdown"
+                                            onchange="setEngineerId()">
+                                            <option label="Choose one">Choose one</option>
+                                            @foreach($users as $user)
+                                            <option value="{{$user->id}}">{{$user->name}}</option>
+                                            @endforeach
+                                        </select>
+
+                                        <!-- Hidden input field to store the selected engineer's ID -->
+                                        <input type="text" id="userId" name="userId" value="">
+
+                                    </div>
+
+                                    <div class="form-group  m-0 border-bottom">
+                                        <div class="form-label mb-4">Select Area</div>
+                                        <div class="custom-controls-stacked ">
+                                            <label class="custom-control form-checkbox custom-control-md">
+                                                <input type="checkbox" class="custom-control-input" name="area[]"
+                                                    value="1" wfd-id="id42">
+                                                <span class="custom-control-label custom-control-label-md  tx-17">North
+                                                    Area</span>
+                                            </label>
+                                            <label class="custom-control form-checkbox custom-control-md">
+                                                <input type="checkbox" class="custom-control-input" name="area[]"
+                                                    value="2" wfd-id="id43">
+                                                <span class="custom-control-label custom-control-label-md  tx-17">South
+                                                    Area
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-3 ">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label class="custom-control form-checkbox custom-control-md">
+                                                    <input type="checkbox" class="custom-control-input" name="shift[]"
+                                                        value="0" wfd-id="id42">
+                                                    <span
+                                                        class="custom-control-label custom-control-label-md  tx-17">Day</span>
+                                                </label>
+                                            </div>
+                                            <div class="col">
+                                                <label class="custom-control form-checkbox custom-control-md">
+                                                    <input type="checkbox" class="custom-control-input" name="shift[]"
+                                                        value="1" wfd-id="id42">
+                                                    <span
+                                                        class="custom-control-label custom-control-label-md  tx-17">Night
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Select2 -->
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn ripple btn-primary" type="submit">Save changes</button>
+                                <button class="btn ripple btn-secondary" data-bs-dismiss="modal"
+                                    type="button">Close</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -140,6 +197,16 @@
 @endsection
 
 @section('scripts')
+<script>
+    function setEngineerId() {
+    // Get the selected engineer ID
+    const userId = document.getElementById('usersSelect').value;
+
+    // Set the selected engineer ID to the hidden input field
+    document.getElementById('userId').value = userId;
+}
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
@@ -159,6 +226,13 @@
 <script src="{{asset('assets/plugins/datatable/responsive.bootstrap5.min.js')}}"></script>
 
 <!--Internal  Datatable js -->
+<script>
+    // Get the selected engineer ID
+    const userId = document.getElementById('usersSelect').value;
+  
+    // Set the selected engineer ID to the input text
+    document.getElementById('userId').value = userId;
+</script>
 <script src="{{asset('assets/js/table-data.js')}}"></script>
 <script>
     $(document).ready(function() {
@@ -171,4 +245,10 @@
         @endif
     });
 </script>
+<!-- Internal Select2 js-->
+<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+
+<!-- Internal Modal js-->
+<script src="{{asset('assets/js/modal.js')}}"></script>
+
 @endsection
