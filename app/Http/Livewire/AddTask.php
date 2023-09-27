@@ -67,10 +67,9 @@ class AddTask extends Component
     public function mount()
     {
         $this->stations = Station::all();
-        $this->main_alarms = MainAlarm::where('department_id', Auth::user()->department_id)->get();
         $this->departments = Department::where('name', '!=', Auth::user()->department->name)->get();
         $this->selectedDepartment = Auth::user()->department_id;
-
+        $this->main_alarms = MainAlarm::where('department_id', $this->selectedDepartment)->get();
         return view('livewire.add-task');
     }
     public function render(Request $request)
@@ -79,6 +78,8 @@ class AddTask extends Component
     }
     public function getStationInfo()
     {
+        $this->main_alarms = MainAlarm::where('department_id', $this->selectedDepartment)->get();
+
         // Reset all the properties to their default values.
         $this->resetProperties();
 
@@ -230,22 +231,47 @@ class AddTask extends Component
 
         }
     }
+    /**
+     * Get engineers based on department, area, and shift criteria.
+     */
     public function getEngineer()
     {
-        if ($this->area == 3) {
-            if ($this->duty === false) {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('shift', 0)->get();
-            } else {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('shift', 1)->get();
-            }
-        } else {
-            if ($this->duty === false) {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('area', $this->area)->where('shift', 0)->get();
-            } else {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('area', $this->area)->where('shift', 1)->get();
-            }
+        $userDepartmentId = Auth::user()->department_id;
+        $area = $this->area;
+        // Default to showing day shift engineers
+        $shiftId = 1; // Assuming 1 is the ID for the day shift
+
+        // Change the shift to night shift if the checkbox is checked
+        if ($this->duty) {
+            $shiftId = 2; // Assuming 2 is the ID for the night shift
         }
+
+        // Query engineers based on the department
+        $engineers = Engineer::where('department_id', $userDepartmentId)
+
+            // Use a conditional 'when' clause to filter by area if not equal to 3
+            ->when($area != 3, function ($query) use ($area) {
+                $query->whereHas('areas', function ($subquery) use ($area) {
+                    $subquery->where('areas.id', $area); // Filter by the specified area ID
+                });
+            })
+
+            // Further filter by shift using 'whereHas'
+            ->whereHas('shifts', function ($subquery) use ($shiftId) {
+                $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
+            })
+
+            // Get the resulting collection of engineers
+            ->get();
+
+
+        $this->engineers = $engineers;
     }
+
+
+
+
+
     public function getEmail()
     {
         $this->engineerEmail = User::where('id', $this->selectedEngineer)->pluck('email')->first();
@@ -368,7 +394,7 @@ class AddTask extends Component
             $user = User::where('email', $this->engineerEmail)->first();
             // Notification::send($user, new TaskReport($main_task, $this->photos));
         }
-        session()->flash('success', 'تم الاضافة بنجاح');
+        session()->flash('success', 'The Task has been added');
 
         return redirect("/dashboard/admin");
     }

@@ -81,18 +81,12 @@ class EditTask extends Component
         $this->work_type = $this->task->work_type;
         $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
         $this->selectedEngineer = $this->departmentTask ? $this->departmentTask->eng_id : $this->selectedEngineer;
-
+        $userDepartmentId = Auth::user()->department_id;
         // Set the Area based on the Department of the authenticated User.
         $this->setArea();
         $this->getEmail();
         $controlCenter = $this->stationDetails->control;
-        $this->engineers = Engineer::where('department_id', Auth::user()->department_id);
-
-        if ($this->area !== 3) {
-            $this->engineers->where('area', $this->area);
-        }
-
-        $this->engineers = $this->engineers->get();
+        $this->getEngineer();
         $this->problem = $this->task->problem;
         $this->notes = $this->task->notes;
         $this->voltage = Equip::where('station_id', $this->task->station->id)->distinct()->pluck('voltage_level');
@@ -267,19 +261,36 @@ class EditTask extends Component
     }
     public function getEngineer()
     {
-        if ($this->area == 3) {
-            if ($this->duty === false) {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('shift', 0)->get();
-            } else {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('shift', 1)->get();
-            }
-        } else {
-            if ($this->duty === false) {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('area', $this->area)->where('shift', 0)->get();
-            } else {
-                $this->engineers = Engineer::where('department_id', Auth::user()->department_id)->where('area', $this->area)->where('shift', 1)->get();
-            }
+        $userDepartmentId = Auth::user()->department_id;
+        $area = $this->area;
+        // Default to showing day shift engineers
+        $shiftId = 1; // Assuming 1 is the ID for the day shift
+
+        // Change the shift to night shift if the checkbox is checked
+        if ($this->duty) {
+            $shiftId = 2; // Assuming 2 is the ID for the night shift
         }
+
+        // Query engineers based on the department
+        $engineers = Engineer::where('department_id', $userDepartmentId)
+
+            // Use a conditional 'when' clause to filter by area if not equal to 3
+            ->when($area != 3, function ($query) use ($area) {
+                $query->whereHas('areas', function ($subquery) use ($area) {
+                    $subquery->where('areas.id', $area); // Filter by the specified area ID
+                });
+            })
+
+            // Further filter by shift using 'whereHas'
+            ->whereHas('shifts', function ($subquery) use ($shiftId) {
+                $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
+            })
+
+            // Get the resulting collection of engineers
+            ->get();
+
+
+        $this->engineers = $engineers;
     }
     public function getEmail()
     {

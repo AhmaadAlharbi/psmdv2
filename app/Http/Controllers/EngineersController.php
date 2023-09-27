@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Engineer;
-use Illuminate\Support\Facades\Auth;
-use App\Models\MainTask;
-use App\Models\Station;
+use PDO;
+use App\Models\Area;
 use App\Models\User;
+use App\Models\Shift;
+use App\Models\Station;
+use App\Models\Engineer;
+use App\Models\MainTask;
 use App\Models\SectionTask;
 use Illuminate\Http\Request;
-use PDO;
+use Illuminate\Support\Facades\Auth;
 
 class EngineersController extends Controller
 {
@@ -22,8 +24,9 @@ class EngineersController extends Controller
             return $query->where('department_id', Auth::user()->department_id);
         })->get();
         $users = User::where('department_id', Auth::user()->department_id)->orderBy('name')->get();
-
-        return view('dashboard.engineers.engineersList', compact('engineers', 'users'));
+        $areas = Area::all();
+        $shifts = Shift::all();
+        return view('dashboard.engineers.engineersList', compact('engineers', 'users', 'shifts', 'areas'));
     }
     public function engineerProfile($id)
     {
@@ -90,18 +93,28 @@ class EngineersController extends Controller
     public function edit($id)
     {
         $engineer = Engineer::findOrFail($id);
-        return view('dashboard.engineers.edit', compact('engineer'));
+        $areas = Area::all();
+        $shifts = Shift::all();
+        return view('dashboard.engineers.edit', compact('engineer', 'areas', 'shifts'));
     }
     public function update(Request $request, $id)
     {
+        // Find the engineer by ID
         $engineer = Engineer::findOrFail($id);
-        $area = $request->area;
-        $shift = $request->shift;
-        $engineer->update([
-            'area' => $area,
-            'shift' => $shift
-        ]);
-        session()->flash('success', 'تم التعديل بنجاح');
+
+        // Validate the request data if necessary
+
+        // Update the engineer's areas and shifts
+        $selectedAreas = $request->input('area', []);
+        $selectedShifts = $request->input('shift', []);
+
+        // Sync the engineer's assigned areas with the selected areas
+        $engineer->areas()->sync($selectedAreas);
+
+        // Sync the engineer's assigned shifts with the selected shifts
+        $engineer->shifts()->sync($selectedShifts);
+
+        session()->flash('success', 'The Engineer details have been updated');
         return redirect()->route('dashboard.engineersList');
     }
     public function logout()
@@ -129,23 +142,35 @@ class EngineersController extends Controller
     }
     public function addEngineer(Request $request)
     {
+        // Get the user ID from the request
         $user_id = $request->userId;
-        $areas = $request->area;
-        $shifts = $request->shift;
+        // Get the selected shifts and areas from the request
+        $selectedShifts = $request->input('shift', []);
+        $selectedAreas = $request->input('area', []);
+        // Find the user by their ID
         $user = User::findOrFail($user_id);
+        // If the user doesn't exist, abort with a 404 error
         if (!$user) {
             abort(404);
         }
-        foreach ($areas as $area) {
-            foreach ($shifts as $shift) {
-                Engineer::create([
+        // Create an engineer record for each selected area and shift combination
+        foreach ($selectedAreas as $areaId) {
+            foreach ($selectedShifts as $shiftId) {
+                // Find or create an engineer record based on user and department
+                $engineer = Engineer::firstOrCreate([
                     'user_id' => $user_id,
                     'department_id' => Auth::user()->department_id,
-                    'area' => $area,
-                    'shift' => $shift
                 ]);
+
+                // Attach the engineer to the selected area
+                $engineer->areas()->attach($areaId);
+
+                // Attach the engineer to the selected shift
+                $engineer->shifts()->attach($shiftId);
             }
         }
+
+        // Redirect back to the previous page
         return back();
     }
 }

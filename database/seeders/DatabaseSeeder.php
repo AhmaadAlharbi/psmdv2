@@ -20,8 +20,10 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             MainAlarmSeeder::class,
-            StationSeeder::class,
-            EquipSeeder::class,
+            AreaSeeder::class,
+            ShiftSeeder::class,
+            // StationSeeder::class,
+            // EquipSeeder::class,
         ]);
     }
 }

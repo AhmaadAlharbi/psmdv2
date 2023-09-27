@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateShiftTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateShiftTable extends Migration
      */
     public function up()
     {
-
-        Schema::create('shift', function (Blueprint $table) {
+        Schema::create('engineer_area', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->String('shift');
+            $table->unsignedBigInteger('engineer_id');
+            $table->unsignedBigInteger('area_id');
             $table->timestamps();
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
+            $table->foreign('engineer_id')->references('id')->on('engineers');
+            $table->foreign('area_id')->references('id')->on('areas');
         });
     }
 
@@ -32,6 +30,6 @@ class CreateShiftTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shift');
+        Schema::dropIfExists('engineer_area');
     }
-}
+};

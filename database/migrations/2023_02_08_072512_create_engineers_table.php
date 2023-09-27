@@ -17,8 +17,6 @@ class CreateEngineersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();
-            $table->String('area')->nullable();
-            $table->String('shift')->nullable();
             $table->timestamps();
             $table->foreign('user_id')
                 ->references('id')

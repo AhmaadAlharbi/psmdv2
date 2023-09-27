@@ -49,58 +49,52 @@
 <div class="row">
     <div class="card  box-shadow-0">
         <div class="card-header">
-            <h4 class="card-title mb-1">تعديل جدول المهندس </h4>
+            <h2 class="card-title mb-1">Edit Engineer</h2>
         </div>
         <div class="card-body pt-0">
             <form class="form-horizontal" action="{{route('engineer.update',['id'=>$engineer->id])}}" method="post">
                 @csrf
+                @method('PUT')
                 <div class="form-group">
-                    <input type="text" class="form-control" id="inputName" placeholder="Name"
-                        value="{{$engineer->user->name}}" disabled>
+
+                    <p>{{$engineer->user->name}}</p>
                 </div>
-                <div class="form-group">
-                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email"
-                        value="{{$engineer->user->email}}" disabled>
+
+                <div class="form-group m-0 border-bottom">
+                    <div class="form-label mb-4">Select Area</div>
+                    <div class="custom-controls-stacked">
+                        @foreach($areas as $area)
+                        <label class="custom-control form-checkbox custom-control-md">
+                            <input type="checkbox" class="custom-control-input" name="area[]" value="{{$area->id}}" {{
+                                in_array($area->id, $engineer->areas->pluck('id')->toArray()) ? 'checked' : '' }}>
+                            <span class="custom-control-label custom-control-label-md tx-17">{{$area->area}}</span>
+                        </label>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="form-group">
-                    <select name="area" class="form-control">
-                        {{-- <option value="{{$engineer->area }}">{{$engineer->area == 0 ? 'المنطقة الشمالية' : 'المنطقة
-                            الجنوبية'}}</option>
-                        <option value="{{$engineer->area}}">{{$engineer->area == 1 ? 'المنطقة الجنوبية' : 'المنطقة
-                            الشمالية'}}</option> --}}
-                        @if($engineer->area == 1)
-                        <option value="1">المنطقة الشمالية</option>
-                        <option value="2">المنطقة الجنوبية</option>
 
-                        @else
-                        <option value="2">المنطقة الجنوبية</option>
-                        <option value="1">المنطقة الشمالية</option>
+                <div class="form-group mt-3">
+                    <div class="form-label mb-4">Select Shift</div>
 
-                        @endif
-                    </select>
-                </div>
-                <div class="form-group">
-                    <select name="shift" class="form-control">
-                        {{-- <option value="{{$engineer->area }}">{{$engineer->area == 0 ? 'المنطقة الشمالية' : 'المنطقة
-                            الجنوبية'}}</option>
-                        <option value="{{$engineer->area}}">{{$engineer->area == 1 ? 'المنطقة الجنوبية' : 'المنطقة
-                            الشمالية'}}</option> --}}
-                        @if($engineer->shift == 0)
-                        <option value="0">صباحاً</option>
-                        <option value="1">مساءً</option>
-
-                        @else
-                        <option value="0">صباحاً</option>
-                        <option value="1">مساءً</option>
-
-                        @endif
-                    </select>
+                    <div class="row">
+                        <div class="col">
+                            @foreach($shifts as $shift)
+                            <label class="custom-control form-checkbox custom-control-md">
+                                <input type="checkbox" class="custom-control-input" name="shift[]"
+                                    value="{{$shift->id}}" {{ in_array($shift->id,
+                                $engineer->shifts->pluck('id')->toArray()) ? 'checked' : '' }}>
+                                <span
+                                    class="custom-control-label custom-control-label-md tx-17">{{$shift->shift}}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group mb-0 mt-3 justify-content-end">
                     <div>
-                        <button type="submit" class="btn btn-primary">تعديل</button>
-                        <a href="{{route('dashboard.engineersList')}}" class="btn btn-secondary ms-4">العودة</a>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <a href="{{route('dashboard.engineersList')}}" class="btn btn-secondary ms-4">Back</a>
                     </div>
                 </div>
             </form>

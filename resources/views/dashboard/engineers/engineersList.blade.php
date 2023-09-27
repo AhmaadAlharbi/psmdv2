@@ -55,47 +55,41 @@
                                         </select>
 
                                         <!-- Hidden input field to store the selected engineer's ID -->
-                                        <input type="text" id="userId" name="userId" value="">
+                                        <input type="hidden" id="userId" name="userId" value="">
 
                                     </div>
 
                                     <div class="form-group  m-0 border-bottom">
                                         <div class="form-label mb-4">Select Area</div>
                                         <div class="custom-controls-stacked ">
+                                            @foreach($areas as $area)
                                             <label class="custom-control form-checkbox custom-control-md">
                                                 <input type="checkbox" class="custom-control-input" name="area[]"
-                                                    value="1" wfd-id="id42">
-                                                <span class="custom-control-label custom-control-label-md  tx-17">North
-                                                    Area</span>
+                                                    value="{{$area->id}}" wfd-id="id42">
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17">{{$area->area}}</span>
                                             </label>
-                                            <label class="custom-control form-checkbox custom-control-md">
-                                                <input type="checkbox" class="custom-control-input" name="area[]"
-                                                    value="2" wfd-id="id43">
-                                                <span class="custom-control-label custom-control-label-md  tx-17">South
-                                                    Area
-                                                </span>
-                                            </label>
+                                            @endforeach
+
+
                                         </div>
                                     </div>
                                     <div class="form-group mt-3 ">
                                         <div class="row">
+                                            <div class="form-label mb-4">Select Shift</div>
+
                                             <div class="col">
+                                                @foreach($shifts as $shift)
                                                 <label class="custom-control form-checkbox custom-control-md">
                                                     <input type="checkbox" class="custom-control-input" name="shift[]"
-                                                        value="0" wfd-id="id42">
+                                                        value="{{$shift->id}}" wfd-id="id42">
                                                     <span
-                                                        class="custom-control-label custom-control-label-md  tx-17">Day</span>
+                                                        class="custom-control-label custom-control-label-md  tx-17">{{$shift->shift}}</span>
                                                 </label>
+                                                @endforeach
+
                                             </div>
-                                            <div class="col">
-                                                <label class="custom-control form-checkbox custom-control-md">
-                                                    <input type="checkbox" class="custom-control-input" name="shift[]"
-                                                        value="1" wfd-id="id42">
-                                                    <span
-                                                        class="custom-control-label custom-control-label-md  tx-17">Night
-                                                    </span>
-                                                </label>
-                                            </div>
+
                                         </div>
                                     </div>
 
@@ -117,10 +111,8 @@
                         id="responsive-datatable">
                         <thead>
                             <tr>
-                                <th class="wd-lg-8p"><span>#</span></th>
+                                <th class=""><span>#</span></th>
                                 <th class="wd-lg-20p"><span>الاسم</span></th>
-                                <th class="wd-lg-20p"><span>المنطقة</span></th>
-                                <th class="wd-lg-20p"><span>الفترة</span></th>
                                 <th class="wd-lg-20p"><span>Status</span></th>
                                 <th class="wd-lg-20p">Action</th>
                             </tr>
@@ -137,13 +129,7 @@
                                 <td> <a
                                         href="{{route('dashboard.engineerProfile',['eng_id'=>$engineer->user_id])}}">{{$engineer->user->name}}</a>
                                 </td>
-                                <td>
-                                    {{$engineer->area == 1 ? ' المنطقة الشمالية' : 'المنطقة الجنوبية'}}
-                                </td>
-                                <td>
-                                    {{$engineer->shift == 0 ? ' صباحاً ' : 'مساءً'}}
 
-                                </td>
                                 <td class="text-center">
                                     <span class="label text-success d-flex ">
                                         <div class="dot-label bg-success mx-3"></div><span class="mt-1">active</span>

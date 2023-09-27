@@ -15,7 +15,7 @@ class Engineer extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     public function main_task()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -23,5 +23,14 @@ class Engineer extends Model
     public function main_tasks()
     {
         return $this->hasMany(MainTask::class);
+    }
+    public function shifts()
+    {
+        return $this->belongsToMany(Shift::class, 'engineer_shift');
+    }
+
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class, 'engineer_area');
     }
 }

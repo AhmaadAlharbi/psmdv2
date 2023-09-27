@@ -295,7 +295,7 @@ Route::get('/task/edit/{id}', [DashBoardController::class, 'editTask'])->name('d
 Route::get('/archive', [DashBoardController::class, 'archive'])->name('dashboard.archive');
 Route::get('/archive/search', [DashBoardController::class, 'searchArchive'])->name('dashboard.searchArchive');
 Route::get('/engineer/{id}/edit', [EngineersController::class, 'edit'])->name('engineer.edit');
-Route::post('/engineer/update}', [EngineersController::class, 'update'])->name('engineer.update');
+Route::put('/engineer/update/{id}', [EngineersController::class, 'update'])->name('engineer.update');
 Route::get('/logout2', [EngineersController::class, 'logout'])->name('engineer.logout');
 Route::get('/update/user/{id}', [UserController::class, 'update'])->name('user.update');
 Route::get('engineers-list/update/{id}', [EngineersController::class, 'toggleEngineer'])->name('engineerList.toggle');
