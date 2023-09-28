@@ -63,6 +63,7 @@ class EditTask extends Component
     public $otherVoltage = '';
     public $otherEquip = '';
     public $departmentTask = '';
+    public $mainTasksConverted = '';
     public function __construct($task_id)
     {
         $this->task_id = $task_id;
@@ -73,6 +74,16 @@ class EditTask extends Component
         $this->stations = Station::all();
         $this->main_alarms = MainAlarm::where('department_id', 2)->get();
         $this->task = MainTask::find($this->task_id);
+        $this->mainTasksConverted = $this->task->departmentsAssienments->where('department_id', 2);
+        echo  $isTaskedConverted = $this->task->conversions->filter(function ($conversion) {
+            return $conversion->source_department == Auth::user()->department_id || $conversion->destination_department == Auth::user()->department_id;
+        });
+
+        // Now $isTaskedConverted contains only the desired conversions
+
+        // Now you can use $isTaskedConverted as needed
+
+        //  $this->mainTasksConverted->eng_id;
         $this->departmentTask = department_task_assignment::where('main_tasks_id', $this->task_id)->where('department_id', Auth::user()->department_id)->first();
         $this->station_id =  $this->task->station->id;
         $this->selectedStation = Station::where('id', $this->station_id)->value('SSNAME');
@@ -349,12 +360,13 @@ class EditTask extends Component
             $selectedEngineerName = null;
         }
         $main_task_id = $this->task->id;
-        $department_task = department_task_assignment::where('main_tasks_id', $main_task_id)
-            ->first();
-        if ($this->selectedEngineer !== $department_task->eng_id) {
-            $department_task->update([
+        $assignments = $this->task->departmentsAssienments->where('department_id', Auth::user()->department_id)->first();
+        if ($assignments && $this->selectedEngineer !== $assignments->eng_id) {
+            // Update the assignment
+            $assignments->update([
                 'eng_id' => $this->selectedEngineer,
             ]);
+
             TaskTimeline::create([
                 'main_tasks_id' => $main_task_id,
                 'department_id' => Auth::user()->department_id,
@@ -374,17 +386,18 @@ class EditTask extends Component
         // Check if the selected department is different from the user's department
         if ($this->selectedDepartment != Auth::user()->department_id) {
             // Create a conversion record
-            $isTaskedConvered = TaskConversions::where('main_tasks_id', $main_task_id)
-                ->where('source_department', Auth::user()->department_id)
-                ->OrWhere('destination_department', Auth::user()->department_id)
-                ->first();
-            if (!$isTaskedConvered) {
+            // $isTaskedConvered = $this->task->conversions;
+            $isTaskedConverted = $this->task->conversions->filter(function ($conversion) {
+                return $conversion->source_department == Auth::user()->department_id || $conversion->destination_department == Auth::user()->department_id;
+            });
+            if ($isTaskedConverted) {
                 $converted_task = TaskConversions::create([
                     'main_tasks_id' => $main_task_id,
                     'source_department' => Auth::user()->department_id,
                     'destination_department' => $this->selectedDepartment,
                     'status' => 'pending'
                 ]);
+
                 TaskTimeline::create([
                     'main_tasks_id' => $main_task_id,
                     'department_id' => Auth::user()->department_id,
@@ -392,6 +405,7 @@ class EditTask extends Component
                     'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
                     'user_id' => Auth::user()->id
                 ]);
+
                 // Create a new department task assignment for the selected department
                 $departmentTask = department_task_assignment::create([
                     'department_id' => $this->selectedDepartment,
@@ -400,38 +414,6 @@ class EditTask extends Component
                     'status' => 'pending'
                 ]);
             }
-            if (
-                $this->selectedDepartment !== $isTaskedConvered->source_department ||
-                $this->selectedDepartment !== $isTaskedConvered->destination_department
-            ) {
-                $converted_task = TaskConversions::create([
-                    'main_tasks_id' => $main_task_id,
-                    'source_department' => Auth::user()->department_id,
-                    'destination_department' => $this->selectedDepartment,
-                    'status' => 'pending'
-                ]);
-                TaskTimeline::create([
-                    'main_tasks_id' => $main_task_id,
-                    'department_id' => Auth::user()->department_id,
-                    'status' => 'Converted',
-                    'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
-                    'user_id' => Auth::user()->id
-                ]);
-                // Create a new department task assignment for the selected department
-                $departmentTask = department_task_assignment::create([
-                    'department_id' => $this->selectedDepartment,
-                    'main_tasks_id' => $main_task_id,
-                    'eng_id' => $this->selectedEngineer,
-                    'status' => 'pending'
-                ]);
-            }
-            TaskTimeline::create([
-                'main_tasks_id' => $main_task_id,
-                'department_id' => Auth::user()->department_id,
-                'status' => 'updated',
-                'Action' => $this->notes,
-                'user_id' => Auth::user()->id
-            ]);
         } else {
             // Update the existing department task assignment for the user's department
             $userDepartmentTask = department_task_assignment::where('main_tasks_id', $main_task_id)
@@ -452,6 +434,7 @@ class EditTask extends Component
                 ]);
             }
         }
+
         foreach ($this->photos as $photo) {
             // $photo->store('photos');
             $name = $photo->getClientOriginalName();

@@ -33,7 +33,7 @@ class DashBoardController extends Controller
         // Get completed tasks count for a specific day
         $completedTasksInDay = department_task_assignment::where('department_id', $departmentId)
             ->whereDate('created_at', now()->toDateString())
-            ->where('isCompleted', 1)
+            ->where('isCompleted', "1")
             ->count();
         // Get total tasks count for the current week (assuming the week starts on Sunday)
         $totalTasksInWeek = department_task_assignment::where('department_id', $departmentId)
@@ -46,7 +46,7 @@ class DashBoardController extends Controller
             ->whereBetween(DB::raw('DATE(created_at)'), [
                 now()->startOfWeek(Carbon::SUNDAY)->toDateString(),
                 now()->endOfWeek(Carbon::SUNDAY)->toDateString(),
-            ])->where('isCompleted', 1)
+            ])->where('isCompleted', "1")
             ->count();
 
 
@@ -57,11 +57,11 @@ class DashBoardController extends Controller
         // Get completed tasks count for the current month
         $completedTasksInMonth = department_task_assignment::where('department_id', $departmentId)
             ->whereMonth('created_at', now()->month)
-            ->where('isCompleted', 1)
+            ->where('isCompleted', "1")
             ->count();
         $totalTasksAllTime = department_task_assignment::where('department_id', $departmentId)->count();
         $completedTasksAllTime = department_task_assignment::where('department_id', $departmentId)
-            ->where('isCompleted', 1)->count();
+            ->where('isCompleted', "1")->count();
         // Get the number of engineers in the user's department
         $engineersCount = Engineer::when(Auth::user()->department_id !== 1, function ($query) {
             return $query->where('department_id', Auth::user()->department_id);
@@ -125,6 +125,7 @@ class DashBoardController extends Controller
     // return Auth::user()->role->title;
     public function indexControl($control)
     {
+
         // Switch statement to set the control name based on the input
         switch ($control) {
             case 'JAHRA CONTROL CENTER':
@@ -147,49 +148,100 @@ class DashBoardController extends Controller
                 abort(404);
                 break;
         }
+        $departmentId = Auth::user()->department_id;
+        //get tasks count for day , week and month
+        // Get tasks count for a specific day
+        // Get total tasks count for a specific day
+        $totalTasksInDay = department_task_assignment::where('department_id', $departmentId)
+            ->whereDate('created_at', now()->toDateString())->count();
+        // Get completed tasks count for a specific day
+        $completedTasksInDay = department_task_assignment::where('department_id', $departmentId)
+            ->whereDate('created_at', now()->toDateString())
+            ->where('isCompleted', 1)
+            ->count();
+        // Get total tasks count for the current week (assuming the week starts on Sunday)
+        $totalTasksInWeek = department_task_assignment::where('department_id', $departmentId)
+            ->whereBetween(DB::raw('DATE(created_at)'), [
+                now()->startOfWeek(Carbon::SUNDAY)->toDateString(),
+                now()->toDateString(),
+            ])->count();
+        // Get completed tasks count for the current week
+        $completedTasksInWeek = department_task_assignment::where('department_id', $departmentId)
+            ->whereBetween(DB::raw('DATE(created_at)'), [
+                now()->startOfWeek(Carbon::SUNDAY)->toDateString(),
+                now()->endOfWeek(Carbon::SUNDAY)->toDateString(),
+            ])->where('isCompleted', 1)
+            ->count();
 
-        // Count the number of engineers in the current user's department
-        $engineersCount = Engineer::where('department_id', Auth::user()->department_id)->count();
 
-        // Count the number of section tasks in the current user's department
-        $sectionTasksCount = MainTask::where('department_id', Auth::user()->department_id)->count();
+        // Get total tasks count for the current month
+        $totalTasksInMonth = department_task_assignment::where('department_id', $departmentId)
+            ->whereMonth('created_at', now()->month)->count();
 
-        // Count the number of pending tasks in the current user's department and control
-        $pendingTasksCount = MainTask::where('department_id', Auth::user()->department_id)
+        // Get completed tasks count for the current month
+        $completedTasksInMonth = department_task_assignment::where('department_id', $departmentId)
+            ->whereMonth('created_at', now()->month)
+            ->where('isCompleted', 1)
+            ->count();
+        $totalTasksAllTime = department_task_assignment::where('department_id', $departmentId)->count();
+        $completedTasksAllTime = department_task_assignment::where('department_id', $departmentId)
+            ->where('isCompleted', 1)->count();
+        // Get the number of engineers in the user's department
+        $engineersCount = Engineer::when(Auth::user()->department_id !== 1, function ($query) {
+            return $query->where('department_id', Auth::user()->department_id);
+        })
+            ->count();
+        // Get the number of section tasks in the user's department
+        $sectionTasksCount = department_task_assignment::where('department_id', $departmentId)->count();
+        $pendingTasksCount = department_task_assignment::where('department_id', $departmentId)->where('isCompleted', 0)->count();
+        // Get the latest pending main tasks in the user's department, including those that were previously in the user's department
+        $pendingTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->where('status', 'pending')
-            ->whereHas('station', function ($query) use ($control) {
-                $query->where('control', $control);
-            })->count();
-
-        // Get a list of pending tasks in the current user's department and control
-        $pendingTasks = MainTask::where('department_id', Auth::user()->department_id)
-            ->where('status', 'pending')
-            ->whereHas('station', function ($query) use ($controlName) {
-                $query->where('control', $controlName);
-            })
-            ->latest()
-            ->paginate(4, ['*'], 'page2');
-
-        // Count the number of completed tasks in the current user's department and control
-        $completedTasksCount = SectionTask::where('department_id', Auth::user()->department_id)
-            ->where('status', 'completed')
+            ->with('main_task') // Eager load the main_task relationship
             ->whereHas('main_task.station', function ($query) use ($controlName) {
                 $query->where('control', $controlName);
-            })->count();
-
-        // Get a list of completed tasks in the current user's department and control
-        $completedTasks = SectionTask::where('department_id', Auth::user()->department_id)
-            ->where('status', 'completed')
-            ->whereHas('main_task.station', function ($query) use ($controlName) {
-                $query->where('control', $controlName);
             })
-            ->latest()
-            ->paginate(2, ['*'], 'page2');
+            ->get();
 
-        // Count the number of mutual tasks (i.e. tasks that were transferred from another department)
-        $mutualTasks = TaskConversions::where('source_department', Auth::user()->department_id)->orWhere('destination_department', Auth::user()->department_id)->count();
+        // Get the number of completed section tasks in the user's department, including those that were previously in the user's department
+        $completedTasksCount = SectionTask::where(function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })->where('isCompleted', '1')->count();
 
-        return view('dashboard.index', compact('sectionTasksCount', 'mutualTasks', 'pendingTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
+        $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
+
+        // Get the number of main tasks that were previously in the user's department and are now in another department
+        $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
+        $incomingTasks = TaskConversions::whereHas('mainTask', function ($query) {
+            $query->where('status', 'pending');
+        })->where('destination_department', $departmentId)
+            ->where('status', 'pending')
+            ->get();
+        // $outgoingTasks = TaskConversions::whereHas('mainTask', function ($query) {
+        //     $query->where('status', 'pending');
+        // })->where('source_department', $departmentId)->get();
+        $outgoingTasks = TaskConversions::where('status', 'pending')->where('source_department', $departmentId)->get();
+        $currentWeekStart = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        $currentWeekEnd = now()->endOfWeek(Carbon::SUNDAY)->toDateString();
+        $tasksByEngineerThisWeek = SectionTask::whereBetween('date', [$currentWeekStart, $currentWeekEnd])
+            ->groupBy('eng_id')
+            ->selectRaw('eng_id, COUNT(*) as total_tasks_this_week')
+            ->get();
+        $completedTasksByEngineerThisWeek = SectionTask::whereBetween('date', [$currentWeekStart, $currentWeekEnd])
+            ->where('isCompleted', '1')
+            ->groupBy('eng_id')
+            ->selectRaw('eng_id, COUNT(*) as completed_tasks_this_week')
+            ->get();
+        $pendingReportsCount = SectionTask::where('department_id', Auth::user()->department_id)
+            ->where('isCompleted', "1")
+            ->where('approved', 0)
+            ->where('department_id', '!=', 1)
+            ->count();
+
+        return view('dashboard.index', compact('pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
     public function userIndex()
     {
@@ -206,11 +258,12 @@ class DashBoardController extends Controller
     }
     public function engineerTaskPage($id)
     {
-        $tasks = department_task_assignment::where('main_tasks_id', $id)->first();
+        $tasks = department_task_assignment::where('main_tasks_id', $id)->where('department_id', Auth::user()->department_id)->first();
         $files = TaskAttachment::where('main_tasks_id', $id)->get();
         if (!$tasks) {
             abort(404);
         }
+
         if ($tasks->eng_id !== Auth::user()->id) {
             return view('dashboard.unauthorized');
         }
@@ -226,6 +279,7 @@ class DashBoardController extends Controller
         $taskConverted = TaskConversions::where('main_tasks_id', $id)
             ->where('source_department', Auth::user()->department_id)
             ->OrWhere('destination_department', Auth::user()->department_id)
+            ->where('main_tasks_id', $id)
             ->first();
         $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->where('main_tasks_id', $id)
@@ -318,7 +372,8 @@ class DashBoardController extends Controller
                     'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
                     'user_id' => Auth::user()->id,
                     'date' => $date,
-                    'isCompleted' => "1"
+                    'isCompleted' => "1",
+                    'approved' => 1,
                 ]);
                 TaskTimeline::create([
                     'main_tasks_id' => $id,
@@ -353,7 +408,8 @@ class DashBoardController extends Controller
                     'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
                     'user_id' => Auth::user()->id,
                     'date' => $date,
-                    'isCompleted' => "0"
+                    'isCompleted' => "0",
+                    'approved' => 1,
                 ]);
                 TaskTimeline::create([
                     'main_tasks_id' => $id,
@@ -455,8 +511,18 @@ class DashBoardController extends Controller
         $currentMonth = Carbon::now()->month;
         $isAdmin = Auth()->user()->role->title == 'Admin';
         $tasks = $isAdmin ? $this->getAdminTasks($status, $currentMonth) : $this->getEngineerTasks($status);
+        $reports = [];
+        foreach ($tasks as $task) {
+            if ($task->isCompleted == 1) {
+                $taskReports = SectionTask::where('main_tasks_id', $task->main_tasks_id)
+                    ->where('department_id', $task->department_id)
+                    ->get();
 
-        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status'));
+                // Append the reports for this task to the $reports array
+                $reports = array_merge($reports, $taskReports->toArray());
+            }
+        }
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
     }
     public function ShowTasksEngineer($status)
     {
@@ -478,7 +544,7 @@ class DashBoardController extends Controller
             case 'completed':
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
                     ->where('status', 'completed')
-                    ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
+                    ->latest()->paginate(6);
 
             case 'all':
                 return department_task_assignment::where('department_id', Auth::user()->department_id)

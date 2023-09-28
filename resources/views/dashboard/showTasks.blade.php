@@ -152,6 +152,34 @@
 
                     <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
                     </li>
+                    <li class="list-group-item">Action Take <br>
+                        @foreach($reports as $report)
+                        <!-- Start of the foreach loop, iterating through $reports -->
+                        @if(isset($report['main_tasks_id']) && $report['main_tasks_id'] === $task->main_tasks_id)
+                        <!-- Check if $report has 'main_tasks_id' property and it matches the current $task's 'main_tasks_id' -->
+                        {!! $report['action_take'] !!}
+                        <!-- Display the 'action_take' property of the matching $report -->
+                        @if ($report['department_id'] === Auth::user()->department_id &&
+                        Auth::user()->role_id ==
+                        "2" && Auth::user()->department_id !== 1)
+                        <form method="POST" action="{{route('dashboard.approveReports',$report['id'])}}">
+                            @csrf
+                            <button
+                                class="btn float-end mt-3 ms-2 d-none-print {{$report['approved'] == '0' ? 'btn-success' : 'btn-info'}}">
+                                <i class="fa fa-check-circle"></i> {{ $report['approved'] == '0' ? 'Approve Report'
+                                :
+                                'Cancel Approval' }}
+                            </button>
+                        </form>
+                        @endif
+                        @endif
+                        <!-- End of the if condition -->
+
+                        @endforeach
+                        <!-- End of the foreach loop -->
+                    </li>
+                    <!-- End of the list item -->
+
                     @isset($task->eng_id)
                     <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
                         <li class="list-group-item bg-light text-dark"><strong>Engineer <br></strong>
@@ -205,6 +233,7 @@
                         Request to
                         update report </a>
                     @endif
+
 
 
                 </div>

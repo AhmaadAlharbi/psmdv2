@@ -52,4 +52,8 @@ class MainTask extends Model
     {
         return $this->hasMany(TaskConversions::class, 'main_tasks_id', 'id');
     }
+    public function departmentsAssienments()
+    {
+        return $this->hasMany(department_task_assignment::class, 'main_tasks_id', 'id');
+    }
 }

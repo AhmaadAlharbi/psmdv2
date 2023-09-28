@@ -4,8 +4,8 @@
 		<div class="main-header-left ">
 			<div class="responsive-logo">
 				<a href="{{url('index')}}" class="header-logo">
-					<img src="{{asset('assets/img/brand/logo.png')}}" class="logo-1" alt="logo">
-					<img src="{{asset('assets/img/brand/logo-white.png')}}" class="dark-logo-1" alt="logo">
+					<img src="{{asset('assets/img/brand/sb.png')}}" class="logo-1" alt="logo">
+					<img src="{{asset('assets/img/brand/sb.png')}}" class="dark-logo-1" alt="logo">
 				</a>
 			</div>
 			<div class="app-sidebar__toggle" data-bs-toggle="sidebar">
