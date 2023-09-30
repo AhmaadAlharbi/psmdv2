@@ -7,7 +7,7 @@
     }
 
     @media print {
-        .print-button-container {
+        .btn-group {
             display: none;
         }
     }
@@ -111,18 +111,7 @@
                             $section_task->engineer->email }} <br>
 
                         </p>
-                        @if ($section_task->department_id === Auth::user()->department_id && Auth::user()->role_id ==
-                        "2" && Auth::user()->department_id !== 1)
-                        <form method="POST" action="{{route('dashboard.approveReports',$section_task->id)}}">
-                            @csrf
-                            <button
-                                class="btn float-end mt-3 ms-2 d-none-print {{$section_task->approved == '0' ? 'btn-success' : 'btn-info'}}">
-                                <i class="fa fa-check-circle"></i> {{ $section_task->approved == '0' ? 'Approve Report'
-                                :
-                                'Cancel Approval' }}
-                            </button>
-                        </form>
-                        @endif
+
 
                     </div><!-- invoice-notes -->
                 </div>
@@ -168,13 +157,32 @@
                     </table>
                 </div>
                 @endif
-                <div class="print-button-container">
-                    <a href="javascript:void(0);" class="btn btn-dark float-end mt-3 ms-2"
-                        onclick="printContent('printable-content');">
-                        <i class="mdi mdi-printer me-1"></i>Print
+                <div aria-label="Basic example" class="btn-group" role="group">
+                    <a href="{{ route('dashboard.editTask', $section_task->main_tasks_id) }}"
+                        class="btn btn-danger-gradient float-end mt-3 ms-2 pd-sm-x-25 pd-x-15">
+                        <i class="fas fa-exchange-alt"></i>
+                        Convert Task
                     </a>
 
+
+                    @if ($section_task->department_id === Auth::user()->department_id && Auth::user()->role_id ==
+                    "2" && Auth::user()->department_id !== 1)
+                    <form method="POST" action="{{route('dashboard.approveReports',$section_task->id)}}">
+                        @csrf
+                        <button
+                            class="btn float-end mt-3 ms-2  pd-sm-x-25 pd-x-15 {{$section_task->approved == '0' ? 'btn-success' : 'btn-info'}}">
+                            <i class="fa fa-check-circle"></i> {{ $section_task->approved == '0' ? 'Approve Report'
+                            :
+                            'Cancel Approval' }}
+                        </button>
+                    </form>
+                    @endif
+                    <button class="btn btn-dark float-end mt-3 ms-2 pd-sm-x-25 pd-x-15"
+                        onclick="printContent('printable-content');">
+                        <i class="mdi mdi-printer me-1"></i>Print
+                    </button>
                 </div>
+
 
 
 

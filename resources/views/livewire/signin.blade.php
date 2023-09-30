@@ -24,7 +24,7 @@
                 </div>
             </div>
             <!-- The content half -->
-            <div class="col-md-6 col-lg-6 col-xl-5 bg-dark py-4">
+            <div class="col-md-6 col-lg-6 col-xl-5 bg-primary-gradient py-4">
                 <div class="login d-flex align-items-center py-2">
                     <!-- Demo content-->
                     <div class="container p-0">
@@ -44,11 +44,12 @@
                                     </div>
                                     <div class="card-sigin">
                                         <div class="main-signup-header">
-                                            <h5 class="fw-semibold mb-4">Please Sign in</h5>
+                                            <h5 class="fw-semibold mb-4 text-white">Please Sign in</h5>
                                             <form method="POST" action="{{ route('login') }}">
                                                 @csrf
                                                 <div>
-                                                    <x-input-label for="email" :value="__('Email')" />
+                                                    <x-input-label class="text-white" for="email"
+                                                        :value="__('Email')" />
                                                     <x-text-input id="email" class="form-control" type="email"
                                                         name="email" :value="old('email')" required autofocus
                                                         autocomplete="username" />
@@ -57,7 +58,8 @@
 
                                                 <!-- Password -->
                                                 <div class="mt-4">
-                                                    <x-input-label for="password" :value="__('Password')" />
+                                                    <x-input-label class="text-white" for="password"
+                                                        :value="__('Password')" />
 
                                                     <x-text-input id="password" class="form-control mb-4"
                                                         type="password" name="password" required
@@ -70,7 +72,7 @@
                                                         <input id="remember_me" type="checkbox"
                                                             class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                                             name="remember">
-                                                        <span class="ml-2 text-sm text-gray-600">{{ __('Remember me')
+                                                        <span class="ml-2 text-sm text-white">{{ __('Remember me')
                                                             }}</span>
                                                     </label>
                                                 </div>
@@ -80,7 +82,7 @@
 
                                             </form>
 
-                                            <div class="main-signin-footer mt-5">
+                                            <div class=" main-signin-footer mt-5 text-white">
                                                 <p><a href="{{url('forgot')}}">Forgot password?</a></p>
                                                 <p>Don't have an account? <a href="{{url('signup')}}">Create an
                                                         Account</a></p>

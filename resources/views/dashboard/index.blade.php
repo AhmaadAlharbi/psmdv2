@@ -256,8 +256,7 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">المهمات المنشئة - Local Tasks <br> <span
-                            class="badge bg-danger me-1">Pending</span></h4>
+                    <h4 class="card-title mg-b-0"> Local Tasks</h4>
 
                 </div>
             </div>
@@ -315,7 +314,7 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">المهمات الواردة - Incoming Tasks</h4>
+                    <h4 class="card-title mg-b-0">Incoming Tasks</h4>
                 </div>
             </div>
             <div class="card-body">
@@ -323,7 +322,6 @@
                     <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
                             <tr class="bg-info-gradient">
-
                                 <th>ID</th>
                                 <th>STATION</th>
                                 <th>FROM</th>
@@ -341,9 +339,11 @@
                                 <td>{{$task->toDepartment->name}}</td>
                                 <td>{{$task->created_at}}</td>
                                 <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-info-gradient">View</a></td>
-                                <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
-                                    class="btn btn-secondary">History</a>
+                                        class="btn btn-info-gradient">View</a>
+                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
+                                        class="btn btn-secondary">History</a>
+                                </td>
+
                             </tr>
                             @endforeach
 

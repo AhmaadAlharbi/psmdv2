@@ -75,6 +75,7 @@ class DashBoardController extends Controller
             $query->where('department_id', $departmentId);
         })->where('isCompleted', "0")->latest()->get();
 
+
         // Get the number of completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasksCount = SectionTask::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
@@ -292,7 +293,7 @@ class DashBoardController extends Controller
                 ->where('main_tasks_id', $id) //Proteciton first time
                 ->first();
             //check if Edara sent this tasks 
-            if ($taskConverted->source_department === 1) {
+            if ($taskConverted->source_department !== $departmentTask->department_id) {
                 $taskSoruce->update([
                     'status' => $status_raidoBtn,
                     'isCompleted' => "1"
@@ -442,6 +443,7 @@ class DashBoardController extends Controller
 
         $sections_tasks = SectionTask::where('main_tasks_id', $main_task_id)
             ->where('isCompleted', "1")
+            ->where('approved', true)
             ->where('department_id', "!=", $department_id)
             ->get();
         return view('dashboard.reportPage2', compact('section_task', 'sections_tasks'));
@@ -455,7 +457,18 @@ class DashBoardController extends Controller
             ->paginate(6);
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
+        $reports = [];
+        foreach ($tasks as $task) {
+            if ($task->isCompleted == 1) {
+                $taskReports = SectionTask::where('main_tasks_id', $task->main_tasks_id)
+                    ->where('department_id', $task->department_id)
+                    ->get();
+
+                // Append the reports for this task to the $reports array
+                $reports = array_merge($reports, $taskReports->toArray());
+            }
+        }
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'reports'));
     }
     public function requestToUpdateReport($main_task_id)
     {
