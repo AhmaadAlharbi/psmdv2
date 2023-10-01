@@ -139,6 +139,7 @@
                                             </label>
                                         </div>
                                         <textarea class="content5" name="action_take"></textarea>
+
                                         <div id="attachmentFile"
                                             class="e d-flex flex-column align-items-start justify-content-start">
                                             <div class="col-sm-12 col-md-12">
@@ -189,6 +190,8 @@
 @endsection
 
 @section('scripts')
+
+
 <script>
     function printContent(elementId) {
     var content = document.getElementById(elementId);

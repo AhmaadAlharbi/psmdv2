@@ -76,9 +76,8 @@
                                                             }}</span>
                                                     </label>
                                                 </div>
-                                                <x-primary-button class="ml-3">
-                                                    {{ __('Log in') }}
-                                                </x-primary-button>
+
+                                                <button type="submit" class="btn btn-light">Login</button>
 
                                             </form>
 

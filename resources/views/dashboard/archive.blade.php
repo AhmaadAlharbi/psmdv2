@@ -160,13 +160,13 @@
                 </ul>
             </div>
             <div class="card-footer">
-                <button class="btn {{$task->status =='pending'  ? 'btn-danger' : 'btn-success'}}">More
-                    information</button>
+
                 @if($task->status === 'completed')
-                <a href="{{route('dashboard.reportPage',['id'=>$task->main_task->id])}}" type="button"
-                    class="btn btn-outline-success  button-icon "><i class="si si-notebook px-2"
+                <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
+                    type="button" class="btn btn-outline-success  button-icon "><i class="si si-notebook px-2"
                         data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
                         aria-label="si-notebook"></i>Report</a>
+
                 @endif
 
             </div>

@@ -273,7 +273,16 @@ class DashBoardController extends Controller
     public function submitEngineerReport(Request $request, $id)
     {
         $status_raidoBtn =  $request->input('action_take_status');
-        $actionTake = $request->input('action_take');
+
+        // Retrieve the content from the 'action_take' input field
+        $userText = $request->input('action_take');
+
+        // Check if the user's content contains a style attribute for font size
+        if (!preg_match('/style="font-size:\s*\d+px;"/', $userText)) {
+            // If there's no font-size style, add the default font size
+            $defaultFontSize = 'font-size:20px;';
+            $actionTake = '<div><span style="' . $defaultFontSize . '">' . $userText . '</span><br></div>';
+        }
         $date =  Carbon::now();
         $main_task = MainTask::findOrFail($id);
         $section_task = SectionTask::where('main_tasks_id', $id)->first();
