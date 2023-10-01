@@ -60,43 +60,24 @@
                         <p class="invoice-info-row"><span>Previous Maintenance</span> <span> {{
                                 $section_task->main_task->station->pm }}</span></p>
                     </div>
-                </div>
-                <div class="table-responsive mg-t-40">
-                    <table class="table table-invoice border text-md-nowrap mb-0">
-                        <thead>
+                    <div class="invoice-notes border">
+                        <label class="main-content-label tx-16 mt-3">Nature of Fault <span
+                                class="badge bg-danger me-1"></span></label>
+                        <p class="tx-20 text-secondary">{{
+                            $section_task->main_task->problem }} </p>
+                    </div>
 
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="valign-middle" colspan="2">
-                                    <div class="invoice-notes">
-                                        <label class="main-content-label tx-16">Nature of Fault <span
-                                                class="badge bg-danger me-1"></span></label>
-                                        <p class="tx-20 text-secondary">{{
-                                            $section_task->main_task->problem }} </p>
-                                    </div><!-- invoice-notes -->
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="valign-middle" colspan="2">
-                                    <div class="invoice-notes">
-                                        <label class="main-content-label tx-16">Action Take
-                                        </label>
-                                        <p class=" text-dark">
-                                            @if (isset($section_task->action_take))
+                    <div class="invoice-notes border">
+                        <label class="main-content-label tx-16 mt-3">Action Take
+                        </label>
+                        <p class=" text-dark">
+                            @if (isset($section_task->action_take))
 
-                                            {!! $section_task->action_take !!}
+                            {!! $section_task->action_take !!}
 
-                                            @endif
-                                        </p>
-                                    </div><!-- invoice-notes -->
-                                </td>
-                            </tr>
-
-
-
-                        </tbody>
-                    </table>
+                            @endif
+                        </p>
+                    </div><!-- invoice-notes -->
                     <div class="invoice-notes mt-5 "
                         style="display: flex;flex-direction:column;  align-items:flex-end;">
                         <label class="main-content-label tx-16 mt-2">Engineer
@@ -115,48 +96,147 @@
 
                     </div><!-- invoice-notes -->
                 </div>
-                @if(count($sections_tasks) > 0 && Auth::user()->department_id !== 1)
-                <h4 class="d-print-none">Shared Reports</h4>
+                <div class="card d-print-none" id="tabs-style4">
+                    <div class="card-body">
+                        <div class="main-content-label mg-b-5">
+                            Shared Reports & Attachments
+                        </div>
+                        <p class="mg-b-20">Explore related reports and attachments from other departments.</p>
 
-                <div class="table-responsive border d-print-none mt-4">
+                        <div class="text-wrap">
+                            <div class="example">
+                                <div class="d-md-flex">
+                                    <div class="">
+                                        <div class="panel panel-primary tabs-style-4">
+                                            <div class="tab-menu-heading">
+                                                <div class="tabs-menu ">
+                                                    <!-- Tabs -->
+                                                    <ul class="nav panel-tabs me-3">
+                                                        <li class=""><a href="#tab21" class="active"
+                                                                data-bs-toggle="tab"><i class="fas fa-file-alt"></i>
+                                                                Reports({{$shared_reports_count}})</a></li>
+                                                        <li><a href="#tab22" data-bs-toggle="tab"><i
+                                                                    class="fas fa-paperclip"></i>
+                                                                Attachments({{$files_count}})</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tabs-style-4 ">
+                                        <div class="panel-body tabs-menu-body">
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="tab21">
+                                                    <div class="table-responsive border d-print-none mt-4">
+                                                        @if(count($sections_tasks) > 0 && Auth::user()->department_id
+                                                        !== 1)
+                                                        <table class="table mg-b-0 text-md-nowrap w-100">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>#</th>
+                                                                    <th>Department</th>
+                                                                    <th>Engineer</th>
+                                                                    <th>Date</th>
+                                                                    <th>Report</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @php $i=1 @endphp
+                                                                @foreach($sections_tasks as $task)
+                                                                @if($task->department_id !== 1)
+                                                                <tr>
+                                                                    <th scope="row">{{$i++}}</th>
+                                                                    <td>{{$task->department->name}}</td>
+                                                                    <td>{{$task->engineer->name}}</td>
+                                                                    <td>{{$task->created_at}}</td>
+                                                                    <td>
+                                                                        <a class="btn btn-outline-info"
+                                                                            href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}">
+                                                                            Report
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                        @endif
+                                                    </div>
+                                                </div>
 
-                    <table class="table mg-b-0 text-md-nowrap">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Department</th>
-                                <th>Engineer</th>
-                                <th>Date</th>
-                                <th>Report</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                            $i=1
-                            @endphp
-                            @foreach($sections_tasks as $task)
-                            @if($task->department_id !== 1 )
-                            <tr>
-                                <th scope="row">
-                                    {{$i++}}
-                                </th>
-                                <td>{{$task->department->name}}</td>
-                                <td>{{$task->engineer->name}}</td>
-                                <td>{{$task->created_at}}</td>
-                                <td>
-                                    <a class="btn btn-outline-info"
-                                        href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}">
-                                        Report
-                                    </a>
-                                </td>
-                            </tr>
-                            @endif
-                            @endforeach
-                        </tbody>
+                                                <div class="tab-pane" id="tab22">
+                                                    {{-- attachments table --}}
+                                                    <div
+                                                        class=" d-flex flex-column align-items-start justify-content-start d-print-none">
+                                                        <table class="table table-striped mg-b-0 text-md-nowrap">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">م</th>
+                                                                    <th scope="col">Department</th>
+                                                                    <th scope="col">File</th>
+                                                                    <th scope="col"> Sent by</th>
+                                                                    <th scope="col">View</th>
+                                                                    <th scope="col">Download</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $i = 0; ?>
+                                                                @foreach($files as $file )
+                                                                <tr>
+                                                                    <td>{{ ++$i }}</td>
+                                                                    <td>{{ $file->department->name }}</td>
+                                                                    <td>{{ $file->file }}</td>
+                                                                    <td>
 
-                    </table>
+                                                                        {{ $file->user->name }}
+
+                                                                    </td>
+                                                                    <td>
+
+
+                                                                        <a class="btn btn-info"
+                                                                            href="{{ route('view.file', ['main_task_id' => $file->main_tasks_id, 'file' => $file->file]) }}"
+                                                                            target="_blank">
+                                                                            <i class="fas fa-eye"></i> View
+                                                                        </a>
+
+
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <a class="btn btn-outline-primary"
+                                                                            href="{{ asset('storage/attachments/' . $file->main_tasks_id . '/' . $file->file) }}"
+                                                                            download="{{ $file->file }}">
+                                                                            <i class="fas fa-download"></i> Download
+                                                                        </a>
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <a class="btn btn-danger"
+                                                                            href="{{ route('delete.file', ['main_task_id' => $file->main_tasks_id, 'file' => $file->file,'id'=>$file->id]) }}"
+                                                                            onclick="return confirm('Are you sure you want to delete this file?');">
+                                                                            <i class="fas fa-trash"></i> Delete
+                                                                        </a>
+                                                                    </td>
+
+                                                                    @endforeach
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /div -->
                 </div>
-                @endif
+
                 <div aria-label="Basic example" class="btn-group" role="group">
                     <a href="{{ route('dashboard.editTask', $section_task->main_tasks_id) }}"
                         class="btn btn-danger-gradient float-end mt-3 ms-2 pd-sm-x-25 pd-x-15">
@@ -165,13 +245,15 @@
                     </a>
 
 
-                    @if ($section_task->department_id === Auth::user()->department_id && Auth::user()->role_id ==
+                    @if ($section_task->department_id ===
+                    Auth::user()->department_id && Auth::user()->role_id ==
                     "2" && Auth::user()->department_id !== 1)
                     <form method="POST" action="{{route('dashboard.approveReports',$section_task->id)}}">
                         @csrf
                         <button
                             class="btn float-end mt-3 ms-2  pd-sm-x-25 pd-x-15 {{$section_task->approved == '0' ? 'btn-success' : 'btn-info'}}">
-                            <i class="fa fa-check-circle"></i> {{ $section_task->approved == '0' ? 'Approve Report'
+                            <i class="fa fa-check-circle"></i> {{
+                            $section_task->approved == '0' ? 'Approve Report'
                             :
                             'Cancel Approval' }}
                         </button>
@@ -182,7 +264,6 @@
                         <i class="mdi mdi-printer me-1"></i>Print
                     </button>
                 </div>
-
 
 
 

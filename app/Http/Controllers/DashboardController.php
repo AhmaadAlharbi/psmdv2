@@ -449,13 +449,19 @@ class DashBoardController extends Controller
             ->where('department_id', $department_id)
             ->where('isCompleted', "1")
             ->first();
-
+        $shared_reports_count = SectionTask::where('main_tasks_id', $main_task_id)
+            ->where('isCompleted', "1")
+            ->where('approved', true)
+            ->where('department_id', "!=", $department_id)
+            ->count();
         $sections_tasks = SectionTask::where('main_tasks_id', $main_task_id)
             ->where('isCompleted', "1")
             ->where('approved', true)
             ->where('department_id', "!=", $department_id)
             ->get();
-        return view('dashboard.reportPage2', compact('section_task', 'sections_tasks'));
+        $files_count = TaskAttachment::where('main_tasks_id', $main_task_id)->where('department_id', $department_id)->count();
+        $files = TaskAttachment::where('main_tasks_id', $main_task_id)->where('department_id', $department_id)->get();
+        return view('dashboard.reportPage2', compact('section_task', 'sections_tasks', 'shared_reports_count', 'files', 'files_count'));
     }
     public function pendingReports()
     {
