@@ -438,6 +438,22 @@ class DashBoardController extends Controller
                 ]);
             }
         }
+        if ($request->hasfile('pic')) {
+            foreach ($request->file('pic') as $file) {
+                $name = $file->getClientOriginalName();
+                $file->move(storage_path('app/public/attachments/' . $main_task->id), $name); // Store in the 'storage' directory
+                $data[] = $name;
+                $refNum = $request->refNum;
+
+                $attachments = new TaskAttachment();
+                $attachments->main_tasks_id = $main_task->id;
+                $attachments->department_id = Auth::user()->department_id;
+                $attachments->file = $name;
+                $attachments->user_id = Auth::user()->id;
+                $attachments->save();
+            }
+        }
+
         return redirect("/dashboard/user");
     }
 
