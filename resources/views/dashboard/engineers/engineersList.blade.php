@@ -44,18 +44,29 @@
                                     <div>
                                         <h6>Add Engineer</h6>
                                         <!-- Select2 -->
-                                        <!-- Select dropdown for engineers -->
-                                        <select id="usersSelect"
-                                            class="form-control select2-show-search select2-dropdown"
-                                            onchange="setEngineerId()">
-                                            <option label="Choose one">Choose one</option>
+
+
+                                        <div class="input-group">
+                                            <input list="users" oninput="setEngineerId(this.value)" class="form-control"
+                                                id="userSelect" name="users" type="search" />
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="clearInputField()">
+                                                    <i class="fas fa-times"></i>
+                                                    <!-- Font Awesome "times" icon for clear -->
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <datalist id="users">
+                                            <option label="Choose one"></option>
                                             @foreach($users as $user)
-                                            <option value="{{$user->id}}">{{$user->name}}</option>
+                                            <option value="{{$user->name}}"></option>
                                             @endforeach
-                                        </select>
+                                        </datalist>
 
                                         <!-- Hidden input field to store the selected engineer's ID -->
                                         <input type="hidden" id="userId" name="userId" value="">
+
 
                                     </div>
 
@@ -183,15 +194,26 @@
 @endsection
 
 @section('scripts')
+
 <script>
-    function setEngineerId() {
-    // Get the selected engineer ID
-    const userId = document.getElementById('usersSelect').value;
+    function setEngineerId(selectedUserName) {
+        // Get the selected user's ID based on the selected user name
+        const usersList = document.getElementById('users');
+        const selectedOption = Array.from(usersList.options).find(option => option.value === selectedUserName);
 
-    // Set the selected engineer ID to the hidden input field
-    document.getElementById('userId').value = userId;
-}
-
+        // Update the hidden input with the selected user's ID
+        if (selectedOption) {
+            const userId = selectedOption.getAttribute('data-user-id');
+            document.getElementById('userId').value = userId;
+        } else {
+            document.getElementById('userId').value = ''; // Clear the ID if no option is selected
+        }
+    }
+</script>
+<script>
+    function clearInputField() {
+        document.getElementById('userSelect').value = '';
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -213,11 +235,16 @@
 
 <!--Internal  Datatable js -->
 <script>
-    // Get the selected engineer ID
-    const userId = document.getElementById('usersSelect').value;
-  
-    // Set the selected engineer ID to the input text
-    document.getElementById('userId').value = userId;
+    const userMapping = {
+        @foreach($users as $user)
+            '{{$user->name}}': '{{$user->id}}',
+        @endforeach
+    };
+
+    function setEngineerId(selectedUserName) {
+        const userId = userMapping[selectedUserName] || '';
+        document.getElementById('userId').value = userId;
+    }
 </script>
 <script src="{{asset('assets/js/table-data.js')}}"></script>
 <script>
