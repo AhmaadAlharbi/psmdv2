@@ -1,5 +1,5 @@
 
-INSERT INTO `equips` (`id`, `station_id`, `voltage_level`, `equip_number`, `equip_name`) VALUES
+INSERT INTO `equip` (`id`, `station_id`, `voltage_level`, `equip_number`, `equip_name`) VALUES
 (1, 1, '132KV', 'E(1)', 'RDTNA1'),
 (2, 1, '132KV', 'E(2)', '45TR1'),
 (3, 1, '132KV', 'E(3)', 'BS1'),

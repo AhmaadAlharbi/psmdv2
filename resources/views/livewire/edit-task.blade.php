@@ -96,10 +96,7 @@
                     <label for="main_alarm" class="control-label m-3">Main Alarm</label>
                     <select wire:model="selectedMainAlarm" wire:change="getEquip" name="mainAlarm" id="main_alarm"
                         class="form-control">
-                        <!--placeholder-->
-                        <option value="{{$task->main_alarm_id}}" selected>{{ $selectedMainAlarm ? $selectedMainAlarm :
-                            '-' }}
-                        </option>
+
                         @foreach($main_alarms as $alarm)
                         @if($alarm->name !== $selectedMainAlarm)
                         <option value="{{$alarm->id}}">{{$alarm->name}}</option>
