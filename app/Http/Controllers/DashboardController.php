@@ -69,7 +69,7 @@ class DashBoardController extends Controller
             ->count();
         // Get the number of section tasks in the user's department
         $sectionTasksCount = department_task_assignment::where('department_id', $departmentId)->count();
-        $pendingTasksCount = department_task_assignment::where('department_id', $departmentId)->where('isCompleted', 0)->count();
+        $pendingTasksCount = department_task_assignment::where('department_id', $departmentId)->where('isCompleted', "0")->count();
         // Get the latest pending main tasks in the user's department, including those that were previously in the user's department
         $pendingTasks = department_task_assignment::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
@@ -626,7 +626,7 @@ class DashBoardController extends Controller
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
         $station = Station::where('SSNAME', $request->station)->first();
-        $tasks = MainTask::where('department_id', Auth::user()->department_id)
+        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->where('station_id', $station->id)
             ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
