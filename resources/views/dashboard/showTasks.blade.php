@@ -126,6 +126,7 @@
                     <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
                     </li>
                     <li class="list-group-item">Action Take <br>
+                        @isset($reports)
                         @foreach($reports as $report)
                         <!-- Start of the foreach loop, iterating through $reports -->
                         @if(isset($report['main_tasks_id']) && $report['main_tasks_id'] === $task->main_tasks_id)
@@ -149,6 +150,7 @@
                         <!-- End of the if condition -->
 
                         @endforeach
+                        @endisset
                         <!-- End of the foreach loop -->
                     </li>
                     <!-- End of the list item -->

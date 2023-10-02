@@ -604,7 +604,7 @@ class DashBoardController extends Controller
     {
         switch ($status) {
             case 'pending':
-                return MainTask::where('eng_id', Auth::user()->id)
+                return department_task_assignment::where('eng_id', Auth::user()->id)
                     ->where('status', 'pending')
                     ->paginate(6);
             case 'completed':
@@ -613,7 +613,7 @@ class DashBoardController extends Controller
                     ->where('status', 'completed')
                     ->latest()->paginate(6);
             case 'all':
-                return MainTask::where('eng_id', Auth::user()->id)
+                return department_task_assignment::where('eng_id', Auth::user()->id)
                     ->latest()->paginate(6);
             default:
                 abort(403);
@@ -626,9 +626,13 @@ class DashBoardController extends Controller
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
         $station = Station::where('SSNAME', $request->station)->first();
-        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
-            ->where('station_id', $station->id)
-            ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
+        $tasks = department_task_assignment::join('main_tasks', 'department_task_assignment.main_tasks_id', '=', 'main_tasks.id')
+            ->where('department_task_assignment.department_id', Auth::user()->department_id)
+            ->where('main_tasks.station_id', $station->id)
+            ->latest('department_task_assignment.created_at') // Specify the table for ordering
+            ->paginate(6);
+
+
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
     public function engineerTasks(Request $request)
@@ -637,9 +641,9 @@ class DashBoardController extends Controller
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
         $engineer = User::where('name', $request->engineer)->first();;
-        $tasks = MainTask::where('department_id', Auth::user()->department_id)
+        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->where('eng_id', $engineer->id)
-            ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
+            ->latest()->paginate(6);
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
     public function editTask($id)
