@@ -287,7 +287,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="departmentSelect">Select Department</label>
-                        <input type="text" name="main_task" value="{{$section_task->main_tasks_id}}">
+                        <input type="hidden" name="main_task" value="{{$section_task->main_tasks_id}}">
                         <select id="departmentSelect" name="departmentSelect" class="form-select">
                             <option value="{{ Auth::user()->department_id }}">{{ Auth::user()->department->name }}
                             </option>

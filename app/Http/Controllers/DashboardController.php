@@ -86,7 +86,8 @@ class DashBoardController extends Controller
         })->where('isCompleted', '1')->where('approved', 1)->latest()->paginate(10);
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
-        $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
+        $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)
+            ->Orwhere('source_department', $departmentId)->count();
         $incomingTasks = TaskConversions::whereHas('mainTask', function ($query) {
             $query->where('status', 'pending');
         })->where('destination_department', $departmentId)
@@ -95,7 +96,9 @@ class DashBoardController extends Controller
         // $outgoingTasks = TaskConversions::whereHas('mainTask', function ($query) {
         //     $query->where('status', 'pending');
         // })->where('source_department', $departmentId)->get();
-        $outgoingTasks = TaskConversions::where('status', 'pending')->where('source_department', $departmentId)->get();
+        $outgoingTasks = TaskConversions::where('status', 'pending')
+            ->where('source_department', $departmentId)
+            ->get();
         $currentWeekStart = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
         $currentWeekEnd = now()->endOfWeek(Carbon::SUNDAY)->toDateString();
         $tasksByEngineerThisWeek = SectionTask::whereBetween('date', [$currentWeekStart, $currentWeekEnd])
@@ -767,5 +770,12 @@ class DashBoardController extends Controller
                 'status' => 'pending'
             ]);
         }
+        return back();
+    }
+    public function deleteConvertedTask(Request $request, $id)
+    {
+        $tasks = TaskConversions::findOrFail($id);
+        $tasks->delete();
+        return redirect()->back()->with('success', 'Task deleted successfully');
     }
 }

@@ -366,7 +366,7 @@
         @if(isset($outgoingTasks) && count($outgoingTasks) > 0)
         <div class="card">
             <div class="card-header pb-0">
-                <h4 class="card-title mg-b-0">Outgoing Tasks - المهمات المرسلة</h4>
+                <h4 class="card-title mg-b-0">Outgoing Tasks</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -397,9 +397,51 @@
                                 </td>
                                 @endif
                                 <td> <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
-                                        class="btn btn-secondary">History</a></td>
+                                        class="btn btn-secondary">History</a>
+                                    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                        data-bs-target="#deleteConfirmationModal-{{ $task->id }}">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+
+                                </td>
 
                             </tr>
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteConfirmationModal-{{ $task->id }}" tabindex="-1"
+                                aria-labelledby="deleteConfirmationModalLabel-{{ $task->id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteConfirmationModalLabel-{{ $task->id }}">
+                                                Delete Confirmation</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this item?
+                                            <form
+                                                action="{{ route('dashboard.deleteConvertedTask', ['id' => $task->id]) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <input type="hidden" value="{{$task->id}}" name="task_id">
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                            {{-- <button type="submit" class="btn btn-danger"
+                                                id="confirmDelete">Delete</button> --}}
+                                            <button class="btn btn-outline-danger" id="deleteTask"
+                                                data-id="{{ $task->id }}">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             @endforeach
                         </tbody>
                     </table>
@@ -443,8 +485,12 @@
                                     @endisset
                                 </td>
                                 <td>
+                                    @if($task->status === 'completed')
                                     <span class="badge bg-success me-1">{{$task->status}}</span>
+                                    @else
+                                    <span class="badge bg-warning me-1">{{$task->status}}</span>
 
+                                    @endif
                                 </td>
                                 <td>
                                     <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
@@ -475,6 +521,7 @@
 
 
 
+
 </div>
 <!-- row closed -->
 
@@ -495,7 +542,16 @@
 
 <!-- Internal Chartjs js -->
 <script src="{{asset('assets/js/chart.chartjs.js')}}"></script>
+<!-- Internal Select2 js-->
+<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
 
+<!--Internal  Sweet-Alert js-->
+<script src="{{asset('assets/plugins/sweet-alert/sweetalert.min.js')}}"></script>
+<script src="{{asset('assets/plugins/sweet-alert/jquery.sweet-alert.js')}}"></script>
+
+<!-- Sweet-alert js  -->
+<script src="{{asset('assets/plugins/sweet-alert/sweetalert.min.js')}}"></script>
+<script src="{{asset('assets/js/sweet-alert.js')}}"></script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -511,7 +567,10 @@
             @endif
         });
 </script>
-//delete tasks
+
+
+
+
 <script>
     function deleteRecord(id) {
       Swal.fire({

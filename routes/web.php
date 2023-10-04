@@ -314,4 +314,5 @@ Route::get('/download/{main_task_id}/{file}', [FileController::class, 'download'
 Route::get('/delete/{main_task_id}/{file}/{id}', [FileController::class, 'delete'])->name('delete.file');
 Route::get('/view/{main_task_id}/{file}', [FileController::class, 'view'])->name('view.file');
 Route::post('/convert-tasks/{id}', [DashBoardController::class, 'convertTask'])->name('dashboard.convertTask');
+Route::delete('/delete-converted-task/{id}', [DashBoardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
 require __DIR__ . '/auth.php';
