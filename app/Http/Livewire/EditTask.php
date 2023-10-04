@@ -75,7 +75,7 @@ class EditTask extends Component
         $this->main_alarms = MainAlarm::where('department_id', 2)->get();
         $this->task = MainTask::find($this->task_id);
         $this->mainTasksConverted = $this->task->departmentsAssienments->where('department_id', 2);
-        echo  $isTaskedConverted = $this->task->conversions->filter(function ($conversion) {
+        $isTaskedConverted = $this->task->conversions->filter(function ($conversion) {
             return $conversion->source_department == Auth::user()->department_id || $conversion->destination_department == Auth::user()->department_id;
         });
 
@@ -423,6 +423,7 @@ class EditTask extends Component
             if ($userDepartmentTask) {
                 $userDepartmentTask->update([
                     'eng_id' => $this->selectedEngineer,
+                    'status' => 'pending'
                 ]);
             } else {
                 // Create a new department task assignment for the user's department

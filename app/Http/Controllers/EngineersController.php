@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use PDO;
 use App\Models\Area;
+use App\Models\department_task_assignment;
 use App\Models\User;
 use App\Models\Shift;
 use App\Models\Station;
@@ -31,30 +32,41 @@ class EngineersController extends Controller
     public function engineerProfile($id)
     {
         $engineer = User::findOrfail($id);
-        $tasks = MainTask::where('department_id', Auth::user()->department_id)->where('eng_id', $id)->count();
-        $pendingTasks = MainTask::where('department_id', Auth::user()->department_id)->where('eng_id', $id)->where('status', 'pending')->count();
-        $completedTasks = MainTask::where('department_id', Auth::user()->department_id)->where('eng_id', $id)->where('status', 'pending')->count();
+        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+            ->where('eng_id', $id)
+            ->count();
+        $pendingTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+            ->where('eng_id', $id)
+            ->where('isCompleted', "0")
+
+            ->count();
+        $completedTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+            ->where('eng_id', $id)
+            ->where('isCompleted', "1")
+
+            ->count();
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $taskCounts = [];
         $pendingTaskCounts = [];
         $completedTaskCounts = [];
-
         foreach ($months as $month) {
-            $taskCounts[] = MainTask::where('department_id', Auth::user()->department_id)
+            $taskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
                 ->where('eng_id', $id)
                 ->whereMonth('created_at', date('m', strtotime($month)))
                 ->count();
 
-            $pendingTaskCounts[] = MainTask::where('department_id', Auth::user()->department_id)
+            $pendingTaskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
                 ->where('eng_id', $id)
                 ->whereMonth('created_at', date('m', strtotime($month)))
                 ->where('status', 'pending')
+                ->where('isCompleted', "0")
+
                 ->count();
 
-            $completedTaskCounts[] = MainTask::where('department_id', Auth::user()->department_id)
+            $completedTaskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
                 ->where('eng_id', $id)
                 ->whereMonth('created_at', date('m', strtotime($month)))
-                ->where('status', 'completed')
+                ->where('isCompleted', "1")
                 ->count();
         }
         return view('dashboard.engineers.profile', compact('tasks', 'pendingTasks', 'completedTasks', 'months', 'taskCounts', 'pendingTaskCounts', 'completedTaskCounts', 'engineer', 'months', 'taskCounts', 'pendingTaskCounts', 'completedTaskCounts'));
@@ -65,22 +77,22 @@ class EngineersController extends Controller
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
         switch ($status) {
             case 'pending':
-                $tasks = MainTask::where('department_id', Auth::user()->department_id)
-                    ->where('status', 'pending')
+                $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+                    ->where('isCompleted', "0")
                     ->where('eng_id', $id)
                     ->latest()
                     ->paginate(6);
                 break;
             case 'completed':
-                $tasks = MainTask::where('department_id', Auth::user()->department_id)
-                    ->where('status', 'completed')
+                $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+                    ->where('isCompleted', "1")
                     ->where('eng_id', $id)
                     ->latest()
                     ->paginate(6);
                 break;
 
             case 'all':
-                $tasks = MainTask::where('department_id', Auth::user()->department_id)
+                $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
                     ->where('eng_id', $id)
                     ->latest()
                     ->paginate(6);

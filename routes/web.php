@@ -313,5 +313,5 @@ Route::post('/dashboard/admin/add-engineer', [EngineersController::class, 'addEn
 Route::get('/download/{main_task_id}/{file}', [FileController::class, 'download'])->name('download.file');
 Route::get('/delete/{main_task_id}/{file}/{id}', [FileController::class, 'delete'])->name('delete.file');
 Route::get('/view/{main_task_id}/{file}', [FileController::class, 'view'])->name('view.file');
-
+Route::post('/convert-tasks/{id}', [DashBoardController::class, 'convertTask'])->name('dashboard.convertTask');
 require __DIR__ . '/auth.php';

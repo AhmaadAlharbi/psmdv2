@@ -73,8 +73,7 @@ class DashBoardController extends Controller
         // Get the latest pending main tasks in the user's department, including those that were previously in the user's department
         $pendingTasks = department_task_assignment::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('isCompleted', "0")->latest()->get();
-
+        })->where('isCompleted', "0")->latest()->paginate(10);
 
         // Get the number of completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasksCount = SectionTask::where(function ($query) use ($departmentId) {
@@ -84,7 +83,7 @@ class DashBoardController extends Controller
         // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
+        })->where('isCompleted', '1')->where('approved', 1)->latest()->paginate(10);
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)->Orwhere('source_department', $departmentId)->count();
@@ -477,7 +476,8 @@ class DashBoardController extends Controller
             ->get();
         $files_count = TaskAttachment::where('main_tasks_id', $main_task_id)->where('department_id', $department_id)->count();
         $files = TaskAttachment::where('main_tasks_id', $main_task_id)->where('department_id', $department_id)->get();
-        return view('dashboard.reportPage2', compact('section_task', 'sections_tasks', 'shared_reports_count', 'files', 'files_count'));
+        $departments = Department::all();
+        return view('dashboard.reportPage2', compact('departments', 'section_task', 'sections_tasks', 'shared_reports_count', 'files', 'files_count'));
     }
     public function pendingReports()
     {
@@ -743,5 +743,29 @@ class DashBoardController extends Controller
         $departmentTask = department_task_assignment::where('main_tasks_id', $id)->orderBy('id', 'DESC')->get();
         $tasksTracking = TaskTimeline::where('main_tasks_id', $id)->orderBy('id', 'DESC')->get();
         return view('dashboard.timeline', compact('main_task', 'tasksTracking'));
+    }
+    public function convertTask(Request $request, $id)
+    {
+        $main_task = MainTask::findOrFail($id);
+        $selectedDepartment = $request->input('departmentSelect');
+        $note = $request->input('notes');
+        $main_task->update([
+            'notes' => $note
+        ]);
+        $departmentTask = department_task_assignment::where('main_tasks_id')
+            ->where('department_id', $selectedDepartment)
+            ->first();
+        if ($departmentTask) {
+            $departmentTask->update([
+                'status' => 'pending'
+            ]);
+        } else {
+            $converted_task = TaskConversions::create([
+                'main_tasks_id' => $id,
+                'source_department' => Auth::user()->department_id,
+                'destination_department' => $selectedDepartment,
+                'status' => 'pending'
+            ]);
+        }
     }
 }

@@ -238,10 +238,14 @@
                 </div>
 
                 <div aria-label="Basic example" class="btn-group" role="group">
-                    <a href="{{ route('dashboard.editTask', $section_task->main_tasks_id) }}"
+                    {{-- <a href="{{ route('dashboard.editTask', $section_task->main_tasks_id) }}"
                         class="btn btn-danger-gradient float-end mt-3 ms-2 pd-sm-x-25 pd-x-15">
                         <i class="fas fa-exchange-alt"></i>
                         Convert Task
+                    </a> --}}
+                    <a class="btn btn-danger-gradient float-end mt-3 ms-2 pd-sm-x-25 pd-x-15"
+                        data-bs-target="#modaldemo1" data-bs-toggle="modal" href="">
+                        Update Department
                     </a>
 
 
@@ -271,7 +275,44 @@
         </div>
     </div>
 </div>
+<div class="modal" id="modaldemo1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content modal-content-demo">
+            <div class="modal-header">
+                <h6 class="modal-title">Update this task</h6><button aria-label="Close" class="close"
+                    data-bs-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('dashboard.convertTask',$section_task->main_tasks_id)}}" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <label for="departmentSelect">Select Department</label>
+                        <input type="text" name="main_task" value="{{$section_task->main_tasks_id}}">
+                        <select id="departmentSelect" name="departmentSelect" class="form-select">
+                            <option value="{{ Auth::user()->department_id }}">{{ Auth::user()->department->name }}
+                            </option>
+                            @foreach($departments as $department)
+                            @if($department->id !== Auth::user()->department_id)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endif
+                            @endforeach
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" class="form-control"></textarea>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn ripple btn-primary" type="submit">Save changes</button>
+                <button class="btn ripple btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- row closed -->
 
 @endsection

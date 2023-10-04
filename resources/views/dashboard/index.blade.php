@@ -280,13 +280,20 @@
                                 <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
                                 <td class="text-lg"> {{$task->main_task->station->SSNAME}} </td>
                                 @if(isset($task->main_task->main_alarm_id))
-                                <td class="text-lg">{{$task->main_task->main_alarm->name}}</td>
+                                <td class="text-lg">{{$task->main_task->main_alarm->name}}
+                                </td>
                                 @else
                                 <td>-</td>
                                 @endisset
-                                <td>{{$task->status}}</td>
+                                <td>
+                                    <span class="badge bg-danger me-1">{{$task->status}}</span>
+                                </td>
                                 @if($task->eng_id)
-                                <td class="text-lg">{{$task->engineer->name}} - {{$task->engineer->department->name}}
+                                <td class="text-lg">
+                                    <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
+
+                                        {{$task->engineer->name}} - {{$task->engineer->department->name}}
+                                    </a>
                                 </td>
                                 @else
                                 <td>-</td>
@@ -303,8 +310,10 @@
                                 </td>
                             </tr>
                             @endforeach
+
                         </tbody>
                     </table>
+                    {{ $pendingTasks->links() }}
 
                 </div>
             </div>
@@ -402,7 +411,7 @@
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
-                    <h4 class="card-title mg-b-0">المهمات المنجزة - Completed Tasks</h4>
+                    <h4 class="card-title mg-b-0"> Completed Tasks</h4>
 
 
                 </div>
@@ -433,8 +442,16 @@
                                     {{$task->main_task->main_alarm->name}}
                                     @endisset
                                 </td>
-                                <td>{{$task->status}}</td>
-                                <td>{{$task->engineer->name}}</td>
+                                <td>
+                                    <span class="badge bg-success me-1">{{$task->status}}</span>
+
+                                </td>
+                                <td>
+                                    <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
+
+                                        {{$task->engineer->name}} - {{$task->engineer->department->name}}
+                                    </a>
+                                </td>
                                 <td>{{$task->created_at}}</td>
 
                                 <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
@@ -449,6 +466,8 @@
 
                         </tbody>
                     </table>
+                    {{ $completedTasks->links() }}
+
                 </div>
             </div>
         </div>

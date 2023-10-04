@@ -122,8 +122,9 @@
                         id="responsive-datatable">
                         <thead>
                             <tr>
-                                <th class=""><span>#</span></th>
-                                <th class="wd-lg-20p"><span>الاسم</span></th>
+                                <th class="wd-lg-20p"><span>#</span></th>
+                                <th class="wd-lg-20p"><span>Name</span></th>
+                                <th class="wd-lg-20p"><span>Department</span></th>
                                 <th class="wd-lg-20p"><span>Status</span></th>
                                 <th class="wd-lg-20p">Action</th>
                             </tr>
@@ -146,7 +147,7 @@
                                         <div class="dot-label bg-success mx-3"></div><span class="mt-1">active</span>
                                     </span>
                                 </td>
-
+                                <td>{{$engineer->user->department->name}}</td>
                                 <td>
 
                                     <a href="{{route('engineer.edit',['id'=>$engineer->id])}} "
