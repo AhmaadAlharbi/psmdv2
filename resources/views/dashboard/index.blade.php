@@ -18,27 +18,31 @@
 
     </div>
     <div class="btn-group dropdown">
-        <button type="button" class="btn btn-primary">لوحة التحكم حسب التحكم</button>
+        <button type="button" class="btn btn-primary">
+            <i class="fas fa-cog"></i> Control Panel - Filter by Control
+        </button>
+
         <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="dropdownMenuDate"
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate" x-placement="bottom-end">
-            <a class="dropdown-item" href="{{route('dashboard.indexControl',['control'=>'JAHRA CONTROL CENTER'])}}">تحكم
-                الجهراء</a>
             <a class="dropdown-item"
-                href="{{route('dashboard.indexControl',['control'=>'SHUAIBA CONTROL CENTER'])}}">تحكم
-                الشعيبة</a>
+                href="{{ route('dashboard.indexControl', ['control' => 'JAHRA CONTROL CENTER']) }}">Al Jahra Control</a>
             <a class="dropdown-item"
-                href="{{route('dashboard.indexControl',['control'=>'JABRIYA CONTROL CENTER'])}}">تحكم
-                الجابرية</a>
-            <a class="dropdown-item" href="{{route('dashboard.indexControl',['control'=>'TOWN CONTROL CENTER'])}}">تحكم
-                المدينة</a>
+                href="{{ route('dashboard.indexControl', ['control' => 'SHUAIBA CONTROL CENTER']) }}">Shuaiba
+                Control</a>
             <a class="dropdown-item"
-                href="{{route('dashboard.indexControl',['control'=>'NATIONAL CONTROL CENTER'])}}">تحكم
-                الوطني</a>
+                href="{{ route('dashboard.indexControl', ['control' => 'JABRIYA CONTROL CENTER']) }}">Jabriya
+                Control</a>
+            <a class="dropdown-item"
+                href="{{ route('dashboard.indexControl', ['control' => 'TOWN CONTROL CENTER']) }}">Town Control</a>
+            <a class="dropdown-item"
+                href="{{ route('dashboard.indexControl', ['control' => 'NATIONAL CONTROL CENTER']) }}">National
+                Control</a>
         </div>
     </div>
+
 </div>
 <div class="row ">
     {{-- @if(session('success'))
