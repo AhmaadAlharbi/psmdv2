@@ -131,7 +131,8 @@
                         <!-- Start of the foreach loop, iterating through $reports -->
                         @if(isset($report['main_tasks_id']) && $report['main_tasks_id'] === $task->main_tasks_id)
                         <!-- Check if $report has 'main_tasks_id' property and it matches the current $task's 'main_tasks_id' -->
-                        {!! $report['action_take'] !!}
+                        {!! strip_tags($report['action_take']) !!}
+
                         <!-- Display the 'action_take' property of the matching $report -->
                         @if ($report['department_id'] === Auth::user()->department_id &&
                         Auth::user()->role_id ==
