@@ -77,4 +77,39 @@ class StationController extends Controller
 
         return redirect()->route('stations.create')->with('success', 'Station added successfully.');
     }
+    public function edit(Station $station)
+    {
+        return view('dashboard.stations.edit', compact('station'));
+    }
+    public function update(Request $request, Station $station)
+    {
+        // Validation logic here...
+
+        $station->update([
+            'SSNAME' => $request->input('SSNAME'),
+            'COMPANY_MAKE' => $request->input('COMPANY_MAKE'),
+            'Voltage_Level_KV' => $request->input('Voltage_Level_KV'),
+            'Contract_No' => $request->input('Contract_No'),
+            'COMMISIONING_DATE' => $request->input('COMMISIONING_DATE'),
+            // Add more fields as needed...
+        ]);
+
+        // Flash a success message to the session
+        session()->flash('success', 'Station updated successfully');
+
+        return redirect()->route('stations.index'); // Redirect to the index page or any other suitable page
+    }
+    public function destroy(Station $station)
+    {
+        // Check if the station exists
+        if (!$station) {
+            return abort(404); // Or handle the not found case as needed
+        }
+
+        // Delete the station
+        $station->delete();
+
+        // Redirect to a page (e.g., station list) with a success message
+        return redirect()->route('stations.index')->with('success', 'Station deleted successfully');
+    }
 }

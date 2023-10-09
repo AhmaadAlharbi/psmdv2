@@ -281,9 +281,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/dashboard/admin', [DashBoardController::class, 'index'])->name('dashboard.index')->middleware('auth');
-Route::get('/dashboard/admin/stations', [StationController::class, 'index'])->name('station.index');
+Route::get('/dashboard/admin/stations', [StationController::class, 'index'])->name('stations.index');
 Route::get('/dashboard/admin/stations/{control}', [StationController::class, 'indexControl'])->name('station.indexControl');
 Route::get('/dashboard/stations/create', [StationController::class, 'create'])->name('stations.create');
+Route::get('/stations/{station}/edit', [StationController::class, 'edit'])->name('stations.edit');
+Route::put('/stations/{station}', [StationController::class, 'update'])->name('stations.update');
+Route::delete('/stations/{station}', [StationController::class, 'destroy'])->name('stations.destroy');
+
 Route::post('/dashboard/stations', [StationController::class, 'store'])->name('stations.store');
 Route::get('/dashboard/admin/{control}', [DashBoardController::class, 'indexControl'])->name('dashboard.indexControl')->middleware('auth');
 Route::get('/dashboard/user', [DashBoardController::class, 'userIndex'])->name('dashboard.userIndex')->middleware('auth');

@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="text" class="form-control" id="COMMISIONING_DATE" name="COMMISIONING_DATE"
+                    <input type="date" class="form-control" id="COMMISIONING_DATE" name="COMMISIONING_DATE"
                         placeholder="Commissioning Date" value="{{ old('COMMISIONING_DATE') }}">
                     @error('COMMISIONING_DATE')
                     <div class="text-danger">{{ $message }}</div>

@@ -10,50 +10,28 @@
 <div class="breadcrumb-header justify-content-between">
     <div class="my-auto">
         <div class="d-flex">
-            <h4 class="content-title mb-0 my-auto">Pages</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
-                Empty</span>
+            <h4 class="content-title mb-0 my-auto">Stations</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
+                List</span>
         </div>
     </div>
-    <div class="d-flex my-xl-auto right-content">
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-info btn-icon me-2 btn-b"><i
-                    class="mdi mdi-filter-variant"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-danger btn-icon me-2"><i class="mdi mdi-star"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-warning  btn-icon me-2"><i class="mdi mdi-refresh"></i></button>
-        </div>
-        <div class="mb-xl-0">
-            <div class="btn-group dropdown">
-                <button type="button" class="btn btn-primary">14 Aug 2019</button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                    id="dropdownMenuDate" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate"
-                    x-placement="bottom-end">
-                    <a class="dropdown-item" href="javascript:void(0);">2015</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2016</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2017</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2018</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 <!-- breadcrumb -->
 
 <!-- row -->
 <div class="row">
     <div class="card">
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
         <div class="dropdown mt-2">
             <button aria-expanded="false" aria-haspopup="true" class="btn ripple btn btn-primary"
                 data-bs-toggle="dropdown" id="dropdownMenuButton4" type="button">Filter By Control <i
                     class="fas fa-caret-down ms-1"></i></button>
             <div class="dropdown-menu tx-13">
-                <a class="dropdown-item" href="{{route('station.index')}}">All Station</a>
+                <a class="dropdown-item" href="{{route('stations.index')}}">All Station</a>
                 <a class="dropdown-item" href="{{route('station.indexControl','JAHRA CONTROL CENTER')}}">Al Jahra
                     Control</a>
                 <a class="dropdown-item" href="{{route('station.indexControl','SHUAIBA CONTROL CENTER')}}">Shuaiba
@@ -71,6 +49,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table border-top-0  table-bordered text-nowrap border-bottom" id="responsive-datatable">
+
                     <thead>
                         <tr>
                             <th class="wd-15p border-bottom-0">#</th>
@@ -80,6 +59,7 @@
                             <th class="wd-10p border-bottom-0">Contract.No</th>
                             <th class="wd-10p border-bottom-0">Commisioning Date</th>
                             <th class="wd-25p border-bottom-0">Control</th>
+                            <th class="wd-25p border-bottom-0">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,7 +72,37 @@
                             <td>{{$station->Contract_No}}</td>
                             <td>{{$station->COMMISIONING_DATE}}</td>
                             <td>{{$station->control}}</td>
+                            <td><a class="btn btn-warning" href="{{ route('stations.edit', $station) }}">Edit</a>
+                                <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteConfirmationModal-{{ $station->id }}"> <i
+                                        class="fa fa-trash"></i>
+                            </td>
                         </tr>
+                        <div class="modal fade" id="deleteConfirmationModal-{{ $station->id }}" tabindex="-1"
+                            aria-labelledby="deleteConfirmationModalLabel-{{ $station->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteConfirmationModalLabel-{{ $station->id }}">
+                                            Delete Confirmation </h5> <button type="button" class="btn-close"
+                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body"> Are you sure you want to delete this station? <form
+                                            method="POST" action="{{ route('stations.destroy', $station) }}"
+                                            class="d-inline">
+                                            @csrf @method('DELETE')
+                                            <input type="hidden" value="{{ $station->id }}" name="station_id">
+
+
+                                    </div>
+                                    <div class="modal-footer"> <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancel</button> <button
+                                            class="btn btn-outline-danger" id="deleteTask" data-id="{{ $station->id }}">
+                                            <i class="fa fa-trash"></i> Delete </button> </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         @endforeach
 
                     </tbody>
@@ -104,6 +114,7 @@
         </div>
     </div>
 </div>
+
 <!-- row closed -->
 
 @endsection
