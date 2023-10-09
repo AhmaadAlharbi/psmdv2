@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Station;
 use App\Http\Livewire\Faq;
 use App\Http\Livewire\Blog;
 use App\Http\Livewire\Chat;
@@ -122,6 +123,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Livewire\Underconstruction;
 use App\Http\Livewire\FileManagerDetails;
 use App\Http\Livewire\WidgetNotification;
+use App\Http\Controllers\StationController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\EngineersController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -279,6 +281,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/dashboard/admin', [DashBoardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+Route::get('/dashboard/admin/stations', [StationController::class, 'index'])->name('station.index');
+Route::get('/dashboard/admin/stations/{control}', [StationController::class, 'indexControl'])->name('station.indexControl');
 Route::get('/dashboard/admin/{control}', [DashBoardController::class, 'indexControl'])->name('dashboard.indexControl')->middleware('auth');
 Route::get('/dashboard/user', [DashBoardController::class, 'userIndex'])->name('dashboard.userIndex')->middleware('auth');
 Route::get('/add-task', [DashBoardController::class, 'add_task'])->name('dashboard.add_task');
@@ -315,4 +319,5 @@ Route::get('/delete/{main_task_id}/{file}/{id}', [FileController::class, 'delete
 Route::get('/view/{main_task_id}/{file}', [FileController::class, 'view'])->name('view.file');
 Route::post('/convert-tasks/{id}', [DashBoardController::class, 'convertTask'])->name('dashboard.convertTask');
 Route::delete('/delete-converted-task/{id}', [DashBoardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
+////##### statins list  
 require __DIR__ . '/auth.php';
