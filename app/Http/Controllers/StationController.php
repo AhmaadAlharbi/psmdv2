@@ -54,4 +54,27 @@ class StationController extends Controller
         // Return the stations to the view, passing them in a 'stations' variable.
         return view('dashboard.stations.index', compact('stations'));
     }
+    public function create()
+    {
+        return view('dashboard.stations.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'SSNAME' => 'required|string|max:255',
+            'COMPANY_MAKE' => 'nullable|string|max:255',
+            'Voltage_Level_KV' => 'nullable|string|max:255',
+            'Contract_No' => 'nullable|string|max:255',
+            'COMMISIONING_DATE' => 'nullable|string|max:255',
+            'control' => 'nullable|string|max:255',
+            'FULLNAME' => 'nullable|string|max:255',
+            'pm' => 'nullable|string|max:255',
+        ]);
+
+        Station::create($request->all());
+        session()->flash('success', 'Data saved successfully');
+
+        return redirect()->route('stations.create')->with('success', 'Station added successfully.');
+    }
 }

@@ -83,7 +83,7 @@
 					<ul class="slide-menu">
 						<li class="side-menu__label1"><a href="javascript:void(0);">Charts</a></li>
 						<li><a class="slide-item" href="{{ route('station.index') }}">Stations List</a></li>
-						<li><a class="slide-item" href="{{ route('dashboard.engineersList') }}">Add Station</a></li>
+						<li><a class="slide-item" href="{{ route('stations.create') }}">Add Station</a></li>
 					</ul>
 				</li>
 

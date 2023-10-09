@@ -283,6 +283,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard/admin', [DashBoardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 Route::get('/dashboard/admin/stations', [StationController::class, 'index'])->name('station.index');
 Route::get('/dashboard/admin/stations/{control}', [StationController::class, 'indexControl'])->name('station.indexControl');
+Route::get('/dashboard/stations/create', [StationController::class, 'create'])->name('stations.create');
+Route::post('/dashboard/stations', [StationController::class, 'store'])->name('stations.store');
 Route::get('/dashboard/admin/{control}', [DashBoardController::class, 'indexControl'])->name('dashboard.indexControl')->middleware('auth');
 Route::get('/dashboard/user', [DashBoardController::class, 'userIndex'])->name('dashboard.userIndex')->middleware('auth');
 Route::get('/add-task', [DashBoardController::class, 'add_task'])->name('dashboard.add_task');
