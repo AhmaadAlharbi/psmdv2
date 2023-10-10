@@ -25,6 +25,9 @@ class DashBoardController extends Controller
     public function index()
     {
         $departmentId = Auth::user()->department_id;
+        if (Auth::user()->role_id !== 2) {
+            return redirect()->route('dashboard.indexUser');
+        }
         //get tasks count for day , week and month
         // Get tasks count for a specific day
         // Get total tasks count for a specific day
