@@ -26,6 +26,6 @@ class MewEmail implements Rule
      */
     public function message()
     {
-        return 'Only MEW email addresses are allowed.';
+        return 'Only email addresses with the MEW (Ministry of Electricity and Water) domain are allowed.';
     }
 }

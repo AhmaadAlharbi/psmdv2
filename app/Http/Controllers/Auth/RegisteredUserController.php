@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
         //         // Handle an invalid department name
         //         break;
         // }
+
         return view('livewire.signup');
     }
 
@@ -50,6 +51,8 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255', new FullName],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users', new MewEmail],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'department' => ['required', 'integer', 'in:1,2,3,4,5,6'],
+
         ]);
 
 

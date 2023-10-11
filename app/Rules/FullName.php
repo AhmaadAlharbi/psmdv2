@@ -29,6 +29,6 @@ class FullName implements Rule
      */
     public function message()
     {
-        return 'The :attribute must be at least four names separated by spaces.';
+        return 'The :attribute must match the format of your civil ID, which typically includes at least four words separated by spaces.';
     }
 }
