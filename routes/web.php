@@ -295,6 +295,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::get('/engineers-list', [EngineersController::class, 'engineersList'])->name('dashboard.engineersList');
     Route::get('engineer-profile/{eng_id}', [EngineersController::class, 'engineerProfile'])->name('dashboard.engineerProfile');
     Route::get('/admin/reports/pending-approval', [DashboardController::class, 'pendingReports'])->name('dashboard.pendingReports');
+    Route::get('/admin/dashboard/pending-users', [DashBoardController::class, 'pendingUsers'])->name('dashboard.pendingUsers');
     Route::post('admin/dashboard/reports/approve/{id}', [DashboardController::class, 'approveReports'])->name('dashboard.approveReports');
     Route::get('/task/edit/{id}', [DashBoardController::class, 'editTask'])->name('dashboard.editTask');
     Route::get('/update/user/{id}', [UserController::class, 'update'])->name('user.update');
@@ -303,6 +304,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::post('/convert-tasks/{id}', [DashBoardController::class, 'convertTask'])->name('dashboard.convertTask');
     Route::get('/engineer/{id}/edit', [EngineersController::class, 'edit'])->name('engineer.edit');
     Route::put('/engineer/update/{id}', [EngineersController::class, 'update'])->name('engineer.update');
+    Route::patch('/activate-users', [UserController::class, 'activateUsers'])->name('update.users');
     Route::delete('/tasks/{id}/delete', [DashBoardController::class, 'destroy'])->name('task.destroy');
     Route::delete('/section-tasks/{id}/delete', [DashBoardController::class, 'destroySectionTasks'])->name('sectionTasks.destroy');
     Route::get('/users-list', [UserController::class, 'usersList'])->name('dashboard.usersList');
@@ -310,23 +312,27 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::delete('/delete-converted-task/{id}', [DashBoardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
 });
 
+Route::middleware(['confirmed'])->group(function () {
+    Route::get('/dashboard/user', [DashBoardController::class, 'userIndex'])->name('dashboard.userIndex')->middleware('auth');
+    Route::get('/engineer-task-page/{task}', [DashBoardController::class, 'engineerTaskPage'])->name('dashboard.engineerTaskPage')->middleware('auth');
+    Route::post('/submit-engineer-report/{id}', [DashBoardController::class, 'submitEngineerReport'])->name('dashboard.submitEngineerReport');
+    Route::get('/report-page/{id}', [DashBoardController::class, 'reportPage'])->name('dashboard.reportPage');
+    Route::get('/report-page/{main_task_id}/{department_id}', [DashBoardController::class, 'reportDepartment'])->name('dashboard.reportDepartment');
+    Route::get('/tasks/{status}', [DashBoardController::class, 'showTasks'])->name('dashboard.showTasks');
+    Route::get('/search/station', [DashBoardController::class, 'searchStation'])->name('dashboard.searchStation');
+    Route::get('/search/engineer-tasks', [DashBoardController::class, 'engineerTasks'])->name('dashboard.engineerTasks');
+    Route::get('engineer/{id}/tasks/{status}', [EngineersController::class, 'engineerTask'])->name('dashboard.engineerTask');
+    Route::get('/archive', [DashBoardController::class, 'archive'])->name('dashboard.archive');
+    Route::get('/archive/search', [DashBoardController::class, 'searchArchive'])->name('dashboard.searchArchive');
+});
 
+Route::get('/unapproved-access', function () {
+    return view('waiting-approval');
+})->name('unapproved.access');
 
-Route::get('/dashboard/user', [DashBoardController::class, 'userIndex'])->name('dashboard.userIndex')->middleware('auth');
-Route::get('/engineer-task-page/{task}', [DashBoardController::class, 'engineerTaskPage'])->name('dashboard.engineerTaskPage')->middleware('auth');
-Route::post('/submit-engineer-report/{id}', [DashBoardController::class, 'submitEngineerReport'])->name('dashboard.submitEngineerReport');
-Route::get('/report-page/{id}', [DashBoardController::class, 'reportPage'])->name('dashboard.reportPage');
-Route::get('/report-page/{main_task_id}/{department_id}', [DashBoardController::class, 'reportDepartment'])->name('dashboard.reportDepartment');
-Route::get('/tasks/{status}', [DashBoardController::class, 'showTasks'])->name('dashboard.showTasks');
-Route::get('/search/station', [DashBoardController::class, 'searchStation'])->name('dashboard.searchStation');
-Route::get('/search/engineer-tasks', [DashBoardController::class, 'engineerTasks'])->name('dashboard.engineerTasks');
-Route::get('engineer/{id}/tasks/{status}', [EngineersController::class, 'engineerTask'])->name('dashboard.engineerTask');
-Route::get('/archive', [DashBoardController::class, 'archive'])->name('dashboard.archive');
-Route::get('/archive/search', [DashBoardController::class, 'searchArchive'])->name('dashboard.searchArchive');
 Route::get('/logout2', [EngineersController::class, 'logout'])->name('engineer.logout');
 
 Route::get('/dashboard/admin/timeline/{id}', [DashBoardController::class, 'timeline'])->name('dashboard.timeline');
-
 Route::get('/dashbaord/user/engineer-tasks/{status}', [DashBoardController::class, 'ShowTasksEngineer'])->name('dashboard.ShowTasksEngineer');
 Route::get('/dashboard/user/request-to-update-report/{main_task_id}', [DashBoardController::class, 'requestToUpdateReport'])->name('dashboard.requestToUpdateReport');
 Route::patch('/dashboard/user/update-report/{main_task_id}', [DashBoardController::class, 'updateReport'])->name('dashboard.updateReport');

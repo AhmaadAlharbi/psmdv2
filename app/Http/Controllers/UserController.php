@@ -28,4 +28,11 @@ class UserController extends Controller
         session()->flash('success', 'تم التعديل بنجاح');
         return back();
     }
+    public function activateUsers(Request $request)
+    {
+        // Validate the request if needed
+        $userIds = $request->input('users', []); // Get the selected user IDs from the request
+        User::whereIn('id', $userIds)->update(['approved' => true]);
+        return redirect()->route('dashboard.usersList')->with('success', 'Users activated successfully.');
+    }
 }

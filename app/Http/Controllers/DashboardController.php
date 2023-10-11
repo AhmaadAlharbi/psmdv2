@@ -118,7 +118,8 @@ class DashBoardController extends Controller
             ->count();
 
         $stationsCount = Station::all()->count();
-        return view('dashboard.index', compact('stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
+        return view('dashboard.index', compact('usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
 
     // return MainTask::with('station')->whereHas('station', function ($query) {
@@ -599,6 +600,14 @@ class DashBoardController extends Controller
 
         return view('dashboard.reportPageEdit', compact('section_task'));
     }
+    public function pendingUsers()
+    {
+        $pendingUsers = User::where('department_id', Auth::user()->department_id)
+            ->where('approved', false)->get();
+        return view('dashboard.users.pendingUsers', compact('pendingUsers'));
+    }
+
+
     public function updateReport(Request $request, $main_task_id)
     {
         $actionTake = $request->input('action_take');

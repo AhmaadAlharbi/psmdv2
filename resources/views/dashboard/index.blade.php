@@ -257,6 +257,15 @@
                             </div>
 
                         </div>
+                        <div class="col text-center">
+                            <h3>Users Ready for Approval ({{$usersPendingCount}}) </h3>
+                            <a href="{{route('dashboard.pendingUsers')}}" class="btn btn-secondary">Check Users
+                            </a>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <li class="icons-list-item"><i class="fa fa-hourglass-end text-danger"></i></li>
+                            </div>
+
+                        </div>
                     </div><!-- row -->
                 </div>
             </div>
