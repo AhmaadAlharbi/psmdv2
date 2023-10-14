@@ -129,8 +129,7 @@
                                             <div class="tab-content">
                                                 <div class="tab-pane active" id="tab21">
                                                     <div class="table-responsive border d-print-none mt-4">
-                                                        @if(count($sections_tasks) > 0 && Auth::user()->department_id
-                                                        !== 1)
+                                                        @if(count($sections_tasks) > 0 )
                                                         <table class="table mg-b-0 text-md-nowrap w-100">
                                                             <thead>
                                                                 <tr>

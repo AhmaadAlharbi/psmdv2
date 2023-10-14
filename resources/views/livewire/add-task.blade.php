@@ -11,7 +11,7 @@
 
         <div class="text-center ">
             <label for=" ssname">Departmental Task</label>
-
+            area is : {{$area}}
             <select name="department" wire:model="selectedDepartment" class="form-control">
                 <option selected value="{{Auth::user()->department_id}}">{{Auth::user()->department->name}}</option>
                 @foreach($departments as $department)

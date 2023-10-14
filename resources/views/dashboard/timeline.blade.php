@@ -58,6 +58,10 @@
                     <div
                         class="timeline-wrapper {{ $key % 2 === 0 ? 'timeline-wrapper-warning' : 'timeline-wrapper-info timeline-inverted' }} ">
                         <div class="timeline-badge {{ $key % 2 === 0 ? 'success' : 'info' }}">
+                            <div
+                                class="d-flex justify-content-center align-items-center mt-2 text-white font-weight-bold">
+                                {{$loop->iteration}}
+                            </div>
 
                         </div>
                         <div class="timeline-panel">
