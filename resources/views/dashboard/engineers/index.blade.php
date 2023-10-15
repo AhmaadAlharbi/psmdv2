@@ -11,11 +11,11 @@
 
     <div class="my-auto">
         <div class="d-flex">
-            <h4 class="content-title mb-0 my-auto">ادارة صيانة محطات التحويل الرئيسية</h4>
+            <h4 class="content-title mb-0 my-auto">PSMD</h4>
 
             <span class="text-muted mt-1 tx-13 ms-2 mb-0">/
 
-                قسم {{Auth::user()->department->name}}
+                {{Auth::user()->department->name}}
             </span>
 
         </div>
@@ -45,7 +45,7 @@
                             <i class="icon icon-rocket"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">عدد الأعطال الغير منجزة</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Pending Tasks</h5>
                             <h2 class="counter mb-0 text-white">{{$pendingTasksCount}}</h2>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                             <i class="icon icon-docs"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">عدد الأعطال المنجزة</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Completed Tasks</h5>
                             <h2 class="counter mb-0 text-white">{{$completedTasksCount}}</h2>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                             <i class="icon icon-emotsmile"></i>
                         </div>
                         <div class="ms-auto">
-                            <h5 class="tx-18 tx-white-8 mb-3">ارشيف التقارير</h5>
+                            <h5 class="tx-18 tx-white-8 mb-3">Reports Archive</h5>
                             <h2 class="counter mb-0 text-white">{{$archiveCount}}</h2>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
     <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
         @foreach($pendingTasks as $task)
         <div class="card card-danger">
-            <h5 class="card-title p-4">التقارير الغير منجزة</h5>
+            <h5 class="card-title p-4">Pending Tasks</h5>
 
             <div class="card-body  ">
                 <ul class="list-group   text-center">

@@ -24,7 +24,7 @@
     <div class="card mg-b-20" id="tabs-style2">
         <div class="card-body">
             <div class="main-content-label mg-b-5">
-                البحث
+                Search
             </div>
 
             <div class="text-wrap">
@@ -34,11 +34,12 @@
                             <div class="tabs-menu1">
                                 <!-- Tabs -->
                                 <ul class="nav panel-tabs main-nav-line">
-                                    <li><a href="#tab4" class="nav-link active" data-bs-toggle="tab">البحث في
-                                            المحطات</a>
+                                    <li><a href="#tab4" class="nav-link active" data-bs-toggle="tab">
+                                            Search in stations
+                                        </a>
                                     </li>
                                     <li><a href="#tab5" class="nav-link" data-bs-toggle="tab">
-                                            البحث في المهندسين</a></li>
+                                            Search in Engineers</a></li>
 
                                 </ul>
                             </div>
@@ -56,8 +57,10 @@
                                                 <option value="{{ $station->SSNAME }}">
                                                     @endforeach
                                             </datalist>
-                                            <button type="submit"
-                                                class="col-1 btn btn-secondary bg-secondary mb-2">ابحث</button>
+                                            <button type="submit" class="col-1 btn btn-secondary bg-secondary mb-2">
+                                                <i class="bi bi-search"></i> Search
+                                            </button>
+
                                         </div>
                                     </form>
                                 </div>
@@ -88,15 +91,23 @@
         <div class="p-3 bg-light text-dark border">
             <nav class="nav main-nav flex-column flex-md-row">
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'all' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'all'])}}">كل المهمات</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'all']) }}">
+                    <i class="bi bi-list-task"></i> All Tasks
+                </a>
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'pending' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'pending'])}}">المهمات الغير
-                    المنجزة</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'pending']) }}">
+                    <i class="bi bi-clock-history"></i> Pending Tasks
+                </a>
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'completed' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'completed'])}}">المهمات المنجزة</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'completed']) }}">
+                    <i class="bi bi-check-circle-fill"></i> Completed Tasks
+                </a>
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'mutual-tasks' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'mutual-tasks'])}}">المهمات المشتركة</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'mutual-tasks']) }}">
+                    <i class="bi bi-people"></i> Mutual Tasks
+                </a>
             </nav>
+
         </div>
     </div>
     @endif

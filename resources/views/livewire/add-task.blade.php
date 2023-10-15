@@ -10,8 +10,8 @@
     <form wire:submit.prevent="submit">
 
         <div class="text-center ">
-            <label for=" ssname">Departmental Task</label>
-            area is : {{$area}}
+            <label for=" ssname">Department Task</label>
+
             <select name="department" wire:model="selectedDepartment" class="form-control">
                 <option selected value="{{Auth::user()->department_id}}">{{Auth::user()->department->name}}</option>
                 @foreach($departments as $department)

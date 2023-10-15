@@ -10,7 +10,7 @@
     <form wire:submit.prevent="update">
 
         <div class="text-center ">
-            <label for=" ssname">المهمة تتبع قسم</label>
+            <label for=" ssname">Department Task</label>
 
             <select name="department" wire:model="selectedDepartment" class="form-control">
                 <option selected value="{{Auth::user()->department_id}}">{{Auth::user()->department->name}}</option>
@@ -18,7 +18,7 @@
                 <option value="{{$department->id}}">{{$department->name}}</option>
                 @endforeach
             </select>
-            <label for=" ssname">يرجى اختيار اسم المحطة</label>
+            <label for=" ssname">Please select the station name</label>
             @if($selectedStation == null)
 
             <input list="ssnames" wire:change="getStationInfo" class="form-control " wire:model="selectedStation"
@@ -135,7 +135,7 @@
                             <option value="other">other</option>
                         </select>
                         @if($selectedEquip === 'other')
-                        <label for="">Enter equip number and name | ادخل رقم المعده واسمها</label>
+                        <label for="">Enter equip number and name</label>
                         <input type="text" wire:model="otherEquip" class="form-control">
                         @endif
                     </div>
@@ -158,7 +158,7 @@
 
 
                 <div class="">
-                    <label for="inputName" class="control-label">اسم المهندس</label>
+                    <label for="inputName" class="control-label">Please select engineer name</label>
                     <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
                         class="form-control engineerSelect my-4">
                         <option value="-">-</option>
@@ -180,7 +180,7 @@
                     <input wire:model="engineerEmail" type="text" class="form-control" name="eng_email"
                         id="eng_name_email" readonly>
                 </div>
-                <label for="" class="mt-2">نوع المهمة</label>
+                <label for="" class="mt-2">Task Type</label>
                 <select name="work_type" wire:model="work_type" name="work_type" class="form-control">
                     <option value="">-</option>
                     <option value="Clearance">Clearance</option>
@@ -193,7 +193,7 @@
                 <label for="problem" class="control-label mt-4"> Nature of Fault</label>
                 <textarea list="problems" wire:model="problem" class="form-control " rows="3" name="problem"
                     id="problem"></textarea>
-                <label for="exampleTextarea" class="mt-3">ملاحظات</label>
+                <label for="exampleTextarea" class="mt-3">Notes</label>
                 <textarea class="form-control" wire:model="notes" id="exampleTextarea" name="notes" rows="3"></textarea>
                 @error('photos.*') <span class="error">{{ $message }}</span> @enderror
 
@@ -213,8 +213,8 @@
                     <input class="form-control form-control-lg" id="formFileLg" type="file" wire:model="photos"
                         multiple>
                     <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary" id="but4">ارسال
-                            البيانات</button>
+                        <button type="submit" class="btn btn-primary" id="but4">
+                            Submit</button>
                     </div>
 
                     <script>
@@ -222,8 +222,8 @@
                             btnid.addEventListener('click', () => {
                                 let timerInterval
                                 Swal.fire({
-                                    title: 'جاري ارسال البيانات',
-                                    html: 'يرجى الانتظار وعدم اغلاق الصفحة',
+                                    title: 'Sending Data in progress',
+                                    html: 'Please wait and do not close the page'',
                                     timer: 60000,
                                     timerProgressBar: true,
                                     didOpen: () => {
