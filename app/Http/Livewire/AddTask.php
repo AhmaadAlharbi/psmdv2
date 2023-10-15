@@ -236,56 +236,106 @@ class AddTask extends Component
     /**
      * Get engineers based on department, area, and shift criteria.
      */
+    // public function getEngineer()
+    // {
+    //     $userDepartmentId = Auth::user()->department_id;
+    //     $area = $this->area;
+    //     // Default to showing day shift engineers
+    //     $shiftId = 1; // Assuming 1 is the ID for the day shift
+    //     // Change the shift to night shift if the checkbox is checked
+    //     if ($this->duty) {
+    //         $shiftId = 2; // Assuming 2 is the ID for the night shift
+    //     }
+    //     // Query engineers based on the department
+
+    //     //protections departments engineers (2 = Protection Department)
+    //     if ($userDepartmentId === 2) {
+    //         $engineers = Engineer::where('department_id', $userDepartmentId)
+    //             // Use a conditional 'when' clause to filter by area if not equal to 3
+    //             ->when($area != 3, function ($query) use ($area) {
+    //                 $query->whereHas('areas', function ($subquery) use ($area) {
+    //                     $subquery->where('areas.id', $area); // Filter by the specified area ID
+    //                 });
+    //             })
+
+    //             // Further filter by shift using 'whereHas'
+    //             ->whereHas('shifts', function ($subquery) use ($shiftId) {
+    //                 $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
+    //             })
+    //             // Get the resulting collection of engineers
+    //             ->get();
+    //         $this->engineers = $engineers;
+    //     }
+    //     //Switchgears departments engineers (5 = Protection Department)
+    //     if ($userDepartmentId === 5) {
+    //         $engineers = Engineer::where('department_id', $userDepartmentId)
+    //             // Use a conditional 'when' clause to filter by area if not equal to 3
+    //             ->when($area != 4, function ($query) use ($area) {
+    //                 $query->whereHas('areas', function ($subquery) use ($area) {
+    //                     $subquery->where('areas.id', $area); // Filter by the specified area ID
+    //                 });
+    //             })
+    //             // Further filter by shift using 'whereHas'
+    //             ->whereHas('shifts', function ($subquery) use ($shiftId) {
+    //                 $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
+    //             })
+    //             // Get the resulting collection of engineers
+    //             ->get();
+    //         $this->engineers = $engineers;
+    //     }
+    //     ///
+    //     //Battreis departments engineers (3 = Battries Department)
+    //     if ($userDepartmentId === 3) {
+    //         $engineers = Engineer::where('department_id', $userDepartmentId)
+    //             // Use a conditional 'when' clause to filter by area if not equal to 3                             
+    //             // Further filter by shift using 'whereHas'
+    //             ->whereHas('shifts', function ($subquery) use ($shiftId) {
+    //                 $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
+    //             })
+    //             // Get the resulting collection of engineers
+    //             ->get();
+    //         $this->engineers = $engineers;
+    //     }
+    // }
+
+
     public function getEngineer()
     {
         $userDepartmentId = Auth::user()->department_id;
         $area = $this->area;
-        // Default to showing day shift engineers
-        $shiftId = 1; // Assuming 1 is the ID for the day shift
-        // Change the shift to night shift if the checkbox is checked
-        if ($this->duty) {
-            $shiftId = 2; // Assuming 2 is the ID for the night shift
-        }
-        // Query engineers based on the department
 
-        //protections departments engineers (2 = Protection Department)
-        if ($userDepartmentId === 2) {
-            $engineers = Engineer::where('department_id', $userDepartmentId)
-                // Use a conditional 'when' clause to filter by area if not equal to 3
-                ->when($area != 3, function ($query) use ($area) {
-                    $query->whereHas('areas', function ($subquery) use ($area) {
-                        $subquery->where('areas.id', $area); // Filter by the specified area ID
-                    });
-                })
+        // Determine the shift based on the duty checkbox (day shift by default)
+        $shiftId = $this->duty ? 2 : 1; // Assuming 2 is the ID for night shift, and 1 for day shift
 
-                // Further filter by shift using 'whereHas'
-                ->whereHas('shifts', function ($subquery) use ($shiftId) {
-                    $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
-                })
-                // Get the resulting collection of engineers
-                ->get();
-            $this->engineers = $engineers;
-        }
-        //Switchgears departments engineers (5 = Protection Department)
-        if ($userDepartmentId === 5) {
-            $engineers = Engineer::where('department_id', $userDepartmentId)
-                // Use a conditional 'when' clause to filter by area if not equal to 3
-                ->when($area != 4, function ($query) use ($area) {
-                    $query->whereHas('areas', function ($subquery) use ($area) {
-                        $subquery->where('areas.id', $area); // Filter by the specified area ID
+        // Start building the query
+        $query = Engineer::where('department_id', $userDepartmentId)
+            ->when($userDepartmentId === 2, function ($query) use ($area) {
+                // Filter by area if the user's department is Protection
+                return $query->when($area !== 3, function ($query) use ($area) {
+                    return $query->whereHas('areas', function ($subquery) use ($area) {
+                        $subquery->where('areas.id', $area);
                     });
-                })
-                // Further filter by shift using 'whereHas'
-                ->whereHas('shifts', function ($subquery) use ($shiftId) {
-                    $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
-                })
-                // Get the resulting collection of engineers
-                ->get();
-            $this->engineers = $engineers;
-        }
+                });
+            })
+            ->when($userDepartmentId === 5, function ($query) use ($area) {
+                // Filter by area if the user's department is Switchgears
+                return $query->when($area !== 4, function ($query) use ($area) {
+                    return $query->whereHas('areas', function ($subquery) use ($area) {
+                        $subquery->where('areas.id', $area);
+                    });
+                });
+            })
+            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
+                // Filter by shift if the user's department is Batteries or Transformers
+                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                    $subquery->where('shifts.id', $shiftId);
+                });
+            });
+
+        // Retrieve the engineers based on the conditions
+        $engineers = $query->get();
+        $this->engineers = $engineers;
     }
-
-
 
 
 
