@@ -45,16 +45,16 @@ class TaskReport extends Notification
         $url = url('/engineer-task-page/' . $this->task->id);
 
         $message = (new MailMessage)
-
-            // ->line('New Task from PSMD')
-            // ->action('Notification Action', url('/'))
-            // ->line('Thank you for using our application!');
             ->subject('New Task from PSMD')
-            ->greeting('Hello!')
-            ->line('Task to ' . $this->task->station->SSNAME . ' has been sent to you at ')
-            ->action('عرض المهمة', $url)
+            ->greeting('Dear Engineer,')
+            ->line('A new task has been assigned to you for ' . $this->task->station->SSNAME . '.')
+            ->action('View Task Details', $url);
+        if (count($this->photos) > 0) {
+            $message->line('Please find the attached files for reference:');
+        }
+        $message->line('Should you have any questions or require further information, please review the task details.')
+            ->salutation('Best regards');
 
-            ->line('Please find the attached files:');
         foreach ($this->photos as $photo) {
             $message->attach(public_path('storage/attachments/' . $this->task->id . "/" . $photo->getClientOriginalName()));
         }

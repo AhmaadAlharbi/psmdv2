@@ -459,7 +459,7 @@ class AddTask extends Component
         }
         if ($this->selectedEngineer !== null) {
             $user = User::where('email', $this->engineerEmail)->first();
-            // Notification::send($user, new TaskReport($main_task, $this->photos));
+            Notification::send($user, new TaskReport($main_task, $this->photos));
         }
         session()->flash('success', 'The Task has been added');
 

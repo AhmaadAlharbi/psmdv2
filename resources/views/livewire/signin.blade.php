@@ -32,12 +32,12 @@
                             <div class="col-md-10 col-lg-10 col-xl-9 mx-auto">
                                 <div class="card-sigin">
                                     <div class="mb-5 d-flex">
-                                        <a href="{{url('index')}}"><img
+                                        {{-- <a href="{{url('index')}}"><img
                                                 src="{{asset('assets/img/brand/favicon-32x32.png')}}"
                                                 class="sign-favicon-a ht-40" alt="logo">
                                             <img src="{{asset('assets/img/brand/favicon-white.png')}}"
                                                 class="sign-favicon-b ht-40" alt="logo">
-                                        </a>
+                                        </a> --}}
                                         <h3 class="main-logo1 ms-1 me-0 my-auto tx-28">
                                             Transsmison Electrical Networks
                                         </h3>
@@ -80,7 +80,7 @@
                                             </form>
 
                                             <div class=" main-signin-footer mt-5 text-white">
-                                                <p><a href="{{url('forgot')}}">Forgot password?</a></p>
+                                                {{-- <p><a href="{{url('forgot')}}">Forgot password?</a></p> --}}
                                                 <p>Don't have an account? <a href="{{url('signup')}}">Create an
                                                         Account</a></p>
                                             </div>

@@ -213,8 +213,8 @@
                                 btnid.addEventListener('click', () => {
                                     let timerInterval
                                     Swal.fire({
-                                        title: 'Sending Data...',
-                                        html: 'Please wait and do not close the page'
+                                        title: 'Data Submission in Progress',
+                                        html: 'Please wait and do not close the page',
                                         timer: 60000,
                                         timerProgressBar: true,
                                         didOpen: () => {
