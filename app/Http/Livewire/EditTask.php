@@ -452,7 +452,8 @@ class EditTask extends Component
             $user = User::where('email', $this->engineerEmail)->first();
             // Notification::send($user, new TaskReport($this->task, $this->photos));
         }
-        session()->flash('success', 'تم التعديل بنجاح');
+
+        session()->flash('success', 'Updated successfully.');
         return redirect("/dashboard/admin");
     }
 }

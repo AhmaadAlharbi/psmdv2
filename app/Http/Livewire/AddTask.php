@@ -428,7 +428,7 @@ class AddTask extends Component
                 'department_id' => Auth::user()->department_id,
                 'main_tasks_id' => $main_task_id,
                 'eng_id' => $this->selectedEngineer,
-                'status' => 'pending'
+                'status' => 'converted'
             ]);
         } else {
             $departmentTask = department_task_assignment::create([

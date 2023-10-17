@@ -70,6 +70,38 @@ class MainAlarmSeeder extends Seeder
             "Low Voltage",
             "High Voltage"
         ];
+        $transformersAlarms = [
+            'Transformer Alarm',
+            'Cable Oil Pressure Low Trip (UGC & Cable Tails)',
+            'Transformer Out of Step',
+            'Transformer Buchholz Alarm',
+            'Transformer Buchholz Trip',
+            'Transformer Buchholz Tap Changer Trip',
+            'Transformer Buchholz+Transformer Low Oil Level Alarm for33/11 KV',
+            'Transformer Oil Temperature Alarm',
+            'Transformer Oil Temperature Trip',
+            'Transformer Winding Temperature Alarm',
+            'Transformer Winding Temperature Trip',
+            'Transformer Temperature (oil+winding) Alarm for 33/11',
+            'Transformer Low Oil Level Alarm',
+            'Transformer Bucholz Tap Changer Alarm',
+            'Transformer Blower (Fans) Failure Alarm',
+            'Transformer Pumps Failure Alarm',
+            'Tap Changer Drive Motor Failure Alarm',
+            'General Alarm Shunt Reactor',
+            'Shunt Reactor Restricted Earth Fault Relay Trip',
+            'Shunt Reactor Bucholz Alarm',
+            'Shunt Reactor Bucholz Trip',
+            'Shunt Reactor Oil Temperature Alarm',
+            'Shunt Reactor Oil Temperature Trip',
+            'Shunt Reactor Winding Temperature Alarm',
+            'Shunt Reactor Winding Temperature trip',
+            'Shunt Reactor Temperature Alarm',
+            'Shunt Reactor Low Oil Level Alarm',
+            'Shunt Reactor Arcing Fault Protection Alarm',
+            'Shunt Reactor Blowers (Fans) Failure Alarm',
+
+        ];
 
         foreach ($alarms as $alarm) {
             DB::table('main_alarm')->insert([
@@ -88,6 +120,13 @@ class MainAlarmSeeder extends Seeder
         foreach ($batteryAlarms as $alarm) {
             DB::table('main_alarm')->insert([
                 'department_id' => 3,
+                'name' => $alarm,
+
+            ]);
+        }
+        foreach ($transformersAlarms as $alarm) {
+            DB::table('main_alarm')->insert([
+                'department_id' => 4,
                 'name' => $alarm,
 
             ]);

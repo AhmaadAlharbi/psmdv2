@@ -290,6 +290,8 @@
 
         </div>
         {{--red table --}}
+        @if (!$pendingTasks->isEmpty())
+
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
@@ -298,6 +300,7 @@
                 </div>
             </div>
             <div class="card-body">
+
                 <div class="table-responsive">
                     <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
@@ -355,8 +358,10 @@
                 </div>
             </div>
         </div>
+        @endif
+
         {{-- incoming table--}}
-        @if(isset($incomingTasks) && count($incomingTasks) > 0)
+        @if (!$incomingTasks->isEmpty())
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
@@ -400,7 +405,7 @@
         </div>
         @endif
         {{-- outgoing tasks--}}
-        @if(isset($outgoingTasks) && count($outgoingTasks) > 0)
+        @if (!$outgoingTasks->isEmpty())
         <div class="card">
             <div class="card-header pb-0">
                 <h4 class="card-title mg-b-0">Outgoing Tasks</h4>
@@ -487,6 +492,8 @@
         </div>
         @endif
         {{-- green table--}}
+        @if (!$completedTasks->isEmpty())
+
         <div class="card">
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
@@ -554,6 +561,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
 
