@@ -7,7 +7,7 @@
             <h3>Waiting for Approval</h3>
 
 
-            <p class="lead">You are not authorized to access this page.</p>
+            <p class="lead">Please wait until the head department approves your account.</p>
             @if(Auth::user()->role->title === 'Admin')
             <a href="{{route('dashboard.index')}}" class="btn btn-primary">Home Page</a>
             @else

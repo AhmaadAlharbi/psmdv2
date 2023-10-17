@@ -46,7 +46,10 @@
 
                                             <!-- Name -->
                                             <div>
-                                                <x-input-label for="name" :value="__('Name')" />
+                                                <x-input-label for="name" :value="__('Full name , Match civil ID format: typically four
+                                                words,
+                                                separated by
+                                                spaces.')" />
                                                 <x-text-input id="name" class="form-control" type="text" name="name"
                                                     :value="old('name')" required autofocus autocomplete="name" />
                                                 <x-input-error :messages="$errors->get('name')"
@@ -55,7 +58,7 @@
 
                                             <!-- Email Address -->
                                             <div class="mt-4">
-                                                <x-input-label for="email" :value="__('Email')" />
+                                                <x-input-label for="email" :value="__('Email,only MEW Email')" />
                                                 <x-text-input id="email" class="form-control" type="email" name="email"
                                                     :value="old('email')" required autocomplete="username" />
                                                 <x-input-error :messages="$errors->get('email')"

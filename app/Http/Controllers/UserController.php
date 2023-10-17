@@ -13,7 +13,7 @@ class UserController extends Controller
         $users = User::where('department_id', Auth::user()->department_id)->get();
         return view('dashboard.users.usersList', compact('users'));
     }
-    public function update($id)
+    public function setAdmin($id)
     {
         $user = User::findOrFail($id);
         $role = null;

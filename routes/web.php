@@ -124,7 +124,7 @@ use App\Http\Livewire\Underconstruction;
 use App\Http\Livewire\FileManagerDetails;
 use App\Http\Livewire\WidgetNotification;
 use App\Http\Controllers\StationController;
-use App\Http\Controllers\DashBoardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EngineersController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -283,7 +283,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     // Add routes that require role_id = 2 here
-    Route::get('/dashboard/admin', [DashBoardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+    Route::get('/dashboard/admin', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
     Route::get('/dashboard/admin/stations', [StationController::class, 'index'])->name('stations.index');
     Route::get('/dashboard/admin/stations/{control}', [StationController::class, 'indexControl'])->name('station.indexControl');
     Route::get('/dashboard/stations/create', [StationController::class, 'create'])->name('stations.create');
@@ -291,41 +291,43 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::put('/stations/{station}', [StationController::class, 'update'])->name('stations.update');
     Route::delete('/stations/{station}', [StationController::class, 'destroy'])->name('stations.destroy');
     Route::post('/dashboard/stations', [StationController::class, 'store'])->name('stations.store');
-    Route::get('/dashboard/admin/{control}', [DashBoardController::class, 'indexControl'])->name('dashboard.indexControl')->middleware('auth');
-    Route::get('/add-task', [DashBoardController::class, 'add_task'])->name('dashboard.add_task');
+    Route::get('/dashboard/admin/{control}', [DashboardController::class, 'indexControl'])->name('dashboard.indexControl')->middleware('auth');
+    Route::get('/add-task', [DashboardController::class, 'add_task'])->name('dashboard.add_task');
     Route::get('/engineers-list', [EngineersController::class, 'engineersList'])->name('dashboard.engineersList');
     Route::get('engineer-profile/{eng_id}', [EngineersController::class, 'engineerProfile'])->name('dashboard.engineerProfile');
     Route::get('/admin/reports/pending-approval', [DashboardController::class, 'pendingReports'])->name('dashboard.pendingReports');
-    Route::get('/admin/dashboard/pending-users', [DashBoardController::class, 'pendingUsers'])->name('dashboard.pendingUsers');
+    Route::get('/admin/dashboard/pending-users', [DashboardController::class, 'pendingUsers'])->name('dashboard.pendingUsers');
     Route::post('admin/dashboard/reports/approve/{id}', [DashboardController::class, 'approveReports'])->name('dashboard.approveReports');
-    Route::get('/task/edit/{id}', [DashBoardController::class, 'editTask'])->name('dashboard.editTask');
+    Route::get('/task/edit/{id}', [DashboardController::class, 'editTask'])->name('dashboard.editTask');
     Route::get('/update/user/{id}', [UserController::class, 'update'])->name('user.update');
     Route::get('engineers-list/update/{id}', [EngineersController::class, 'toggleEngineer'])->name('engineerList.toggle');
     Route::get('/view/{main_task_id}/{file}', [FileController::class, 'view'])->name('view.file');
-    Route::post('/convert-tasks/{id}', [DashBoardController::class, 'convertTask'])->name('dashboard.convertTask');
+    Route::post('/convert-tasks/{id}', [DashboardController::class, 'convertTask'])->name('dashboard.convertTask');
     Route::get('/engineer/{id}/edit', [EngineersController::class, 'edit'])->name('engineer.edit');
     Route::put('/engineer/update/{id}', [EngineersController::class, 'update'])->name('engineer.update');
     Route::patch('/activate-users', [UserController::class, 'activateUsers'])->name('update.users');
-    Route::delete('/tasks/{id}/delete', [DashBoardController::class, 'destroy'])->name('task.destroy');
-    Route::delete('/section-tasks/{id}/delete', [DashBoardController::class, 'destroySectionTasks'])->name('sectionTasks.destroy');
+    Route::delete('/tasks/{id}/delete', [DashboardController::class, 'destroy'])->name('task.destroy');
+    Route::delete('/section-tasks/{id}/delete', [DashboardController::class, 'destroySectionTasks'])->name('sectionTasks.destroy');
     Route::get('/users-list', [UserController::class, 'usersList'])->name('dashboard.usersList');
     Route::post('/dashboard/admin/add-engineer', [EngineersController::class, 'addEngineer'])->name('addEngineer');
-    Route::delete('/delete-converted-task/{id}', [DashBoardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
+    Route::delete('/delete-converted-task/{id}', [DashboardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
+    Route::get('/set/user-to-admin/{id}', [UserController::class, 'setAdmin'])->name('setAdmin');
 });
 
 Route::middleware(['auth', 'confirmed'])->group(function () {
-    Route::get('/dashboard/user', [DashBoardController::class, 'userIndex'])->name('dashboard.userIndex')->middleware('auth');
-    Route::get('/engineer-task-page/{task}', [DashBoardController::class, 'engineerTaskPage'])->name('dashboard.engineerTaskPage')->middleware('auth');
-    Route::post('/submit-engineer-report/{id}', [DashBoardController::class, 'submitEngineerReport'])->name('dashboard.submitEngineerReport');
-    Route::get('/report-page/{id}', [DashBoardController::class, 'reportPage'])->name('dashboard.reportPage');
-    Route::get('/report-page/{main_task_id}/{department_id}', [DashBoardController::class, 'reportDepartment'])->name('dashboard.reportDepartment');
-    Route::get('/tasks/{status}', [DashBoardController::class, 'showTasks'])->name('dashboard.showTasks');
-    Route::get('/search/station', [DashBoardController::class, 'searchStation'])->name('dashboard.searchStation');
-    Route::get('/search/engineer-tasks', [DashBoardController::class, 'engineerTasks'])->name('dashboard.engineerTasks');
+    Route::get('/dashboard/user', [DashboardController::class, 'userIndex'])->name('dashboard.userIndex');
+    Route::get('/engineer-task-page/{task}', [DashboardController::class, 'engineerTaskPage'])->name('dashboard.engineerTaskPage');
+    Route::post('/submit-engineer-report/{id}', [DashboardController::class, 'submitEngineerReport'])->name('dashboard.submitEngineerReport');
+    Route::get('/report-page/{id}', [DashboardController::class, 'reportPage'])->name('dashboard.reportPage');
+    Route::get('/report-page/{main_task_id}/{department_id}', [DashboardController::class, 'reportDepartment'])->name('dashboard.reportDepartment');
+    Route::get('/tasks/{status}', [DashboardController::class, 'showTasks'])->name('dashboard.showTasks');
+    Route::get('/search/station', [DashboardController::class, 'searchStation'])->name('dashboard.searchStation');
+    Route::get('/search/engineer-tasks', [DashboardController::class, 'engineerTasks'])->name('dashboard.engineerTasks');
     Route::get('engineer/{id}/tasks/{status}', [EngineersController::class, 'engineerTask'])->name('dashboard.engineerTask');
-    Route::get('/archive', [DashBoardController::class, 'archive'])->name('dashboard.archive');
-    Route::get('/archive/search', [DashBoardController::class, 'searchArchive'])->name('dashboard.searchArchive');
+    Route::get('/archive', [DashboardController::class, 'archive'])->name('dashboard.archive');
+    Route::get('/archive/search', [DashboardController::class, 'searchArchive'])->name('dashboard.searchArchive');
 });
+
 
 Route::get('/unapproved-access', function () {
     return view('waiting-approval');
@@ -333,10 +335,10 @@ Route::get('/unapproved-access', function () {
 
 Route::get('/logout2', [EngineersController::class, 'logout'])->name('engineer.logout');
 
-Route::get('/dashboard/admin/timeline/{id}', [DashBoardController::class, 'timeline'])->name('dashboard.timeline');
-Route::get('/dashbaord/user/engineer-tasks/{status}', [DashBoardController::class, 'ShowTasksEngineer'])->name('dashboard.ShowTasksEngineer');
-Route::get('/dashboard/user/request-to-update-report/{main_task_id}', [DashBoardController::class, 'requestToUpdateReport'])->name('dashboard.requestToUpdateReport');
-Route::patch('/dashboard/user/update-report/{main_task_id}', [DashBoardController::class, 'updateReport'])->name('dashboard.updateReport');
+Route::get('/dashboard/admin/timeline/{id}', [DashboardController::class, 'timeline'])->name('dashboard.timeline');
+Route::get('/dashbaord/user/engineer-tasks/{status}', [DashboardController::class, 'ShowTasksEngineer'])->name('dashboard.ShowTasksEngineer');
+Route::get('/dashboard/user/request-to-update-report/{main_task_id}', [DashboardController::class, 'requestToUpdateReport'])->name('dashboard.requestToUpdateReport');
+Route::patch('/dashboard/user/update-report/{main_task_id}', [DashboardController::class, 'updateReport'])->name('dashboard.updateReport');
 Route::get('/download/{main_task_id}/{file}', [FileController::class, 'download'])->name('download.file');
 Route::get('/delete/{main_task_id}/{file}/{id}', [FileController::class, 'delete'])->name('delete.file');
 

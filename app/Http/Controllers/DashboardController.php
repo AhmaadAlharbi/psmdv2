@@ -26,7 +26,7 @@ class DashBoardController extends Controller
     {
         $departmentId = Auth::user()->department_id;
         if (Auth::user()->role_id !== 2) {
-            return redirect()->route('dashboard.indexUser');
+            return redirect()->route('dashboard.userIndex');
         }
         //get tasks count for day , week and month
         // Get tasks count for a specific day
@@ -359,253 +359,87 @@ class DashBoardController extends Controller
             abort(404);
         }
 
-        if ($tasks->eng_id !== Auth::user()->id) {
+        if ($tasks->eng_id != Auth::user()->id) {
             return view('dashboard.unauthorized');
         }
         return view('dashboard.engineerTaskPage2', compact('tasks', 'files'));
     }
-    // public function submitEngineerReport(Request $request, $id)
-    // {
-    //     $status_raidoBtn =  $request->input('action_take_status');
-    //     // Retrieve the content from the 'action_take' input field
-    //     $userText = $request->input('action_take');
-
-    //     // Check if the user's content contains a style attribute for font size
-    //     if (!preg_match('/style="font-size:\s*\d+px;"/', $userText)) {
-    //         // If there's no font-size style, add the default font size
-    //         $defaultFontSize = 'font-size:20px;';
-    //         $actionTake = '<div><span style="' . $defaultFontSize . '">' . $userText . '</span><br></div>';
-    //     }
-    //     $date =  Carbon::now();
-    //     $main_task = MainTask::findOrFail($id);
-    //     $section_task = SectionTask::where('main_tasks_id', $id)->first();
-    //     $taskConverted = TaskConversions::where('main_tasks_id', $id)
-    //         ->where('source_department', Auth::user()->department_id)
-    //         ->OrWhere('destination_department', Auth::user()->department_id)
-    //         ->where('main_tasks_id', $id)
-    //         ->first();
-    //     $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
-    //         ->where('main_tasks_id', $id)
-    //         ->first();
-    //     if ($taskConverted) {
-    //         $taskSoruce = department_task_assignment::where('department_id', $taskConverted->source_department)
-    //             ->where('main_tasks_id', $id) //PSMD
-    //             ->first();
-    //         $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
-    //             ->where('main_tasks_id', $id) //Proteciton first time
-    //             ->first();
-    //         //check if Edara sent this tasks 
-    //         if ($taskConverted->source_department !== $departmentTask->department_id) {
-    //             $taskSoruce->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "1"
-    //             ]);
-    //             $taskConverted->update([
-    //                 'status' => 'completed',
-    //             ]);
-    //             SectionTask::create([
-    //                 'main_tasks_id' => $id,
-    //                 'department_id' => 1,
-    //                 'eng_id' => Auth::user()->id,
-    //                 'action_take' => $actionTake,
-    //                 'main_alarm_id' => $main_task->main_alarm_id,
-    //                 'status' => $status_raidoBtn,
-    //                 'engineer-notes' => $request->notes,
-    //                 'user_id' => Auth::user()->id,
-    //                 'date' => $date,
-    //                 'isCompleted' => "1",
-    //             ]);
-    //         }
-    //         if ($taskConverted->source_department === Auth::user()->department_id) {
-    //             $taskSoruce->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "1"
-    //             ]);
-    //             $taskConverted->update([
-    //                 'status' => 'completed'
-    //             ]);
-    //         }
-    //         if ($taskConverted->destination_department === Auth::user()->department_id) {
-    //             $taskDestination->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "1"
-
-    //             ]);
-    //         }
-    //         if ($taskDestination->status === 'completed' && $taskSoruce->status === 'completed') {
-    //             $main_task->update([
-    //                 'status' => $status_raidoBtn,
-    //             ]);
-    //         }
-    //         SectionTask::create([
-    //             'main_tasks_id' => $id,
-    //             'department_id' => Auth::user()->department_id,
-    //             'eng_id' => Auth::user()->id,
-    //             'action_take' => $actionTake,
-    //             'main_alarm_id' => $main_task->main_alarm_id,
-    //             'status' => $status_raidoBtn,
-    //             'engineer-notes' => $request->notes,
-    //             'user_id' => Auth::user()->id,
-    //             'date' => $date,
-    //             'isCompleted' => "1"
-    //         ]);
-    //         TaskTimeline::create([
-    //             'main_tasks_id' => $id,
-    //             'department_id' => Auth::user()->department_id,
-    //             'status' => 'Adding Report',
-    //             'action' => "The Report has been added",
-    //             'user_id' => Auth::user()->id
-    //         ]);
-    //         $departmentTask->update([
-    //             'status' => 'completed',
-    //         ]);
-    //     } else {
-    //         if (
-    //             $status_raidoBtn == 'completed' || $status_raidoBtn == 'Responsibility of another entity'
-    //             || $status_raidoBtn == 'Under warranty'
-    //         ) {
-    //             SectionTask::create([
-    //                 'main_tasks_id' => $id,
-    //                 'department_id' => Auth::user()->department_id,
-    //                 'eng_id' => Auth::user()->id,
-    //                 'action_take' => $request->action_take,
-    //                 'main_alarm_id' => $main_task->main_alarm_id,
-    //                 'status' =>  $status_raidoBtn,
-    //                 'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
-    //                 'user_id' => Auth::user()->id,
-    //                 'date' => $date,
-    //                 'isCompleted' => "1",
-    //                 'approved' => 1,
-    //             ]);
-    //             TaskTimeline::create([
-    //                 'main_tasks_id' => $id,
-    //                 'department_id' => Auth::user()->department_id,
-    //                 'status' => 'Adding Report',
-    //                 'action' => "The Report has been added",
-    //                 'user_id' => Auth::user()->id
-    //             ]);
-    //             $main_task->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "1"
-    //             ]);
-    //             $departmentTask->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "1"
-    //             ]);
-    //             TaskTimeline::create([
-    //                 'main_tasks_id' => $id,
-    //                 'department_id' => Auth::user()->department_id,
-    //                 'status' => $status_raidoBtn,
-    //                 'action' => "The status has been updated",
-    //                 'user_id' => Auth::user()->id
-    //             ]);
-    //         } else {
-    //             SectionTask::create([
-    //                 'main_tasks_id' => $id,
-    //                 'department_id' => Auth::user()->department_id,
-    //                 'eng_id' => Auth::user()->id,
-    //                 'action_take' => $request->action_take,
-    //                 'main_alarm_id' => $main_task->main_alarm_id,
-    //                 'status' => $status_raidoBtn,
-    //                 'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
-    //                 'user_id' => Auth::user()->id,
-    //                 'date' => $date,
-    //                 'isCompleted' => "0",
-    //                 'approved' => 1,
-    //             ]);
-    //             TaskTimeline::create([
-    //                 'main_tasks_id' => $id,
-    //                 'department_id' => Auth::user()->department_id,
-    //                 'status' => $status_raidoBtn,
-    //                 'action' => "The status has been updated",
-    //                 'user_id' => Auth::user()->id
-    //             ]);
-    //             $main_task->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "0"
-    //             ]);
-    //             $departmentTask->update([
-    //                 'status' => $status_raidoBtn,
-    //                 'isCompleted' => "0"
-    //             ]);
-    //         }
-    //     }
-    //     if ($request->hasfile('pic')) {
-    //         foreach ($request->file('pic') as $file) {
-    //             $name = $file->getClientOriginalName();
-    //             $file->move(storage_path('app/public/attachments/' . $main_task->id), $name); // Store in the 'storage' directory
-    //             $data[] = $name;
-    //             $refNum = $request->refNum;
-
-    //             $attachments = new TaskAttachment();
-    //             $attachments->main_tasks_id = $main_task->id;
-    //             $attachments->department_id = Auth::user()->department_id;
-    //             $attachments->file = $name;
-    //             $attachments->user_id = Auth::user()->id;
-    //             $attachments->save();
-    //         }
-    //     }
-
-    //     return redirect("/dashboard/user");
-    // }
     public function submitEngineerReport(Request $request, $id)
     {
-        $status_raidoBtn = $request->input('action_take_status');
+        $status_raidoBtn =  $request->input('action_take_status');
+        // Retrieve the content from the 'action_take' input field
         $userText = $request->input('action_take');
 
-        // ... Other variable declarations
-
+        // Check if the user's content contains a style attribute for font size
         if (!preg_match('/style="font-size:\s*\d+px;"/', $userText)) {
+            // If there's no font-size style, add the default font size
             $defaultFontSize = 'font-size:20px;';
             $actionTake = '<div><span style="' . $defaultFontSize . '">' . $userText . '</span><br></div>';
         }
-
-        $date = Carbon::now();
+        $date =  Carbon::now();
         $main_task = MainTask::findOrFail($id);
         $section_task = SectionTask::where('main_tasks_id', $id)->first();
         $taskConverted = TaskConversions::where('main_tasks_id', $id)
-            ->where(function ($query) {
-                $query->where('source_department', Auth::user()->department_id)
-                    ->orWhere('destination_department', Auth::user()->department_id);
-            })
+            ->where('source_department', Auth::user()->department_id)
+            ->OrWhere('destination_department', Auth::user()->department_id)
+            ->where('main_tasks_id', $id)
             ->first();
-
         $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->where('main_tasks_id', $id)
             ->first();
-
         if ($taskConverted) {
-            $this->handleTaskConversion($taskConverted, $departmentTask, $status_raidoBtn, $actionTake, $date, $main_task, $id);
-        } else {
-            $this->handleNonConvertedTask($status_raidoBtn, $request, $date, $main_task, $departmentTask, $id);
-        }
+            $taskSoruce = department_task_assignment::where('department_id', $taskConverted->source_department)
+                ->where('main_tasks_id', $id) //PSMD
+                ->first();
+            $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
+                ->where('main_tasks_id', $id) //Proteciton first time
+                ->first();
+            //check if Edara sent this tasks 
+            if ($taskConverted->source_department !== $departmentTask->department_id) {
+                $taskSoruce->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+                ]);
+                $taskConverted->update([
+                    'status' => 'completed',
+                ]);
+                SectionTask::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => 1,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $actionTake,
+                    'main_alarm_id' => $main_task->main_alarm_id,
+                    'status' => $status_raidoBtn,
+                    'engineer-notes' => $request->notes,
+                    'user_id' => Auth::user()->id,
+                    'date' => $date,
+                    'isCompleted' => "1",
+                ]);
+            }
+            if ($taskConverted->source_department === Auth::user()->department_id) {
+                $taskSoruce->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+                ]);
+                $taskConverted->update([
+                    'status' => 'completed'
+                ]);
+            }
+            if ($taskConverted->destination_department === Auth::user()->department_id) {
+                $taskDestination->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
 
-        $this->handleFileUploads($request, $main_task);
-
-        return redirect("/dashboard/user");
-    }
-
-    private function handleTaskConversion($taskConverted, $departmentTask, $status_raidoBtn, $actionTake, $date, $main_task, $id)
-    {
-        $taskSoruce = department_task_assignment::where('department_id', $taskConverted->source_department)
-            ->where('main_tasks_id', $id)
-            ->first();
-
-        $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
-            ->where('main_tasks_id', $id)
-            ->first();
-
-        if ($taskConverted->source_department !== $departmentTask->department_id) {
-            $taskSoruce->update([
-                'status' => $status_raidoBtn,
-                'isCompleted' => "1"
-            ]);
-            $taskConverted->update([
-                'status' => 'completed',
-            ]);
+                ]);
+            }
+            if ($taskDestination->status === 'completed' && $taskSoruce->status === 'completed') {
+                $main_task->update([
+                    'status' => $status_raidoBtn,
+                ]);
+            }
             SectionTask::create([
                 'main_tasks_id' => $id,
-                'department_id' => 1,
+                'department_id' => Auth::user()->department_id,
                 'eng_id' => Auth::user()->id,
                 'action_take' => $actionTake,
                 'main_alarm_id' => $main_task->main_alarm_id,
@@ -613,74 +447,96 @@ class DashBoardController extends Controller
                 'engineer-notes' => $request->notes,
                 'user_id' => Auth::user()->id,
                 'date' => $date,
-                'isCompleted' => "1",
-            ]);
-        }
-
-        if ($taskConverted->source_department === Auth::user()->department_id) {
-            $taskSoruce->update([
-                'status' => $status_raidoBtn,
                 'isCompleted' => "1"
             ]);
-            $taskConverted->update([
-                'status' => 'completed'
+            TaskTimeline::create([
+                'main_tasks_id' => $id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Adding Report',
+                'action' => "The Report has been added",
+                'user_id' => Auth::user()->id
             ]);
-        }
-
-        if ($taskConverted->destination_department === Auth::user()->department_id) {
-            $taskDestination->update([
-                'status' => $status_raidoBtn,
-                'isCompleted' => "1"
+            $departmentTask->update([
+                'status' => 'completed',
             ]);
-
-            if ($taskDestination->status === 'completed' && $taskSoruce->status === 'completed') {
+        } else {
+            if (
+                $status_raidoBtn == 'completed' || $status_raidoBtn == 'Responsibility of another entity'
+                || $status_raidoBtn == 'Under warranty'
+            ) {
+                SectionTask::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $request->action_take,
+                    'main_alarm_id' => $main_task->main_alarm_id,
+                    'status' =>  $status_raidoBtn,
+                    'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
+                    'user_id' => Auth::user()->id,
+                    'date' => $date,
+                    'isCompleted' => "1",
+                    'approved' => 1,
+                ]);
+                TaskTimeline::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => 'Adding Report',
+                    'action' => "The Report has been added",
+                    'user_id' => Auth::user()->id
+                ]);
                 $main_task->update([
                     'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+                ]);
+                $departmentTask->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "1"
+                ]);
+                TaskTimeline::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => $status_raidoBtn,
+                    'action' => "The status has been updated",
+                    'user_id' => Auth::user()->id
+                ]);
+            } else {
+                SectionTask::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $request->action_take,
+                    'main_alarm_id' => $main_task->main_alarm_id,
+                    'status' => $status_raidoBtn,
+                    'engineer-notes' => $request->notes ? $request->notes : $status_raidoBtn,
+                    'user_id' => Auth::user()->id,
+                    'date' => $date,
+                    'isCompleted' => "0",
+                    'approved' => 1,
+                ]);
+                TaskTimeline::create([
+                    'main_tasks_id' => $id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => $status_raidoBtn,
+                    'action' => "The status has been updated",
+                    'user_id' => Auth::user()->id
+                ]);
+                $main_task->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "0"
+                ]);
+                $departmentTask->update([
+                    'status' => $status_raidoBtn,
+                    'isCompleted' => "0"
                 ]);
             }
         }
-
-        SectionTask::create([
-            'main_tasks_id' => $id,
-            'department_id' => Auth::user()->department_id,
-            'eng_id' => Auth::user()->id,
-            'action_take' => $actionTake,
-            'main_alarm_id' => $main_task->main_alarm_id,
-            'status' => $status_raidoBtn,
-            'engineer-notes' => $request->notes,
-            'user_id' => Auth::user()->id,
-            'date' => $date,
-            'isCompleted' => "1"
-        ]);
-
-        TaskTimeline::create([
-            'main_tasks_id' => $id,
-            'department_id' => Auth::user()->department_id,
-            'status' => 'Adding Report',
-            'action' => "The Report has been added",
-            'user_id' => Auth::user()->id
-        ]);
-
-        $departmentTask->update([
-            'status' => 'completed',
-        ]);
-    }
-
-    private function handleNonConvertedTask($status_raidoBtn, $request, $date, $main_task, $departmentTask, $id)
-    {
-        $isCompleted = in_array($status_raidoBtn, ['completed', 'Responsibility of another entity', 'Under warranty']) ? 1 : 0;
-
-        // ... (Same as previous code)
-    }
-
-    private function handleFileUploads($request, $main_task)
-    {
-        if ($request->hasFile('pic')) {
+        if ($request->hasfile('pic')) {
             foreach ($request->file('pic') as $file) {
                 $name = $file->getClientOriginalName();
-                $file->move(storage_path('app/public/attachments/' . $main_task->id), $name);
+                $file->move(storage_path('app/public/attachments/' . $main_task->id), $name); // Store in the 'storage' directory
+                $data[] = $name;
+                $refNum = $request->refNum;
 
-                // Create a new TaskAttachment record
                 $attachments = new TaskAttachment();
                 $attachments->main_tasks_id = $main_task->id;
                 $attachments->department_id = Auth::user()->department_id;
@@ -689,6 +545,8 @@ class DashBoardController extends Controller
                 $attachments->save();
             }
         }
+
+        return redirect("/dashboard/user");
     }
 
 

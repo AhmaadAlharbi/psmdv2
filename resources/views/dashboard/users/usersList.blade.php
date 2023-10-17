@@ -88,7 +88,9 @@
                                                 <a class="dropdown-item"
                                                     href="{{route('user.update',['id'=>$user->id])}}">Assign to
                                                     Engineers</a>
-                                                <a class="dropdown-item" href="javascript:void(0);">Assign to Admins</a>
+                                                <a class="dropdown-item"
+                                                    href="{{route('setAdmin',['id'=>$user->id])}}">Assign to
+                                                    Admins</a>
                                                 <a class="dropdown-item" href="javascript:void(0);">Delete User</a>
 
                                             </div>

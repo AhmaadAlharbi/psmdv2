@@ -399,6 +399,7 @@ class AddTask extends Component
         $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
         if ($this->selectedEngineer) {
             $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
+            $selectedEngineerId = User::where('id', $this->selectedEngineer)->first()->id;
         } else {
             $selectedEngineerName = null;
         }
@@ -427,7 +428,7 @@ class AddTask extends Component
             $departmentTask = department_task_assignment::create([
                 'department_id' => Auth::user()->department_id,
                 'main_tasks_id' => $main_task_id,
-                'eng_id' => $this->selectedEngineer,
+                'eng_id' => $selectedEngineerId,
                 'status' => 'converted'
             ]);
         } else {

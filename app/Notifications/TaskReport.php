@@ -42,8 +42,8 @@ class TaskReport extends Notification
      */
     public function toMail($notifiable)
     {
+        // $url = url('/engineer-task-page/' . $this->task->id);
         $url = url('/engineer-task-page/' . $this->task->id);
-
         $message = (new MailMessage)
             ->subject('New Task from PSMD')
             ->greeting('Dear Engineer,')
