@@ -16,6 +16,48 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('users')->insert([
+            [
+                'name' => 'psmd',
+                'email' => 'psmd@mew.gov.kw',
+                'password' => Hash::make('12345678'),
+                'role_id' => 2,
+                'department_id' => 1,
+                'approved' => 1,
+            ],
+            [
+                'name' => 'protection',
+                'email' => 'protection@mew.gov.kw',
+                'password' => Hash::make('12345678'),
+                'role_id' => 2,
+                'department_id' => 2,
+                'approved' => 1,
+            ],
+            [
+                'name' => 'switchgears',
+                'email' => 'switchgears@mew.gov.kw',
+                'password' => Hash::make('12345678'),
+                'role_id' => 2,
+                'department_id' => 5,
+                'approved' => 1,
+            ],
+            [
+                'name' => 'battery',
+                'email' => 'battery@mew.gov.kw',
+                'password' => Hash::make('12345678'),
+                'role_id' => 2,
+                'department_id' => 3,
+                'approved' => 1,
+            ],
+            [
+                'name' => 'transformers',
+                'email' => 'transformers@mew.gov.kw',
+                'password' => Hash::make('12345678'),
+                'role_id' => 2,
+                'department_id' => 4,
+                'approved' => 1,
+            ],
+        ]);
         // $names = array(
         //     0 =>
         //     array(

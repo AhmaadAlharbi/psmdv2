@@ -56,4 +56,8 @@ class MainTask extends Model
     {
         return $this->hasMany(department_task_assignment::class, 'main_tasks_id', 'id');
     }
+    public function taskTimelines()
+    {
+        return $this->hasMany(TaskTimeline::class, 'main_tasks_id');
+    }
 }

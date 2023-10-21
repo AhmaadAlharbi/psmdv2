@@ -95,7 +95,7 @@
                 <div class="col-12">
                     <label for="main_alarm" class="control-label m-3">Main Alarm</label>
                     <select wire:model="selectedMainAlarm" wire:change="getEquip" name="mainAlarm" id="main_alarm"
-                        class="form-control">
+                        class="form-select bg-white">
 
                         @foreach($main_alarms as $alarm)
                         @if($alarm->name !== $selectedMainAlarm)
@@ -161,7 +161,7 @@
                     <label for="inputName" class="control-label">Please select engineer name</label>
                     <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
                         class="form-control engineerSelect my-4">
-                        <option value="-">-</option>
+                        <option>-</option>
                         @foreach($engineers as $engineer)
                         <option value="{{$engineer->user->id}}">{{$engineer->user->name}}</option>
                         @endforeach

@@ -19,6 +19,12 @@
 
 <!-- row -->
 <div class="row mt-4" id="printable-content">
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+
     <div class=" main-content-body-invoice">
         <div class="card card-invoice">
             <div class="card-body">
@@ -151,7 +157,7 @@
                                                                     <td>{{$task->created_at}}</td>
                                                                     <td>
                                                                         <a class="btn btn-outline-info"
-                                                                            href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}">
+                                                                            href="{{ route('dashboard.reportPage', ['id' => $task->id])}}">
                                                                             Report
                                                                         </a>
                                                                     </td>

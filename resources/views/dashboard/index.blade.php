@@ -435,17 +435,26 @@
                                 @if($task->status === 'pending')
                                 <td> <span class="badge bg-danger me-1">Pendng</span></td>
                                 @else
-                                <td> <span class="badge bg-success me-1">Done</span>
+                                <td> <span class="badge bg-success me-1">{{$task->status}}</span>
                                 </td>
                                 @endif
-                                <td> <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
+                                <td>
+                                    @if($task->status =='completed')
+                                    <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                        class="btn btn-info-gradient">View</a>
+                                    @endif
+                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
                                         class="btn btn-secondary">History</a>
                                     <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal"
                                         data-bs-target="#deleteConfirmationModal-{{ $task->id }}">
-                                        <i class="fa fa-trash"></i>
+                                        <i class="fa fa-trash"></i> Delete
                                     </a>
-
+                                    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                        data-bs-target="#cancelConfirmationModal-{{ $task->id }}">
+                                        <i class="fas fa-times"></i> Cancel Tracking
+                                    </a>
                                 </td>
+
 
                             </tr>
                             <!-- Delete Confirmation Modal -->
@@ -460,9 +469,45 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            Are you sure you want to delete this item?
+                                            Are you sure you want to delete this converted task?
                                             <form
                                                 action="{{ route('dashboard.deleteConvertedTask', ['id' => $task->id]) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <input type="hidden" value="{{$task->id}}" name="task_id">
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                            {{-- <button type="submit" class="btn btn-danger"
+                                                id="confirmDelete">Delete</button> --}}
+                                            <button class="btn btn-outline-danger" id="deleteTask"
+                                                data-id="{{ $task->id }}">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- cancel Confirmation Modal -->
+                            <div class="modal fade" id="cancelConfirmationModal-{{ $task->id }}" tabindex="-1"
+                                aria-labelledby="cancelConfirmationModal-{{ $task->id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="cancelConfirmationModal-{{ $task->id }}">
+                                                Delete Confirmation</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to cancel this converted task?
+                                            <form
+                                                action="{{ route('dashboard.cancelConvertedTask', ['id' => $task->id]) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('DELETE')
@@ -544,10 +589,10 @@
                                 </td>
                                 <td>{{$task->created_at}}</td>
 
-                                <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
-                                        type="button" class="btn btn-success-gradient  button-icon "><i
-                                            class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
-                                            data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a>
+                                <td><a href="{{route('dashboard.reportPage',['id'=>$task->id])}}" type="button"
+                                        class="btn btn-success-gradient  button-icon "><i class="si si-notebook px-2"
+                                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
+                                            aria-label="si-notebook"></i>Report</a>
                                     <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
                                         class="btn btn-secondary">History</a>
                                 </td>

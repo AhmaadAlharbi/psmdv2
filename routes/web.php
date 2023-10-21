@@ -311,6 +311,7 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/users-list', [UserController::class, 'usersList'])->name('dashboard.usersList');
     Route::post('/dashboard/admin/add-engineer', [EngineersController::class, 'addEngineer'])->name('addEngineer');
     Route::delete('/delete-converted-task/{id}', [DashboardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
+    Route::delete('/cancel-converted-task/{id}', [DashboardController::class, 'cancelConvertedTask'])->name('dashboard.cancelConvertedTask');
     Route::get('/set/user-to-admin/{id}', [UserController::class, 'setAdmin'])->name('setAdmin');
 });
 

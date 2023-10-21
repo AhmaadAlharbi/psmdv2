@@ -346,42 +346,133 @@ class AddTask extends Component
     protected $rules = [
         'selectedStation' => 'required',
     ];
+    // public function submit3(Request $request)
+    // {
+    //     $this->validate();
+    //     $this->date =  Carbon::now();
+    //     $refNum = $this->date->format("Y/m") . '-' . rand(1, 10000);
+    //     if (!empty($this->selectedEquip && $this->selectedEquip !== 'other')) {
+    //         // If selectedEquip is not empty, set $equip_number and $equip_name to the selected values
+    //         $selectedEquipArr = explode(" - ", $this->selectedEquip);
+    //         $equip_number = $selectedEquipArr[0];
+    //         $equip_name = $selectedEquipArr[1];
+    //     } elseif (!empty($this->selectedTransformer)) {
+    //         // If selectedTransformer is not empty, set $equip_number to the selected value
+    //         $equip_number = $this->selectedTransformer;
+    //         $equip_name = null;
+    //     } else {
+    //         $equip_number = $this->otherEquip;
+    //         $equip_name = null;
+    //     }
+    //     //cehck main alarm if it is empty or not before saving to db
+    //     if ($this->selectedMainAlarm === '') {
+    //         $mainAlarmId = null;
+    //     } else {
+    //         $mainAlarmId = ($this->otherMainAlarm)
+    //             ? MainAlarm::create(['name' => $this->otherMainAlarm, 'department_id' => Auth::user()->department_id])->id
+    //             : $this->selectedMainAlarm;
+    //     }
+    //     if ($this->selectedVoltage == '') {
+    //         $this->selectedVoltage = $this->otherVoltage;
+    //     }
+    //     //check if engineer select is empty to set it null
+    //     if ($this->selectedEngineer === '') {
+    //         $this->selectedEngineer = null;
+    //     }
+    //     if ($this->selectedVoltage === 'other' && isset($this->otherVoltage)) {
+    //         $this->selectedVoltage = $this->otherVoltage;
+    //     }
+    //     $main_task = MainTask::create([
+    //         'refNum' => $refNum,
+    //         'station_id' =>  $this->station_id,
+    //         'voltage_level' => $this->selectedVoltage,
+    //         'equip_number' =>  $equip_number . ' - ' . $equip_name,
+    //         'date' => $this->date,
+    //         'problem' => $this->problem,
+    //         'work_type' => $this->work_type,
+    //         'notes' => $this->notes,
+    //         'status' => 'pending',
+    //         'main_alarm_id' => $mainAlarmId,
+    //         'user_id' => Auth::user()->id,
+    //     ]);
+
+    //     $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
+    //     if ($this->selectedEngineer) {
+    //         $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
+    //         $selectedEngineerId = User::where('id', $this->selectedEngineer)->first()->id;
+    //     } else {
+    //         $selectedEngineerName = null;
+    //     }
+    //     $main_task_id = MainTask::latest()->first()->id;
+    //     TaskTimeline::create([
+    //         'main_tasks_id' => $main_task_id,
+    //         'department_id' => Auth::user()->department_id,
+    //         'status' => 'created',
+    //         'action' => "The task has been assigned by " . Auth::user()->department->name,
+    //         'user_id' => Auth::user()->id
+    //     ]);
+    //     if ($this->selectedDepartment !== Auth::user()->department_id) {
+    //         $converted_task = TaskConversions::create([
+    //             'main_tasks_id' => $main_task_id,
+    //             'source_department' => Auth::user()->department_id,
+    //             'destination_department' => $this->selectedDepartment,
+    //             'status' => 'pending'
+    //         ]);
+    //         TaskTimeline::create([
+    //             'main_tasks_id' => $main_task_id,
+    //             'department_id' => Auth::user()->department_id,
+    //             'status' => 'Converted',
+    //             'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
+    //             'user_id' => Auth::user()->id
+    //         ]);
+    //         $departmentTask = department_task_assignment::create([
+    //             'department_id' => Auth::user()->department_id,
+    //             'main_tasks_id' => $main_task_id,
+    //             'eng_id' => $selectedEngineerId,
+    //             'status' => 'converted'
+    //         ]);
+    //     } else {
+    //         $departmentTask = department_task_assignment::create([
+    //             'department_id' => $this->selectedDepartment,
+    //             'main_tasks_id' => $main_task_id,
+    //             'eng_id' => $this->selectedEngineer,
+    //             'status' => 'pending'
+    //         ]);
+    //         TaskTimeline::create([
+    //             'main_tasks_id' => $main_task_id,
+    //             'department_id' => Auth::user()->department_id,
+    //             'status' => 'Assined Engineer',
+    //             'Action' => 'The Department has assined Engineer ' . $selectedEngineerName,
+    //             'user_id' => Auth::user()->id
+    //         ]);
+    //     }
+    //     foreach ($this->photos as $photo) {
+    //         // $photo->store('photos');
+    //         $name = $photo->getClientOriginalName();
+    //         // $photo->storeAs('public', $name);
+    //         $photo->storeAs('attachments/' . $main_task_id, $name, 'public');
+    //         $attachments = new TaskAttachment();
+    //         $attachments->main_tasks_id = $main_task_id;
+    //         $attachments->department_id = Auth::user()->department_id;
+    //         $attachments->file = $name;
+    //         $attachments->user_id = Auth::user()->id;
+    //         $attachments->save();
+    //     }
+    //     if ($this->selectedEngineer !== null) {
+    //         $user = User::where('email', $this->engineerEmail)->first();
+    //         // Notification::send($user, new TaskReport($main_task, $this->photos));
+    //     }
+    //     session()->flash('success', 'The Task has been added');
+
+    //     return redirect("/dashboard/admin");
+    // }
     public function submit(Request $request)
     {
-        $this->validate();
-        $this->date =  Carbon::now();
-        $refNum = $this->date->format("Y/m") . '-' . rand(1, 10000);
-        if (!empty($this->selectedEquip && $this->selectedEquip !== 'other')) {
-            // If selectedEquip is not empty, set $equip_number and $equip_name to the selected values
-            $selectedEquipArr = explode(" - ", $this->selectedEquip);
-            $equip_number = $selectedEquipArr[0];
-            $equip_name = $selectedEquipArr[1];
-        } elseif (!empty($this->selectedTransformer)) {
-            // If selectedTransformer is not empty, set $equip_number to the selected value
-            $equip_number = $this->selectedTransformer;
-            $equip_name = null;
-        } else {
-            $equip_number = $this->otherEquip;
-            $equip_name = null;
-        }
-        //cehck main alarm if it is empty or not before saving to db
-        if ($this->selectedMainAlarm === '') {
-            $mainAlarmId = null;
-        } else {
-            $mainAlarmId = ($this->otherMainAlarm)
-                ? MainAlarm::create(['name' => $this->otherMainAlarm, 'department_id' => Auth::user()->department_id])->id
-                : $this->selectedMainAlarm;
-        }
-        if ($this->selectedVoltage == '') {
-            $this->selectedVoltage = $this->otherVoltage;
-        }
-        //check if engineer select is empty to set it null
-        if ($this->selectedEngineer === '') {
-            $this->selectedEngineer = null;
-        }
-        if ($this->selectedVoltage === 'other' && isset($this->otherVoltage)) {
-            $this->selectedVoltage = $this->otherVoltage;
-        }
+        $refNum = $this->generateReferenceNumber();
+        list($equip_number, $equip_name) = $this->handleEquipmentSelection();
+        $mainAlarmId = $this->handleMainAlarmSelection();
+        $selectedVoltage = $this->handleVoltageSelection();
+        $selectedEngineer = $this->handleEngineerSelection();
         $main_task = MainTask::create([
             'refNum' => $refNum,
             'station_id' =>  $this->station_id,
@@ -395,75 +486,210 @@ class AddTask extends Component
             'main_alarm_id' => $mainAlarmId,
             'user_id' => Auth::user()->id,
         ]);
-
-        $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
-        if ($this->selectedEngineer) {
-            $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
-            $selectedEngineerId = User::where('id', $this->selectedEngineer)->first()->id;
-        } else {
-            $selectedEngineerName = null;
-        }
-        $main_task_id = MainTask::latest()->first()->id;
-        TaskTimeline::create([
-            'main_tasks_id' => $main_task_id,
-            'department_id' => Auth::user()->department_id,
-            'status' => 'created',
-            'action' => "The task has been assigned by " . Auth::user()->department->name,
-            'user_id' => Auth::user()->id
-        ]);
+        $this->recordTaskTimeline($main_task->id, $selectedEngineer);
+        // Step 1.1: Check if the selected department is different from the user's department
+        // Step 1.1: Check if the selected department is different from the user's department
         if ($this->selectedDepartment !== Auth::user()->department_id) {
-            $converted_task = TaskConversions::create([
-                'main_tasks_id' => $main_task_id,
-                'source_department' => Auth::user()->department_id,
-                'destination_department' => $this->selectedDepartment,
-                'status' => 'pending'
-            ]);
-            TaskTimeline::create([
-                'main_tasks_id' => $main_task_id,
-                'department_id' => Auth::user()->department_id,
-                'status' => 'Converted',
-                'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
-                'user_id' => Auth::user()->id
-            ]);
-            $departmentTask = department_task_assignment::create([
-                'department_id' => Auth::user()->department_id,
-                'main_tasks_id' => $main_task_id,
-                'eng_id' => $selectedEngineerId,
-                'status' => 'converted'
-            ]);
+            $mainTask = $this->handleTaskConversion();
         } else {
-            $departmentTask = department_task_assignment::create([
-                'department_id' => $this->selectedDepartment,
-                'main_tasks_id' => $main_task_id,
-                'eng_id' => $this->selectedEngineer,
-                'status' => 'pending'
-            ]);
+            $mainTask = $this->handleDepartmentTaskAssignment();
+        }
+
+        // Retrieve the main task ID from the created MainTask instance
+        $main_task_id = $mainTask->id;
+
+        $this->uploadAttachments($main_task->id);
+        $this->sendNotifications($main_task, $this->engineerEmail);
+        session()->flash('success', 'The Task has been added');
+
+        // Step 7.2: Redirect the user to a specific page
+        return redirect("/dashboard/admin");
+    }
+    private function generateReferenceNumber()
+    {
+        // Generate the reference number based on your business logic
+        $date = Carbon::now();
+        return $date->format("Y/m") . '-' . rand(1, 10000);
+    }
+    private function handleEquipmentSelection()
+    {
+        // Step 2.2: Logic for handling equipment selection
+        if (!empty($this->selectedEquip && $this->selectedEquip !== 'other')) {
+            $selectedEquipArr = explode(" - ", $this->selectedEquip);
+            $equip_number = $selectedEquipArr[0];
+            $equip_name = $selectedEquipArr[1];
+        } elseif (!empty($this->selectedTransformer)) {
+            $equip_number = $this->selectedTransformer;
+            $equip_name = null;
+        } else {
+            $equip_number = $this->otherEquip;
+            $equip_name = null;
+        }
+
+        // Return the result as a list
+        return [$equip_number, $equip_name];
+    }
+    private function handleMainAlarmSelection()
+    {
+        // Step 3.1: Logic for handling main alarm selection
+        if ($this->selectedMainAlarm === '') {
+            return null;
+        } else {
+            return ($this->otherMainAlarm)
+                ? MainAlarm::create(['name' => $this->otherMainAlarm, 'department_id' => Auth::user()->department_id])->id
+                : $this->selectedMainAlarm;
+        }
+    }
+
+    private function handleVoltageSelection()
+    {
+        // Step 3.2: Logic for handling voltage selection
+        $selectedVoltage = $this->selectedVoltage;
+        if ($selectedVoltage == '') {
+            $selectedVoltage = $this->otherVoltage;
+        }
+
+        return $selectedVoltage;
+    }
+    private function handleEngineerSelection()
+    {
+        // Step 4.1: Logic for handling engineer selection
+        $selectedEngineer = $this->selectedEngineer;
+        if ($selectedEngineer === '') {
+            $selectedEngineer = null;
+        }
+
+        return $selectedEngineer;
+    }
+    private function recordTaskTimeline($mainTaskId, $selectedEngineer)
+    {
+        // Logic for recording task timeline events
+        $user = Auth::user(); // Get the currently authenticated user
+
+        // Example: Recording a task creation event
+        TaskTimeline::create([
+            'main_tasks_id' => $mainTaskId,
+            'department_id' => $user->department_id,
+            'status' => 'created',
+            'action' => "The task has been assigned by " . $user->department->name,
+            'user_id' => $user->id
+        ]);
+
+        // If an engineer is assigned, record an additional event
+        if ($selectedEngineer !== null) {
             TaskTimeline::create([
-                'main_tasks_id' => $main_task_id,
-                'department_id' => Auth::user()->department_id,
-                'status' => 'Assined Engineer',
-                'Action' => 'The Department has assined Engineer ' . $selectedEngineerName,
-                'user_id' => Auth::user()->id
+                'main_tasks_id' => $mainTaskId,
+                'department_id' => $user->department_id,
+                'status' => 'assigned',
+                'action' => 'The task has been assigned to engineer ' . $selectedEngineer,
+                'user_id' => $user->id
             ]);
         }
+
+        // Add more events as needed based on your application's requirements
+    }
+    private function uploadAttachments($mainTaskId)
+    {
         foreach ($this->photos as $photo) {
-            // $photo->store('photos');
             $name = $photo->getClientOriginalName();
-            // $photo->storeAs('public', $name);
-            $photo->storeAs('attachments/' . $main_task_id, $name, 'public');
+            $photo->storeAs('attachments/' . $mainTaskId, $name, 'public');
+
             $attachments = new TaskAttachment();
-            $attachments->main_tasks_id = $main_task_id;
+            $attachments->main_tasks_id = $mainTaskId;
             $attachments->department_id = Auth::user()->department_id;
             $attachments->file = $name;
             $attachments->user_id = Auth::user()->id;
             $attachments->save();
         }
-        if ($this->selectedEngineer !== null) {
-            $user = User::where('email', $this->engineerEmail)->first();
-            Notification::send($user, new TaskReport($main_task, $this->photos));
+    }
+    private function sendNotifications($mainTask, $engineerEmail)
+    {
+        if ($engineerEmail !== null) {
+            $user = User::where('email', $engineerEmail)->first();
+            if ($user) {
+                // Assuming you have defined a notification class called TaskReport
+                // Notification::send($user, new TaskReport($mainTask, $this->photos));
+            }
         }
-        session()->flash('success', 'The Task has been added');
 
-        return redirect("/dashboard/admin");
+        // Add more notification methods as per your application's requirements
+    }
+    private function handleTaskConversion()
+    {
+        // Step 1: Logic for creating a TaskConversions record
+        $sourceDepartment = Auth::user()->department_id;
+        $destinationDepartment = $this->selectedDepartment;
+        $mainTask = MainTask::latest()->first();
+        $main_task_id = $mainTask->id; // Retrieve the ID of the created MainTask
+        $departmentTask = department_task_assignment::create([
+            'department_id' => $sourceDepartment,
+            'main_tasks_id' => $main_task_id,
+            'status' => 'pending'
+        ]);
+
+        $converted_task = TaskConversions::create([
+            'main_tasks_id' => $main_task_id,
+            'source_department' => $sourceDepartment,
+            'destination_department' => $destinationDepartment,
+            'status' => 'pending'
+        ]);
+
+
+        // Step 2: Record timeline event for the task conversion
+        $this->recordTaskConversionTimeline($main_task_id, $destinationDepartment);
+
+        // Continue with any additional logic as needed
+
+        return $converted_task;
+    }
+    private function handleDepartmentTaskAssignment()
+    {
+        // Step 1: Logic for department task assignment
+
+        // Create the MainTask record and retrieve the ID
+        $mainTask = MainTask::latest()->first();
+        $main_task_id = $mainTask->id; // Retrieve the ID of the created MainTask
+
+        $destinationDepartment = $this->selectedDepartment;
+        $selectedEngineer = $this->selectedEngineer;
+
+        // Create the department_task_assignment record
+        $departmentTask = department_task_assignment::create([
+            'department_id' => $destinationDepartment,
+            'main_tasks_id' => $main_task_id,
+            'eng_id' => $selectedEngineer,
+            'status' => 'pending'
+        ]);
+
+        // Step 2: Record timeline event for department task assignment
+        $this->recordDepartmentTaskAssignmentTimeline($main_task_id, $selectedEngineer);
+
+        // Continue with any additional logic as needed
+
+        return $departmentTask;
+    }
+    private function recordTaskConversionTimeline($mainTaskId, $destinationDepartment)
+    {
+        $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
+
+        TaskTimeline::create([
+            'main_tasks_id' => $mainTaskId,
+            'department_id' => $destinationDepartment, // Or any other relevant department ID
+            'status' => 'Converted',
+            'action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
+            'user_id' => Auth::user()->id
+        ]);
+    }
+    private function recordDepartmentTaskAssignmentTimeline($mainTaskId, $selectedEngineer)
+    {
+        // Logic to record the timeline event for department task assignment
+        // You can customize this part to record the timeline event as per your requirements.
+        TaskTimeline::create([
+            'main_tasks_id' => $mainTaskId,
+            'department_id' => Auth::user()->department_id,
+            'status' => 'Assigned Engineer',
+            'action' => 'The task has been assigned to Engineer ' . $selectedEngineer,
+            'user_id' => Auth::user()->id
+        ]);
     }
 }

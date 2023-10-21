@@ -48,7 +48,8 @@
 
                                         <div class="input-group">
                                             <input list="users" oninput="setEngineerId(this.value)" class="form-control"
-                                                id="userSelect" name="users" type="search" />
+                                                id="userSelect" name="users" type="search" autocomplete="off" />
+
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-outline-secondary"
                                                     onclick="clearInputField()">
