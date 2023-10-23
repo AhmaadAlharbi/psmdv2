@@ -575,16 +575,16 @@ class AddTask extends Component
             'user_id' => $user->id
         ]);
 
-        // If an engineer is assigned, record an additional event
-        if ($selectedEngineer !== null) {
-            TaskTimeline::create([
-                'main_tasks_id' => $mainTaskId,
-                'department_id' => $user->department_id,
-                'status' => 'assigned',
-                'action' => 'The task has been assigned to engineer ' . $selectedEngineer,
-                'user_id' => $user->id
-            ]);
-        }
+        // // If an engineer is assigned, record an additional event
+        // if ($selectedEngineer !== null) {
+        //     TaskTimeline::create([
+        //         'main_tasks_id' => $mainTaskId,
+        //         'department_id' => $user->department_id,
+        //         'status' => 'assigned',
+        //         'action' => 'The task has been assigned to engineer ' . $selectedEngineer,
+        //         'user_id' => $user->id
+        //     ]);
+        // }
 
         // Add more events as needed based on your application's requirements
     }
@@ -652,8 +652,14 @@ class AddTask extends Component
 
         $destinationDepartment = $this->selectedDepartment;
         $selectedEngineer = $this->selectedEngineer;
-
-        // Create the department_task_assignment record
+        // Check if the user with the specified ID exists
+        $user = User::find($selectedEngineer);
+        if ($user) {
+            $engineerName = $user->name;
+        } else {
+            // Handle the case where the user doesn't exist
+            $engineerName = 'User not found';
+        }        // Create the department_task_assignment record
         $departmentTask = department_task_assignment::create([
             'department_id' => $destinationDepartment,
             'main_tasks_id' => $main_task_id,
@@ -662,7 +668,7 @@ class AddTask extends Component
         ]);
 
         // Step 2: Record timeline event for department task assignment
-        $this->recordDepartmentTaskAssignmentTimeline($main_task_id, $selectedEngineer);
+        $this->recordDepartmentTaskAssignmentTimeline($main_task_id, $engineerName);
 
         // Continue with any additional logic as needed
 

@@ -200,19 +200,18 @@
                     {{-- <a href="{{route('dashboard.reportPage',['id'=>$task->main_task->id])}}" type="button"
                         class="btn btn-info  button-icon "><i class="si si-notebook px-2" data-bs-toggle="tooltip"
                             title="" data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a> --}}
-                    <a href="{{route('dashboard.reportPage',['id'=>$task->main_task->id])}}"
+                    <a href="{{route('dashboard.reportPage',['id'=>$task->id])}}"
                         class="btn btn-dark btn-lg btn-block"><i class="si si-notebook px-2" data-bs-toggle="tooltip"
                             title="" data-bs-original-title="si-notebook"
                             aria-label="si-notebook"></i>Report</a></button>
+
                     {{-- <a href="/engineer-task-page/{{$task->id}}" class="btn btn-outline-secondary">Engineer
                         report</a> --}}
 
                 </div>
             </div>
             @endforeach
-            @empty($completedTasks)
-            d
-            @endempty
+
         </div>
         {{ $completedTasks->links() }}
 
