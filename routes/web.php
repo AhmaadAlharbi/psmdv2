@@ -342,9 +342,12 @@ Route::get('/dashboard/user/request-to-update-report/{main_task_id}', [Dashboard
 Route::patch('/dashboard/user/update-report/{main_task_id}', [DashboardController::class, 'updateReport'])->name('dashboard.updateReport');
 Route::get('/download/{main_task_id}/{file}', [FileController::class, 'download'])->name('download.file');
 Route::get('/delete/{main_task_id}/{file}/{id}', [FileController::class, 'delete'])->name('delete.file');
-
+Route::get('/dashbaord/view-task/{id}', [DashboardController::class, 'viewTask'])->name('dashboard.viewTask');
 Route::get('/unauthorized', function () {
     return view('unauthorized');
 })->name('unauthorized');
+
+
+
 ////##### statins list  
 require __DIR__ . '/auth.php';

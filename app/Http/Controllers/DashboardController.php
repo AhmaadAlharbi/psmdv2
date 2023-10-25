@@ -934,26 +934,72 @@ class DashBoardController extends Controller
             return back();
         }
     }
+    // public function showTasks($status)
+    // {
+    //     $stations = Station::all();
+    //     $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+    //     $currentMonth = Carbon::now()->month;
+    //     $isAdmin = Auth()->user()->role->title == 'Admin';
+    //     $tasks = $isAdmin ? $this->getAdminTasks($status, $currentMonth) : $this->getEngineerTasks($status);
+    //     $reports = [];
+    //     foreach ($tasks as $task) {
+    //         if ($task->isCompleted == 1) {
+    //             $taskReports = SectionTask::where('main_tasks_id', $task->main_tasks_id)
+    //                 ->where('department_id', $task->department_id)
+    //                 ->where('isCompleted', "1")
+    //                 ->get();
+
+    //             // Append the reports for this task to the $reports array
+    //             $reports = array_merge($reports, $taskReports->toArray());
+    //         }
+    //     }
+    //     return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
+    // }
     public function showTasks($status)
     {
-        $stations = Station::all();
-        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+        $isAdmin = Auth::user()->role->title == 'Admin';
         $currentMonth = Carbon::now()->month;
-        $isAdmin = Auth()->user()->role->title == 'Admin';
-        $tasks = $isAdmin ? $this->getAdminTasks($status, $currentMonth) : $this->getEngineerTasks($status);
-        $reports = [];
-        foreach ($tasks as $task) {
-            if ($task->isCompleted == 1) {
-                $taskReports = SectionTask::where('main_tasks_id', $task->main_tasks_id)
-                    ->where('department_id', $task->department_id)
-                    ->get();
+        $departmentId = Auth::user()->department_id;
 
-                // Append the reports for this task to the $reports array
-                $reports = array_merge($reports, $taskReports->toArray());
-            }
-        }
+        $stations = Station::all();
+        $engineers = Engineer::where('department_id', $departmentId)->get();
+
+        $tasks = $isAdmin ? $this->getAdminTasks($status, $currentMonth) : $this->getEngineerTasks($status);
+
+        $taskIds = $tasks->pluck('id')->toArray();
+
+        $reports = SectionTask::whereIn('main_tasks_id', $taskIds)
+            ->where('department_id', $departmentId)
+            ->where('isCompleted', 1)
+            ->get();
+
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
     }
+
+    public function viewTask($id)
+    {
+        $departmentId = Auth::user()->department_id;
+
+        $stations = Station::all();
+        $engineers = Engineer::where('department_id', $departmentId)->get();
+
+        $tasks = department_task_assignment::where('id', $id)->paginate(6);
+        $status = null; // You can set a default status here if needed.
+        $reports = null; // You can set a default value for reports here if needed.
+
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
+    }
+
+    // public function viewTask($id)
+    // {
+    //     $stations = Station::all();
+    //     $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+    //     $tasks = department_task_assignment::where('id', $id)->paginate(6);
+    //     // $tasks = MainTask::where('id', $task->main_tasks_id)->get();
+    //     $status = null;
+    //     $reports = null;
+    //     return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
+    // }
     public function ShowTasksEngineer($status)
     {
         $stations = Station::all();
@@ -973,7 +1019,7 @@ class DashBoardController extends Controller
 
             case 'completed':
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
-                    ->where('status', 'completed')
+                    ->where('isCompleted', "1")
                     ->latest()->paginate(6);
 
             case 'all':

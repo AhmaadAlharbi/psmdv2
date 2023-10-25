@@ -340,8 +340,14 @@
                                 @endif
 
                                 <td class="text-lg">{{$task->created_at}}</td>
-                                <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-warning-gradient">View</a>
+
+                                <td>
+                                    <a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"
+                                        class="btn btn-primary">View</a>
+
+                                    <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                        class="btn btn-warning-gradient">Edit</a>
+
                                     <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
                                         class="btn btn-secondary">History</a>
 

@@ -65,7 +65,9 @@
                                                     class="mt-2 text-danger" />
                                             </div>
                                             <div class="mt-4">
-                                                <x-input-label for="department" />
+                                                <x-input-label for="department"
+                                                    :value="_('Please select the department that you belong to')" />
+
 
                                                 <select class="form-select bg-white" name="department">
                                                     <option value="-1">Select a Department</option>

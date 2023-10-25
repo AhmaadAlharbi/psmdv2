@@ -49,34 +49,34 @@
                                 <div class="tab-pane active" id="tab4">
                                     <form action="{{route('dashboard.searchStation')}}" method="GET">
                                         <div class="row d-flex justify-content-start mb-3">
-                                            <input list="ssnames" type="search" class="col-3 mx-sm-3 mb-2 form-control"
-                                                name="station" placeholder="search in stations">
-
-                                            <datalist id="ssnames">
-                                                @foreach ($stations as $station)
-                                                <option value="{{ $station->SSNAME }}">
-                                                    @endforeach
-                                            </datalist>
-                                            <button type="submit" class="col-1 btn btn-secondary bg-secondary mb-2">
-                                                <i class="bi bi-search"></i> Search
-                                            </button>
-
+                                            <div class="col">
+                                                <input list="ssnames" type="search" class=" mb-2 form-control"
+                                                    name="station" placeholder="search in stations">
+                                                <datalist id="ssnames">
+                                                    @foreach ($stations as $station)
+                                                    <option value="{{ $station->SSNAME }}">
+                                                        @endforeach
+                                                </datalist>
+                                                <button type="submit" class=" btn btn-secondary bg-secondary mb-2">
+                                                    <i class="bi bi-search"></i> Search</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="tab-pane" id="tab5">
                                     <form action="{{route('dashboard.engineerTasks')}}" method="GET">
                                         <div class="row d-flex justify-content-start mb-3">
-                                            <input list="engineers" type="search"
-                                                class="col-3 mx-sm-3 mb-2 form-control" name="engineer"
-                                                placeholder="search in engineers">
-                                            <datalist id="engineers">
-                                                @foreach ($engineers as $engineer)
-                                                <option value="{{ $engineer->user->name }}">
-                                                    @endforeach
-                                            </datalist>
-                                            <button type="submit"
-                                                class="col-1 btn btn-secondary bg-secondary mb-2">ابحث</button>
+                                            <div class="col">
+                                                <input list="engineers" type="search" class="mb-2 form-control"
+                                                    name="engineer" placeholder="search in engineers">
+                                                <datalist id="engineers">
+                                                    @foreach ($engineers as $engineer)
+                                                    <option value="{{ $engineer->user->name }}">
+                                                        @endforeach
+                                                </datalist>
+                                                <button type="submit" class=" btn btn-secondary bg-secondary mb-2">
+                                                    <i class="bi bi-search"></i> Search</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -111,6 +111,7 @@
         </div>
     </div>
     @endif
+
     @foreach($tasks as $task)
     <div class="col-12 col-sm-12 col-lg-6 col-xl-4 my-2">
         <div class="card {{$task->status =='pending'  ? 'card-danger' : 'card-success'}} h-100 ">
