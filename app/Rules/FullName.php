@@ -19,7 +19,7 @@ class FullName implements Rule
         $parts = explode(' ', $value);
 
         // Count the number of parts and ensure it is at least 4
-        return count($parts) >= 4;
+        return count($parts) >= 3;
     }
 
     /**

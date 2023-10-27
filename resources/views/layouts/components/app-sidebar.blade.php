@@ -3,8 +3,11 @@
 <div class="sticky">
 	<aside class="app-sidebar sidebar-scroll">
 		<div class="main-sidebar-header active">
-			<a class="desktop-logo " href="{{url('index')}}"><img src="https://www.mew.gov.kw/images/mew_ar.svg"
-					class="main-logo" alt="logo"></a>
+			<a class="desktop-logo"
+				href="{{ Auth::user()->role_id == 2 ? url('/dashboard/admin') : url('/dashboard/user') }}">
+				<img src="https://www.mew.gov.kw/images/mew_ar.svg" class="main-logo" alt="logo">
+			</a>
+
 			{{-- <a class="desktop-logo logo-dark active" href="{{url('index')}}"><img
 					src="{{asset('assets/img/brand/logo-white.png')}}" class="main-logo" alt="logo"></a>
 			<a class="logo-icon mobile-logo icon-light active" href="{{url('index')}}"><img

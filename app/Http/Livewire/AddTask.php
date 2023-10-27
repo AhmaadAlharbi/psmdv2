@@ -602,6 +602,7 @@ class AddTask extends Component
             $attachments->save();
         }
     }
+
     private function sendNotifications($mainTask, $engineerEmail)
     {
         if ($engineerEmail !== null) {

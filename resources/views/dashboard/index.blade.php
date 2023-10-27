@@ -304,13 +304,13 @@
                 <div class="table-responsive">
                     <table class="table table-vcenter table-bordered text-nowrap table-striped align-items-center mb-0">
                         <thead>
-                            <tr class=" bg-warning-gradient">
+                            <tr class="bg-warning-gradient">
                                 <th class="text-lg">ID</th>
                                 <th class="text-lg">STATION</th>
-                                <th class="text-lg">Main Alarm</th>
-                                <th class="text-lg">Status</th>
+                                <th class="text-lg d-none d-md-table-cell">Main Alarm</th>
+                                <th class="text-lg d-none d-md-table-cell">Status</th>
                                 <th class="text-lg">ENGINEER</th>
-                                <th class="text-lg">DATE</th>
+                                <th class="text-lg d-none d-md-table-cell">DATE</th>
                                 <th class="text-lg">OPERATION</th>
                             </tr>
                         </thead>
@@ -320,45 +320,50 @@
                                 <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
                                 <td class="text-lg"> {{$task->main_task->station->SSNAME}} </td>
                                 @if(isset($task->main_task->main_alarm_id))
-                                <td class="text-lg">{{$task->main_task->main_alarm->name}}
-                                </td>
-                                @else
-                                <td>-</td>
-                                @endisset
-                                <td>
+                                <td class="text-lg d-none d-md-table-cell">{{$task->main_task->main_alarm->name}}</td>
+                                <td class="d-none d-md-table-cell">
                                     <span class="badge bg-danger me-1">{{$task->status}}</span>
                                 </td>
-                                @if($task->eng_id)
+                                @else
+                                <td class="d-none d-md-table-cell">-</td>
+                                <td class="d-none d-md-table-cell">-</td>
+                                @endisset
                                 <td class="text-lg">
+                                    @if($task->eng_id)
                                     <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-
                                         {{$task->engineer->name}} - {{$task->engineer->department->name}}
                                     </a>
+                                    @else
+                                    -
+                                    @endif
                                 </td>
-                                @else
-                                <td>-</td>
-                                @endif
-
-                                <td class="text-lg">{{$task->created_at}}</td>
-
+                                <td class="text-lg d-none d-md-table-cell">{{$task->created_at}}</td>
                                 <td>
-                                    <a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"
-                                        class="btn btn-primary">View</a>
-
-                                    <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-warning-gradient">Edit</a>
-
-                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
-                                        class="btn btn-secondary">History</a>
-
-
-
+                                    <button type="button" class="btn btn-outline-danger dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fe fe-settings"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.viewTask', ['id' => $task->id]) }}">
+                                                <i class="fas fa-eye"></i> View</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-edit"></i> Edit</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                <i class="fas fa-history"></i> History</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0);">
+                                                <i class="fas fa-exchange-alt"></i> Move to Another Department</a>
+                                        </li>
+                                    </ul>
                                 </td>
                             </tr>
                             @endforeach
-
                         </tbody>
                     </table>
+
+
                     {{ $pendingTasks->links() }}
 
                 </div>
@@ -395,10 +400,29 @@
                                 <td>{{$task->department->name}}</td>
                                 <td>{{$task->toDepartment->name}}</td>
                                 <td>{{$task->created_at}}</td>
-                                <td><a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-info-gradient">View</a>
-                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
-                                        class="btn btn-secondary">History</a>
+                                <td>
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <i class="fe fe-settings"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            @if($task->status =='completed')
+                                            <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                                class="dropdown-item">View</a>
+                                            @endif
+                                        </li>
+
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-edit"></i> Edit</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                <i class="fas fa-history"></i> History</a></li>
+                                    </ul>
+
+
+
                                 </td>
 
                             </tr>
@@ -445,20 +469,41 @@
                                 </td>
                                 @endif
                                 <td>
-                                    @if($task->status =='completed')
-                                    <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                        class="btn btn-info-gradient">View</a>
-                                    @endif
-                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
-                                        class="btn btn-secondary">History</a>
-                                    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal"
-                                        data-bs-target="#deleteConfirmationModal-{{ $task->id }}">
-                                        <i class="fa fa-trash"></i> Delete
-                                    </a>
-                                    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal"
-                                        data-bs-target="#cancelConfirmationModal-{{ $task->id }}">
-                                        <i class="fas fa-times"></i> Cancel Tracking
-                                    </a>
+
+                                    <button type="button" class="btn btn-outline-danger dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fe fe-settings"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            @if($task->status =='completed')
+                                            <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
+                                                class="dropdown-item">View</a>
+                                            @endif
+                                        </li>
+
+                                        {{-- <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.viewTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-eye"></i> View</a></li> --}}
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                <i class="fas fa-history"></i> History</a></li>
+                                        <li>
+                                            <a href="#" class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#deleteConfirmationModal-{{ $task->id }}">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#cancelConfirmationModal-{{ $task->id }}">
+                                                <i class="fas fa-times"></i> Cancel Tracking
+                                            </a>
+                                        </li>
+                                    </ul>
+
+
+
                                 </td>
 
 
@@ -595,13 +640,27 @@
                                 </td>
                                 <td>{{$task->created_at}}</td>
 
-                                <td><a href="{{route('dashboard.reportPage',['id'=>$task->id])}}" type="button"
-                                        class="btn btn-success-gradient  button-icon "><i class="si si-notebook px-2"
-                                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
-                                            aria-label="si-notebook"></i>Report</a>
-                                    <a href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}"
-                                        class="btn btn-secondary">History</a>
-                                </td>
+                                <td>
+
+                                    <button type="button" class="btn btn-success dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fe fe-settings"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                href="{{route('dashboard.reportPage',['id'=>$task->id])}}">
+                                                <i class="fas fa-eye"></i> View Report</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-edit"></i> Edit</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                <i class="fas fa-history"></i> History</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0);">
+                                                <i class="fas fa-exchange-alt"></i> Move to Another Department</a>
+                                        </li>
+                                    </ul>
+
                             </tr>
                             @endforeach
 
