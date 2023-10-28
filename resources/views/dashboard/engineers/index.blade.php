@@ -120,8 +120,9 @@
             </div>
             <div class="card-footer">
 
-                <button data-bs-toggle="dropdown" class="btn btn-danger btn-block"></i>العمليات <i
+                <button data-bs-toggle="dropdown" class="btn btn-danger btn-block w-100">Actions <i
                         class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
+
                 <div class="dropdown-menu">
                     {{-- <a href="{{route('dashboard.editTask',['id'=>$task->id])}}" class="dropdown-item">تعديل</a>
                     --}}

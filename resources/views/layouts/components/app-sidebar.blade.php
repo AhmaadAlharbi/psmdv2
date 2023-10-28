@@ -35,6 +35,15 @@
 				</svg></div>
 			<ul class="side-menu">
 				<li class="side-item side-item-category">Main</li>
+
+				<li class="slide">
+					<a class="side-menu__item" href="{{route('contactPage')}}">
+						<i class="fas fa-headset side-menu__icon"></i>
+						<span class="side-menu__label">Contact Support</span>
+					</a>
+				</li>
+
+
 				<li class="slide">
 					<a class="side-menu__item" href="{{ route('dashboard.index') }}">
 						<i class="fas fa-tachometer-alt side-menu__icon"></i>

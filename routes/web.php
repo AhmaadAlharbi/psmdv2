@@ -327,6 +327,8 @@ Route::middleware(['auth', 'confirmed'])->group(function () {
     Route::get('engineer/{id}/tasks/{status}', [EngineersController::class, 'engineerTask'])->name('dashboard.engineerTask');
     Route::get('/archive', [DashboardController::class, 'archive'])->name('dashboard.archive');
     Route::get('/archive/search', [DashboardController::class, 'searchArchive'])->name('dashboard.searchArchive');
+    Route::get('/contact', [DashboardController::class, 'contactPage'])->name('contactPage');
+    Route::post('/contact', [DashboardController::class, 'sendEmail'])->name('sendEmail');
 });
 
 

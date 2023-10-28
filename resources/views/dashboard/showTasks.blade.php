@@ -178,56 +178,57 @@
                 </ul>
             </div>
             <div class="card-footer">
-                {{-- <button class="btn {{$task->status =='pending'  ? 'btn-danger' : 'btn-success'}}">More
+                {{-- <button class="btn {{ $task->status === 'pending' ? 'btn-danger' : 'btn-success' }}">More
                     information</button> --}}
-                @if(Auth::user()->role->title == 'Admin')
-                <div class="row">
 
-                    @if($task->main_task->status !== 'completed')
-                    <div class="col">
-                        <a class="btn btn-dark" href="{{route('dashboard.editTask', ['id' => $task->id])}}">تعديل</a>
-                    </div>
-                    <div class="col">
-                        <form method="post" action="{{route('task.destroy', ['id' => $task->main_task->id])}}"
+                <div class="btn-group">
+                    <button data-bs-toggle="dropdown" class="btn btn-danger btn-block w-100">Actions <i
+                            class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
+
+                    <div class="dropdown-menu">
+                        @if(Auth::user()->role->title === 'Admin' && $task->main_task->status !== 'completed')
+                        <a href="{{ route('dashboard.editTask', ['id' => $task->main_task->id]) }}"
+                            class="dropdown-item">Edit</a>
+                        <form method="post" action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
                             id="delete-form-{{ $task->main_task->id }}">
                             @csrf
                             @method('DELETE')
                             <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
-                                class="btn btn-outline-danger">حذف المهمة</button>
-
+                                class="dropdown-item">Delete Task</button>
                         </form>
-                    </div>
-                    @endif
+                        @endif
 
+                        @if($task->isCompleted === '1')
+                        <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}"
+                            class="dropdown-item">
+                            <i class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
+                                data-bs-original-title="si-notebook" aria-label="si-notebook"></i>
+                            {{ Auth::user()->department->name }} Report
+                        </a>
+
+                        @if($task->source_department !== 1 && $task->source_department)
+                        @php
+                        $reportRoute = $task->source_department !== Auth::user()->department_id ?
+                        'dashboard.reportDepartment' : 'dashboard.reportDepartment';
+                        $departmentId = $task->source_department !== Auth::user()->department_id ?
+                        $task->source_department : $task->destination_department;
+                        $departmentName = $task->source_department !== Auth::user()->department_id ?
+                        $task->department->name : $task->toDepartment->name;
+                        @endphp
+                        <a href="{{ route($reportRoute, ['main_task_id' => $task->main_tasks_id, 'department_id' => $departmentId]) }}"
+                            class="dropdown-item">Report {{ $departmentName }}</a>
+                        @endif
+
+                        @if($task->eng_id === Auth::user()->id)
+                        <a href="{{ route('dashboard.requestToUpdateReport', $task->main_tasks_id) }}"
+                            class="dropdown-item">Request to update report</a>
+                        @endif
+                        @endif
+                    </div><!-- dropdown-menu -->
                 </div>
-                @endif
-                @if($task->isCompleted === '1')
-                <div class="col">
-                    <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
-                        type="button" class="btn btn-success  button-icon "><i class="si si-notebook px-2"
-                            data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
-                            aria-label="si-notebook"></i>{{Auth::user()->department->name}} Report </a>
-                    @if($task->source_department !== 1 && $task->source_department )
-                    @if( $task->source_department !== Auth::user()->department_id)
-                    <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->source_department])}}"
-                            class="btn btn-dark">Report {{$task->department->name}} </a></td>
-                    @else
-                    <td><a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->destination_department])}}"
-                            class="btn btn-dark">Report {{$task->toDepartment->name}} </a></td>
-                    @endif
-                    @endif
-                    @if($task->eng_id === Auth::user()->id)
-                    <a href="{{route('dashboard.requestToUpdateReport',$task->main_tasks_id)}}" class="btn btn-dark">
-                        Request to
-                        update report </a>
-                    @endif
-
-
-
-                </div>
-                @endif
-
             </div>
+
+
         </div>
     </div>
 

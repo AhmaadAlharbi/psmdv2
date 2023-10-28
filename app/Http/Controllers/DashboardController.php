@@ -13,11 +13,15 @@ use App\Models\Department;
 use App\Models\SectionTask;
 use App\Models\TaskTimeline;
 use Illuminate\Http\Request;
+use App\Mail\ContactFormMail;
 use App\Models\TaskAttachment;
 use App\Models\TaskConversions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\department_task_assignment;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ContactFormNotification;
 
 class DashBoardController extends Controller
 {
@@ -1216,5 +1220,28 @@ class DashBoardController extends Controller
             'tracked' => 0
         ]);
         return redirect()->back()->with('success', 'Task deleted successfully');
+    }
+    public function contactPage()
+    {
+        return view('dashboard.email-page');
+    }
+    public function sendEmail(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
+        $user = User::where('email', 'azaalharbi@mew.gov.kw')->first();
+        $email = $data['email'];
+        $subject = $data['subject'];
+        $message = $data['message'];
+        $userEmail = Auth::user()->email;
+        $username = Auth::user()->name;
+
+        // $user->notify(new ContactFormNotification($email, $subject, $message));
+        Notification::send($user, new ContactFormNotification($email, $subject, $message, $userEmail, $username));
+
+        return redirect()->route('contactPage')->with('success', 'Message sent successfully!');
     }
 }
