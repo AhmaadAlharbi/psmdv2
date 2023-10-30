@@ -353,12 +353,71 @@
                                         <li><a class="dropdown-item"
                                                 href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
                                                 <i class="fas fa-history"></i> History</a></li>
-                                        <li><a class="dropdown-item" href="javascript:void(0);">
-                                                <i class="fas fa-exchange-alt"></i> Move to Another Department</a>
+                                        <li>
+                                            <a class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#moveTask-{{ $task->id }}">
+                                                <i class="fas fa-exchange-alt"></i> Move to Another Department
+                                            </a>
                                         </li>
+
+
+
+
+
+
                                     </ul>
                                 </td>
                             </tr>
+                            <!-- Modal -->
+                            <div class="modal" id="moveTask-{{ $task->id }}" tabindex="-1" role="dialog"
+                                aria-labelledby="moveTaskLabel-{{ $task->id }}">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content modal-content-demo">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">Update this task</h6>
+                                            <button aria-label="Close" class="close" data-bs-dismiss="modal"
+                                                type="button">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('dashboard.convertTask', $task->main_tasks_id) }}"
+                                                method="POST">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="departmentSelect">Select Department</label>
+                                                    <input type="hidden" name="main_task"
+                                                        value="{{ $task->main_tasks_id }}">
+                                                    <select id="departmentSelect" name="departmentSelect"
+                                                        class="form-select">
+                                                        <option value="{{ Auth::user()->department_id }}">
+                                                            {{ Auth::user()->department->name }}
+                                                        </option>
+                                                        @foreach ($departments as $department)
+                                                        @if ($department->id !==
+                                                        Auth::user()->department_id)
+                                                        <option value="{{ $department->id }}">{{
+                                                            $department->name }}</option>
+                                                        @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="notes">Notes</label>
+                                                    <textarea id="notes" name="notes" class="form-control"></textarea>
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn ripple btn-primary" type="submit">Save
+                                                changes</button>
+                                            <button class="btn ripple btn-secondary" data-bs-dismiss="modal"
+                                                type="button">Close</button>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             @endforeach
                         </tbody>
                     </table>
