@@ -126,6 +126,7 @@ use App\Http\Livewire\WidgetNotification;
 use App\Http\Controllers\StationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EngineersController;
+use App\Http\Controllers\MainAlarmController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -313,6 +314,10 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::delete('/delete-converted-task/{id}', [DashboardController::class, 'deleteConvertedTask'])->name('dashboard.deleteConvertedTask');
     Route::delete('/cancel-converted-task/{id}', [DashboardController::class, 'cancelConvertedTask'])->name('dashboard.cancelConvertedTask');
     Route::get('/set/user-to-admin/{id}', [UserController::class, 'setAdmin'])->name('setAdmin');
+    Route::get('/dashboard/main-alarms', [MainAlarmController::class, 'index'])->name('main_alarm.index');
+    Route::patch('/update-main-alarm/{id}', [MainAlarmController::class, 'update'])->name('main_alarm.update');
+    Route::delete('/delete-main-alarm/{id}', [MainAlarmController::class, 'destroy'])->name('main_alarm.destroy');
+    Route::post('/create-main-alarm', [MainAlarmController::class, 'store'])->name('main_alarm.store');
 });
 
 Route::middleware(['auth', 'confirmed'])->group(function () {

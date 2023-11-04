@@ -66,6 +66,8 @@
 					<ul class="slide-menu">
 						<li class="side-menu__label1"><a href="javascript:void(0);">Icons</a></li>
 						<li><a class="slide-item" href="{{ route('dashboard.add_task') }}">Task Assignment</a></li>
+						<li><a class="slide-item" href="{{ route('main_alarm.index') }}">Alarms List</a></li>
+
 						<li><a class="slide-item"
 								href="{{ route('dashboard.showTasks', ['status' => 'pending']) }}">Pending Tasks</a>
 						</li>
@@ -100,6 +102,8 @@
 						<li><a class="slide-item" href="{{ route('stations.create') }}">Add Station</a></li>
 					</ul>
 				</li>
+
+
 
 
 				{{-- <li class="side-item side-item-category">WEB APPS</li>

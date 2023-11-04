@@ -80,7 +80,7 @@
                                             </form>
 
                                             <div class=" main-signin-footer mt-5 text-white">
-                                                {{-- <p><a href="{{url('forgot')}}">Forgot password?</a></p> --}}
+                                                <p><a href="{{url('forgot')}}">Forgot password?</a></p>
                                                 <p>Don't have an account? <a href="{{url('signup')}}">Create an
                                                         Account</a></p>
                                             </div>

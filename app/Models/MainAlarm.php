@@ -14,4 +14,8 @@ class MainAlarm extends Model
     {
         return $this->hasMany(MainTask::class);
     }
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }
