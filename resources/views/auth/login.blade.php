@@ -52,7 +52,8 @@
                                                     <x-text-input id="email" class="form-control" type="email"
                                                         name="email" :value="old('email')" required autofocus
                                                         autocomplete="username" />
-                                                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                                    <x-input-error :messages="$errors->get('email')"
+                                                        class="text-danger" />
                                                 </div>
 
                                                 <!-- Password -->
@@ -63,7 +64,8 @@
                                                         type="password" name="password" required
                                                         autocomplete="current-password" />
 
-                                                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                                    <x-input-error :messages="$errors->get('password')"
+                                                        class="text-danger" />
                                                 </div>
                                                 {{-- <div class="block mt-4">
                                                     <label for="remember_me" class="inline-flex items-center">
@@ -80,7 +82,7 @@
                                             </form>
 
                                             <div class=" main-signin-footer mt-5 text-white">
-                                                {{-- <p><a href="{{url('forgot')}}">Forgot password?</a></p> --}}
+                                                <p><a href="{{url('forgot')}}">Forgot password?</a></p>
                                                 <p>Don't have an account? <a href="{{url('signup')}}">Create an
                                                         Account</a></p>
                                             </div>
