@@ -50,7 +50,7 @@
     <div class="card mg-b-20" id="tabs-style2">
         <div class="card-body">
             <div class="main-content-label mg-b-5">
-                البحث
+                Search
             </div>
 
             <div class="text-wrap">
@@ -60,8 +60,8 @@
                             <div class="tabs-menu1">
                                 <!-- Tabs -->
                                 <ul class="nav panel-tabs main-nav-line">
-                                    <li><a href="#tab4" class="nav-link active" data-bs-toggle="tab">البحث في
-                                            المحطات</a>
+                                    <li><a href="#tab4" class="nav-link active" data-bs-toggle="tab">
+                                            Stations</a>
                                     </li>
 
                                 </ul>
@@ -73,7 +73,7 @@
                                     <form action="{{route('dashboard.searchArchive')}}" method="get">
                                         @csrf
                                         @livewire('station-equip')
-                                        <label for="">المهندس</label>
+                                        <label for="">Engineer</label>
                                         <input list="engineers" type="search" class="col-8 mx-sm-3 mb-2 form-control"
                                             name="engineer">
                                         <datalist id="engineers">
@@ -83,25 +83,25 @@
                                                 @endforeach
                                         </datalist>
                                         <div class="col">
-                                            <label for="">من</label>
+                                            <label for="">From</label>
 
                                             <div class="col-8 mx-sm-3 input-group">
                                                 <div class="input-group-text">
                                                     <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                 </div>
                                                 <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY"
-                                                    type="text" name="task_Date">
+                                                    type="text" name="task_Date" autocomplete="off">
                                             </div><!-- input-group -->
                                         </div>
                                         <div class="col">
-                                            <label for="">إلى</label>
+                                            <label for="">to</label>
 
                                             <div class="col-8 mx-sm-3 input-group">
                                                 <div class="input-group-text">
                                                     <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                                 </div>
                                                 <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY"
-                                                    type="text" name="task_Date2">
+                                                    type="text" name="task_Date2" autocomplete="off">
                                             </div><!-- input-group -->
                                         </div>
                                 </div>
@@ -120,13 +120,23 @@
         <div class="p-3 bg-light text-dark border">
             <nav class="nav main-nav flex-column flex-md-row">
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'all' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'all'])}}">كل المهمات</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'all']) }}">
+                    <i class="bi bi-list-task"></i> All Tasks
+                </a>
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'pending' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'pending'])}}">المهمات الغير
-                    المنجزة</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'pending']) }}">
+                    <i class="bi bi-clock-history"></i> Pending Tasks
+                </a>
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'completed' ? 'active' : '' }}"
-                    href="{{route('dashboard.showTasks',['status'=>'completed'])}}">المهمات المنجزة</a>
+                    href="{{ route('dashboard.showTasks', ['status' => 'completed']) }}">
+                    <i class="bi bi-check-circle-fill"></i> Completed Tasks
+                </a>
+                <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'mutual-tasks' ? 'active' : '' }}"
+                    href="{{ route('dashboard.showTasks', ['status' => 'mutual-tasks']) }}">
+                    <i class="bi bi-people"></i> Mutual Tasks
+                </a>
             </nav>
+
         </div>
     </div>
     @foreach($tasks as $task)
