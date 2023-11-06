@@ -803,10 +803,79 @@
             <div class="card-header pb-0">
                 <div class="d-flex justify-content-between">
                     <h4 class="card-title mg-b-0"> Completed Tasks</h4>
-
-
                 </div>
 
+            </div>
+            <div class="card-body ">
+                <div class="table-responsive">
+                    <table
+                        class="table table-vcenter table-striped table-bordered text-nowrap  align-items-center mb-0">
+                        <thead>
+                            <tr class="bg-success-gradient">
+                                <th>ID</th>
+                                <th>STATION</th>
+                                <th>Main alarm</th>
+                                <th>Status</th>
+                                <th>ENGINEER</th>
+                                <th>Date</th>
+                                <th>Report</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($completedTasks as $task)
+                            <tr>
+                                <th scope="row">{{ $loop->iteration }}</th>
+                                <td>{{$task->main_task->station->SSNAME}}</td>
+                                <td>
+                                    @isset($task->main_alarm_id)
+                                    {{$task->main_task->main_alarm->name}}
+                                    @endisset
+                                </td>
+                                <td>
+                                    @if($task->status === 'completed')
+                                    <span class="badge bg-success me-1">{{$task->status}}</span>
+                                    @else
+                                    <span class="badge bg-warning me-1">{{$task->status}}</span>
+
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
+
+                                        {{$task->engineer->name}} - {{$task->engineer->department->name}}
+                                    </a>
+                                </td>
+                                <td>{{$task->created_at}}</td>
+
+                                <td>
+
+                                    <button type="button" class="btn btn-success dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fe fe-settings"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                href="{{route('dashboard.reportPage',['id'=>$task->id])}}">
+                                                <i class="fas fa-eye"></i> View Report</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-edit"></i> Edit</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                <i class="fas fa-history"></i> History</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0);">
+                                                <i class="fas fa-exchange-alt"></i> Move to Another Department</a>
+                                        </li>
+                                    </ul>
+
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                    {{ $completedTasks->links() }}
+
+                </div>
             </div>
 
         </div>

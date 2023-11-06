@@ -339,7 +339,8 @@ Route::middleware(['auth', 'confirmed'])->group(function () {
 
 Route::get('/unapproved-access', function () {
     return view('waiting-approval');
-})->name('unapproved.access');
+})->name('unapproved.access')->middleware('check_approval');
+
 
 Route::get('/logout2', [EngineersController::class, 'logout'])->name('engineer.logout');
 
