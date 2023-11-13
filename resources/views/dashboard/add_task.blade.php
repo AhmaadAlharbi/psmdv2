@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
 @section('styles')
-
+<style>
+    .form-check-input:checked {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+</style>
 @endsection
 
 @section('content')

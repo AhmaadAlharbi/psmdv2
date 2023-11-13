@@ -97,6 +97,20 @@
                                         <div class="custom-controls-stacked mt-3">
                                             <label class="custom-control form-radio custom-control-md">
                                                 <input type="radio" class="custom-control-input"
+                                                    name="action_take_status" value="task_progress" checked>
+                                                <span
+                                                    class="custom-control-label custom-control-label-md tx-17 text-info">First
+                                                    draft
+                                                </span>
+
+                                                <small class="text-secondary mt-2">
+                                                    Note: If you do not provide a progress update within 24 hours from
+                                                    receiving the task, it will be marked as a late reply.
+                                                </small>
+                                            </label>
+
+                                            <label class="custom-control form-radio custom-control-md">
+                                                <input type="radio" class="custom-control-input"
                                                     name="action_take_status" value="completed" checked>
                                                 <span
                                                     class="custom-control-label custom-control-label-md tx-17 text-success">Completed</span>
@@ -155,7 +169,7 @@
                                                     accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" />
                                             </div><br>
                                         </div>
-                                        <button class="btn btn-info">Submit Report</button>
+                                        <button type="submit" class="btn btn-info">Submit Report</button>
                                 </div>
                                 </form>
 

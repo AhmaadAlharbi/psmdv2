@@ -20,6 +20,10 @@ class Engineer extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function taskLogs()
+    {
+        return $this->hasMany(TaskLog::class, 'engineer_id', 'user_id');
+    }
     public function main_tasks()
     {
         return $this->hasMany(MainTask::class);

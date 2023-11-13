@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Station;
+use App\Models\TaskLog;
 use App\Models\Engineer;
 use App\Models\MainTask;
 use App\Models\MainAlarm;
@@ -575,6 +576,8 @@ class DashBoardController extends Controller
                         ->orWhere('destination_department', Auth::user()->department_id);
                 })
                 ->first();
+
+
             $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
                 ->where('main_tasks_id',  $mainTask->id)
                 ->first();
@@ -610,7 +613,6 @@ class DashBoardController extends Controller
         $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
             ->where('main_tasks_id', $mainTask->id)
             ->first();
-
         // Step 2: Handle tasks based on conditions
         if ($taskSource && $taskConverted->source_department != $departmentTask->department_id) {
             // Task is from source department and not currently assigned to the current department
@@ -687,13 +689,15 @@ class DashBoardController extends Controller
             'action' => "The Report has been added",
             'user_id' => Auth::user()->id
         ]);
-
         // Step 5: Update the department task status to 'completed'
         $departmentTask->update([
             'status' => 'completed',
         ]);
 
         // Continue with other relevant tasks and updates
+        if ($isCompleted) {
+            $this->logTaskCompletion($departmentTask, $actionStatus);
+        }
     }
 
 
@@ -711,10 +715,8 @@ class DashBoardController extends Controller
     {
         // Determine if the task is completed based on its status
         $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
-
         // 'approved' is set to 1
         $approved = 1;
-
         // Data to create a new SectionTask
         $sectionTaskData = [
             'main_tasks_id' => $mainTask->id,
@@ -752,6 +754,11 @@ class DashBoardController extends Controller
             'status' => $actionStatus,
             'isCompleted' => $isCompleted,
         ];
+        if ($mainTask->main_alarm->id == 1) {
+            $this->logTaskCompletion($departmentTask, $actionStatus);
+        }
+        // Create a task log entry to track the completion time
+
 
         // Update the main task and department task with the prepared updates
         $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates);
@@ -803,12 +810,41 @@ class DashBoardController extends Controller
             }
         }
     }
+    private function logTaskCompletion($mainTask, $actionStatus)
+    {
 
 
+        $user = Auth::user();
+        $assignedTime = Carbon::parse($mainTask->created_at);
+        $completedTime = now();
+        $timeTakenInMinutes = $assignedTime->diffInMinutes($completedTime);
+        $taskType = $mainTask->is_emergency;
+        if ($taskType === TaskLog::TASK_TYPE_NORMAL) {
+            // Normal task
+            if ($actionStatus !== 'First Draft') {
+                // Check if it's late based on the time taken
+                $isLate = $timeTakenInMinutes > (24 * 60);
+            }
+        } elseif ($taskType === TaskLog::TASK_TYPE_EMERGENCY) {
+            // Emergency task
+            if ($actionStatus !== 'First Draft') {
+                // Check if it's late based on the time taken
+                $isLate = $timeTakenInMinutes > (2 * 60);
+            }
+        }
+        // Check if it's a normal task and if it's late
 
+        TaskLog::create([
+            'task_id' => $mainTask->id,
+            'user_id' => $user->id,
+            'task_type' => TaskLog::TASK_TYPE_NORMAL,
+            'assigned_time' => $assignedTime,
+            'completed_time' => $completedTime,
+            'time_taken' => $timeTakenInMinutes,
+            'is_late' => $isLate,
 
-
-
+        ]);
+    }
     public function reportDepartment($main_task_id, $department_id)
     {
         $section_task = SectionTask::where('main_tasks_id', $main_task_id)

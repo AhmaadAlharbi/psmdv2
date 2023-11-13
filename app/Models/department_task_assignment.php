@@ -23,4 +23,9 @@ class department_task_assignment extends Model
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
+    // Define the one-to-many relationship
+    public function taskLogs()
+    {
+        return $this->hasMany(TaskLog::class, 'task_id', 'id');
+    }
 }

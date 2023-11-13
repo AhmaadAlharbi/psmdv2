@@ -62,7 +62,7 @@ class AddTask extends Component
     public $otherMainAlarm = '';
     public $otherVoltage = '';
     public $otherEquip = '';
-
+    public $is_emergency = false;
     protected $listeners = ['callEngineer' => 'getEngineer'];
     public function mount()
     {
@@ -485,6 +485,7 @@ class AddTask extends Component
             'status' => 'pending',
             'main_alarm_id' => $mainAlarmId,
             'user_id' => Auth::user()->id,
+            'is_emergency' => $this->is_emergency
         ]);
         $this->recordTaskTimeline($main_task->id, $selectedEngineer);
         // Step 1.1: Check if the selected department is different from the user's department
@@ -625,7 +626,8 @@ class AddTask extends Component
         $departmentTask = department_task_assignment::create([
             'department_id' => $sourceDepartment,
             'main_tasks_id' => $main_task_id,
-            'status' => 'pending'
+            'status' => 'pending',
+            'is_emergency' => $this->is_emergency
         ]);
 
         $converted_task = TaskConversions::create([
@@ -665,7 +667,8 @@ class AddTask extends Component
             'department_id' => $destinationDepartment,
             'main_tasks_id' => $main_task_id,
             'eng_id' => $selectedEngineer,
-            'status' => 'pending'
+            'status' => 'pending',
+            'is_emergency' => $this->is_emergency
         ]);
 
         // Step 2: Record timeline event for department task assignment

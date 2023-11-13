@@ -185,16 +185,30 @@
                 <input wire:model="engineerEmail" type="text" class="form-control" name="eng_email" id="eng_name_email"
                     readonly>
             </div>
-            <label for="" class="mt-2">Task Type</label>
-            <select name="work_type" wire:model="work_type" name="work_type" class="form-control">
-                <option value="">-</option>
-                <option value="Clearance">Clearance</option>
-                <option value="Maintenance">Maintenance</option>
-                <option value="Inspection">Inspection</option>
-                <option value="outage">outage</option>
-                <option value="Installation">Installation</option>
-                <option value="other">other</option>
-            </select>
+            <div class="row">
+                <div class="col">
+                    <label for="" class="mt-2">Task Type</label>
+                    <select name="work_type" wire:model="work_type" name="work_type" class="form-control">
+                        <option value="">-</option>
+                        <option value="Clearance">Clearance</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="outage">outage</option>
+                        <option value="Installation">Installation</option>
+                        <option value="other">other</option>
+                    </select>
+
+                </div>
+                <div class="col mt-4 bg-light ">
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" id="taskTypeSwitch" wire:model="is_emergency"
+                            name="is_emergency" checked>
+                        <label class="form-check-label" for="taskTypeSwitch" id="taskTypeLabel">Emergency</label>
+                    </div>
+
+
+                </div>
+            </div>
 
             <label for="problem" class="control-label mt-4"> Nature of Fault</label>
             <textarea list="problems" wire:model="problem" class="form-control " rows="3" name="problem"
