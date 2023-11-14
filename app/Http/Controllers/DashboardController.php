@@ -83,7 +83,7 @@ class DashBoardController extends Controller
             $query->where('department_id', $departmentId);
         })
             ->where('status', "!=", 'converted')
-            ->where('isCompleted', "0")->latest()->paginate(10);
+            ->where('isCompleted', "0")->latest()->get();
 
         // Get the number of completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasksCount = SectionTask::where(function ($query) use ($departmentId) {
@@ -93,7 +93,7 @@ class DashBoardController extends Controller
         // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
-        })->where('isCompleted', '1')->where('approved', 1)->latest()->paginate(10);
+        })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)
@@ -695,9 +695,9 @@ class DashBoardController extends Controller
         ]);
 
         // Continue with other relevant tasks and updates
-        if ($isCompleted) {
-            $this->logTaskCompletion($departmentTask, $actionStatus);
-        }
+        // if ($isCompleted) {
+        //     $this->logTaskCompletion($departmentTask, $actionStatus);
+        // }
     }
 
 
@@ -754,9 +754,9 @@ class DashBoardController extends Controller
             'status' => $actionStatus,
             'isCompleted' => $isCompleted,
         ];
-        if ($mainTask->main_alarm->id == 1) {
-            $this->logTaskCompletion($departmentTask, $actionStatus);
-        }
+        // if ($mainTask->main_alarm->id == 1) {
+        //     $this->logTaskCompletion($departmentTask, $actionStatus);
+        // }
         // Create a task log entry to track the completion time
 
 
@@ -810,41 +810,41 @@ class DashBoardController extends Controller
             }
         }
     }
-    private function logTaskCompletion($mainTask, $actionStatus)
-    {
+    // private function logTaskCompletion($mainTask, $actionStatus)
+    // {
 
 
-        $user = Auth::user();
-        $assignedTime = Carbon::parse($mainTask->created_at);
-        $completedTime = now();
-        $timeTakenInMinutes = $assignedTime->diffInMinutes($completedTime);
-        $taskType = $mainTask->is_emergency;
-        if ($taskType === TaskLog::TASK_TYPE_NORMAL) {
-            // Normal task
-            if ($actionStatus !== 'First Draft') {
-                // Check if it's late based on the time taken
-                $isLate = $timeTakenInMinutes > (24 * 60);
-            }
-        } elseif ($taskType === TaskLog::TASK_TYPE_EMERGENCY) {
-            // Emergency task
-            if ($actionStatus !== 'First Draft') {
-                // Check if it's late based on the time taken
-                $isLate = $timeTakenInMinutes > (2 * 60);
-            }
-        }
-        // Check if it's a normal task and if it's late
+    //     $user = Auth::user();
+    //     $assignedTime = Carbon::parse($mainTask->created_at);
+    //     $completedTime = now();
+    //     $timeTakenInMinutes = $assignedTime->diffInMinutes($completedTime);
+    //     $taskType = $mainTask->is_emergency;
+    //     if ($taskType === TaskLog::TASK_TYPE_NORMAL) {
+    //         // Normal task
+    //         if ($actionStatus !== 'First Draft') {
+    //             // Check if it's late based on the time taken
+    //             $isLate = $timeTakenInMinutes > (24 * 60);
+    //         }
+    //     } elseif ($taskType === TaskLog::TASK_TYPE_EMERGENCY) {
+    //         // Emergency task
+    //         if ($actionStatus !== 'First Draft') {
+    //             // Check if it's late based on the time taken
+    //             $isLate = $timeTakenInMinutes > (2 * 60);
+    //         }
+    //     }
+    //     // Check if it's a normal task and if it's late
 
-        TaskLog::create([
-            'task_id' => $mainTask->id,
-            'user_id' => $user->id,
-            'task_type' => TaskLog::TASK_TYPE_NORMAL,
-            'assigned_time' => $assignedTime,
-            'completed_time' => $completedTime,
-            'time_taken' => $timeTakenInMinutes,
-            'is_late' => $isLate,
+    //     TaskLog::create([
+    //         'task_id' => $mainTask->id,
+    //         'user_id' => $user->id,
+    //         'task_type' => TaskLog::TASK_TYPE_NORMAL,
+    //         'assigned_time' => $assignedTime,
+    //         'completed_time' => $completedTime,
+    //         'time_taken' => $timeTakenInMinutes,
+    //         'is_late' => $isLate,
 
-        ]);
-    }
+    //     ]);
+    // }
     public function reportDepartment($main_task_id, $department_id)
     {
         $section_task = SectionTask::where('main_tasks_id', $main_task_id)

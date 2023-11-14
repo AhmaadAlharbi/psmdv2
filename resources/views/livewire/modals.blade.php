@@ -97,8 +97,7 @@
 								<div>
 									<h6 class="card-title">Basic Modal</h6>
 								</div>
-								<a class="btn ripple btn-primary" data-bs-target="#modaldemo1" data-bs-toggle="modal"
-									href="">View Demo</a>
+								sc
 							</div>
 						</div>
 					</div>

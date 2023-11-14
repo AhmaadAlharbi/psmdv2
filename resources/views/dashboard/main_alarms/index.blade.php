@@ -64,7 +64,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="example2" class="border-top-0  table table-bordered text-nowrap border-bottom">
+                <table id="completed-tasks" class="border-top-0  table table-bordered text-nowrap border-bottom">
                     <thead>
                         <tr>
                             <th>#</th>

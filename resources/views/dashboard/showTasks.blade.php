@@ -260,12 +260,12 @@
 <script>
     function deleteRecord(id) {
           Swal.fire({
-            title: 'هل أنت متأكد من خيار الحذف؟',
-            text: 'يرجى تحديد خيارك بالأسفل',
-            icon: 'تحذير',
+            title: 'Are you sure about the deletion choice?',
+            text: 'Please select your option below',
+            icon: 'Warning',
             showCancelButton: true,
-            confirmButtonText: 'نعم ، احذف المهمة',
-            cancelButtonText: 'إلغاء',
+            confirmButtonText: 'Yes, delete the task',
+            cancelButtonText: 'Cancel',
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
           }).then((result) => {
