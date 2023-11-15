@@ -74,6 +74,8 @@
 						<li><a class="slide-item"
 								href="{{ route('dashboard.showTasks', ['status' => 'completed']) }}">Completed Tasks</a>
 						</li>
+						<li><a class="slide-item" href="{{ route('dailyReports') }}">Daily Reports</a>
+						</li>
 					</ul>
 				</li>
 

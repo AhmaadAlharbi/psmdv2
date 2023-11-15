@@ -20,6 +20,7 @@ use App\Models\TaskConversions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\department_task_assignment;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ContactFormNotification;
@@ -1282,5 +1283,144 @@ class DashBoardController extends Controller
         Notification::send($user, new ContactFormNotification($email, $subject, $message, $userEmail, $username));
 
         return redirect()->route('contactPage')->with('success', 'Message sent successfully!');
+    }
+    // public function dailyReports()
+    // {
+    //     $todayDate = Carbon::today()->toDateString();
+    //     $selectedDate = $todayDate;
+    //     $townDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $todayDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'TOWN CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+
+    //     $jahraDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $todayDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'JAHRA CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+    //     $shuaibaDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $todayDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'SHUAIBA CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+
+    //     $nationalDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $todayDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'NATIONAL CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+
+    //     return view('dashboard.daily-reports', compact('selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
+    // }
+    // public function dailyReportSearchTasks(Request $request)
+    // {
+    //     $selectedDate = $request->input('selectedDate');
+    //     // Adjust the logic to fetch tasks based on the selected date
+    //     // Parse the input date using Carbon
+    //     $parsedDate = Carbon::createFromFormat('d/m/Y', $selectedDate)->toDateString();
+
+    //     $townDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $parsedDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'TOWN CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+
+    //     $jahraDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $parsedDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'JAHRA CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+    //     $shuaibaDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $parsedDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'SHUAIBA CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+
+    //     $nationalDccTasks = MainTask::where('isCompleted', '1')
+    //         ->whereDate('created_at', $parsedDate)
+    //         ->whereHas('station', function (Builder $query) {
+    //             $query->where('control', 'NATIONAL CONTROL CENTER');
+    //         })
+    //         ->whereHas('departmentsAssienments', function (Builder $query) {
+    //             $query->where('department_id', Auth::user()->department_id);
+    //         })
+    //         ->get();
+
+    //     return view('dashboard.daily-reports', compact('selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
+    // }
+    public function dailyReports()
+    {
+        // Get today's date
+        $todayDate = now()->toDateString();
+        $selectedDate = $todayDate;
+
+        // Get tasks for each control center
+        $townDccTasks = $this->getTasksForControlCenter('TOWN CONTROL CENTER', $todayDate);
+        $jahraDccTasks = $this->getTasksForControlCenter('JAHRA CONTROL CENTER', $todayDate);
+        $shuaibaDccTasks = $this->getTasksForControlCenter('SHUAIBA CONTROL CENTER', $todayDate);
+        $nationalDccTasks = $this->getTasksForControlCenter('NATIONAL CONTROL CENTER', $todayDate);
+        return view('dashboard.daily-reports', compact('selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
+    }
+    public function dailyReportSearchTasks(Request $request)
+    {
+        // Get the selected date from the request
+        $selectedDate = $request->input('selectedDate');
+        $parsedDate = Carbon::createFromFormat('d/m/Y', $selectedDate)->toDateString();
+        // Get tasks for each control center based on the selected date
+        $townDccTasks = $this->getTasksForControlCenter('TOWN CONTROL CENTER', $parsedDate);
+        $jahraDccTasks = $this->getTasksForControlCenter('JAHRA CONTROL CENTER', $parsedDate);
+        $shuaibaDccTasks = $this->getTasksForControlCenter('SHUAIBA CONTROL CENTER', $parsedDate);
+        $nationalDccTasks = $this->getTasksForControlCenter('NATIONAL CONTROL CENTER', $parsedDate);
+
+        return view('dashboard.daily-reports', compact('selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
+    }
+
+    /**
+     * Get tasks for a specific control center and date.
+     *
+     * @param  string  $controlCenter
+     * @param  string  $date
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function getTasksForControlCenter($controlCenter, $date)
+    {
+        return MainTask::where('isCompleted', '1')
+            ->whereDate('created_at', $date)
+            ->whereHas('station', function (Builder $query) use ($controlCenter) {
+                $query->where('control', $controlCenter);
+            })
+            ->whereHas('departmentsAssienments', function (Builder $query) {
+                $query->where('department_id', Auth::user()->department_id);
+            })
+            ->get();
     }
 }

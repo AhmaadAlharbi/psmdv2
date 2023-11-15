@@ -258,13 +258,14 @@
                     </div>
                     <div class="col-xs-1 col-md-6 text-center">
                         <h3>Users Ready for Approval ({{$usersPendingCount}}) </h3>
-                        <a href="{{route('dashboard.pendingUsers')}}" class="btn btn-secondary">Check Users
+                        <a href="{{route('dashboard.pendingUsers')}}" class="btn btn-warning">Check Users
                         </a>
                         <div class="d-flex justify-content-center align-items-center">
                             <li class="icons-list-item"><i class="fa fa-hourglass-end text-danger"></i></li>
                         </div>
 
                     </div>
+
                 </div><!-- row -->
             </div>
         </div>
@@ -278,7 +279,6 @@
         <div class="card-header pb-0">
             <div class="d-flex justify-content-between">
                 <h4 class="card-title mg-b-0"> Local Tasks</h4>
-
             </div>
         </div>
         <div class="card-body">

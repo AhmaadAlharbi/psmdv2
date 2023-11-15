@@ -318,6 +318,8 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::patch('/update-main-alarm/{id}', [MainAlarmController::class, 'update'])->name('main_alarm.update');
     Route::delete('/delete-main-alarm/{id}', [MainAlarmController::class, 'destroy'])->name('main_alarm.destroy');
     Route::post('/create-main-alarm', [MainAlarmController::class, 'store'])->name('main_alarm.store');
+    Route::get('/dashboard/daily-reports', [DashboardController::class, 'dailyReports'])->name('dailyReports');
+    Route::post('/daily-reports/search-tasks', [DashboardController::class, 'dailyReportSearchTasks'])->name('dailyReportSearchTasks');
 });
 
 Route::middleware(['auth', 'confirmed'])->group(function () {

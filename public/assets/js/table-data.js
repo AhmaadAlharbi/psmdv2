@@ -92,6 +92,38 @@
                 lengthMenu: "_MENU_ items/page",
             },
         });
+        $("#jahra-dcc").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
+        $("#town-dcc").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
+        $("#shuaiba-dcc").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
+        $("#national-dcc").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
         $("#example3").DataTable({
             responsive: {
                 details: {
