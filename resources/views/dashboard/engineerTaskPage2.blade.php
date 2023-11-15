@@ -95,7 +95,7 @@
                                         @csrf
                                         <div class="form-label">Task status</div>
                                         <div class="custom-controls-stacked mt-3">
-                                            <label class="custom-control form-radio custom-control-md">
+                                            {{-- <label class="custom-control form-radio custom-control-md">
                                                 <input type="radio" class="custom-control-input"
                                                     name="action_take_status" value="task_progress" checked>
                                                 <span
@@ -107,7 +107,7 @@
                                                     Note: If you do not provide a progress update within 24 hours from
                                                     receiving the task, it will be marked as a late reply.
                                                 </small>
-                                            </label>
+                                            </label> --}}
 
                                             <label class="custom-control form-radio custom-control-md">
                                                 <input type="radio" class="custom-control-input"

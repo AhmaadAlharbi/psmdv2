@@ -564,11 +564,18 @@ class DashBoardController extends Controller
 
     public function submitEngineerReport(Request $request, $id)
     {
+
         // Step 1: Retrieve form input
         $actionStatus = $request->input('action_take_status');
         $actionContent = $request->input('action_take');
 
         try {
+            $validated = $request->validate([
+                'action_take' => 'required|regex:/\S+/', // Validate that the action_take field is not empty and contains at least one non-whitespace character
+            ]);
+            // Allow specific HTML tags (e.g., <div>, <br>, etc.)
+            $allowedTags = '<div><br>'; // Add more tags as needed
+            $cleanActionTake = strip_tags(html_entity_decode($validated['action_take']), $allowedTags);
             // Step 2: Retrieve the main task
             $mainTask = MainTask::findOrFail($id);
             $taskConverted = TaskConversions::where('main_tasks_id', $id)
@@ -714,6 +721,7 @@ class DashBoardController extends Controller
      */
     private function handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask)
     {
+
         // Determine if the task is completed based on its status
         $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
         // 'approved' is set to 1

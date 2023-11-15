@@ -485,7 +485,7 @@ class EditTask extends Component
             // Step 8: Handle Department Task Assignment
             $this->handleDepartmentTaskAssignment();
         }
-
+        $this->sendNotifications($this->task, $this->engineerEmail);
         session()->flash('success', 'Updated successfully.');
         return redirect("/dashboard/admin");
     }
@@ -661,7 +661,7 @@ class EditTask extends Component
     private function sendNotifications($mainTask, $engineerEmail)
     {
         $user = User::where('email', $engineerEmail)->first();
-        // Notification::send($user, new TaskReport($mainTask, $this->photos));
+        Notification::send($user, new TaskReport($mainTask, $this->photos));
     }
     private function isDepartmentDifferent($selectedDepartment)
     {
