@@ -571,11 +571,24 @@ class DashBoardController extends Controller
 
         try {
             $validated = $request->validate([
-                'action_take' => 'required|regex:/\S+/', // Validate that the action_take field is not empty and contains at least one non-whitespace character
+                'action_take' => [
+                    'bail',
+                    'required',
+                    'string',
+                    function ($attribute, $value, $fail) {
+                        // Check if the value is equal to "User"
+                        if (strtolower($value) === '<div><br></div>') {
+                            // If yes, apply additional validation rules
+                            $fail("Custom validation failed for $attribute.");
+                        }
+                    },
+                ],
             ]);
-            // Allow specific HTML tags (e.g., <div>, <br>, etc.)
-            $allowedTags = '<div><br>'; // Add more tags as needed
-            $cleanActionTake = strip_tags(html_entity_decode($validated['action_take']), $allowedTags);
+
+
+
+
+
             // Step 2: Retrieve the main task
             $mainTask = MainTask::findOrFail($id);
             $taskConverted = TaskConversions::where('main_tasks_id', $id)

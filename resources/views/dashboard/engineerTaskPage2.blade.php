@@ -89,6 +89,7 @@
                                 </div>
 
                                 <div class="card-body">
+
                                     <form
                                         action="{{ route('dashboard.submitEngineerReport', ['id' => $tasks->main_tasks_id]) }}"
                                         enctype="multipart/form-data" method="post" autocomplete="off">
@@ -153,6 +154,11 @@
                                             </label>
                                         </div>
                                         <textarea class="content5" name="action_take"></textarea>
+
+
+                                        @error('action_take')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
 
                                         <div id="attachmentFile"
                                             class="e d-flex flex-column align-items-start justify-content-start">
@@ -262,6 +268,36 @@
 @endsection
 
 @section('scripts')
+
+<!--Internal  Sweet-Alert js-->
+<script src="{{asset('assets/plugins/sweet-alert/sweetalert.min.js')}}"></script>
+<script src="{{asset('assets/plugins/sweet-alert/jquery.sweet-alert.js')}}"></script>
+
+<!-- Sweet-alert js  -->
+<script src="{{asset('assets/plugins/sweet-alert/sweetalert.min.js')}}"></script>
+<script src="{{asset('assets/js/sweet-alert.js')}}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('form').addEventListener('submit', function(event) {
+            var actionTakeValue = document.querySelector('textarea[name="action_take"]').value.trim();
+
+            // Your custom validation logic
+            if (actionTakeValue.toLowerCase() === '<div><br></div>') {
+                // Show SweetAlert error message
+                swal({
+                    title: 'Invalid Value',
+                    text: 'Action take feild can not be empty',
+                    type: 'error',
+                });
+
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    });
+</script>
+
+
 
 
 <script>
