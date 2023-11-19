@@ -55,7 +55,7 @@
                                     }}</span>
 
                             </div>
-                            @if($task->status == 'Adding Report')
+                            @if($task->status == 'Report Added')
                             <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
                                 type="button" class="btn btn-success-gradient  button-icon "><i
                                     class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
