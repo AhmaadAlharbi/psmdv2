@@ -320,6 +320,7 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/create-main-alarm', [MainAlarmController::class, 'store'])->name('main_alarm.store');
     Route::get('/dashboard/daily-reports', [DashboardController::class, 'dailyReports'])->name('dailyReports');
     Route::post('/daily-reports/search-tasks', [DashboardController::class, 'dailyReportSearchTasks'])->name('dailyReportSearchTasks');
+    Route::get('/dashboard/tasks/sent-by/{id}', [DashboardController::class, 'tasksSentByUser'])->name('tasksSentByUser');
 });
 
 Route::middleware(['auth', 'confirmed'])->group(function () {

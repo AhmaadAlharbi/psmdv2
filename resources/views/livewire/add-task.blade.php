@@ -22,11 +22,11 @@
             @if($selectedStation == null)
 
             <input list="ssnames" wire:change="getStationInfo" class="form-control " wire:model="selectedStation"
-                name="station_code" id="ssname" type="search">
+                name="station_code" id="ssname" type="search" autocomplete="off">
             @else
             <input list="ssnames" wire:change="getStationInfo" class="form-control  {{$stationDetails  ? " is-valid"
                 : " is-invalid" }}" value="{{ old('station_code') }}" wire:model="selectedStation" name="station_code"
-                id="ssname" type="search">
+                id="ssname" type="search" autocomplete="off">
 
             @endif
 

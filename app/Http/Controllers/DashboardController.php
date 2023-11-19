@@ -58,7 +58,6 @@ class DashBoardController extends Controller
             ])->where('isCompleted', "1")
             ->count();
 
-
         // Get total tasks count for the current month
         $totalTasksInMonth = department_task_assignment::where('department_id', $departmentId)
             ->whereMonth('created_at', now()->month)->count();
@@ -85,6 +84,14 @@ class DashBoardController extends Controller
         })
             ->where('status', "!=", 'converted')
             ->where('isCompleted', "0")->latest()->get();
+
+        $unAssignedTasks =  department_task_assignment::where(function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })
+            ->whereNull('eng_id')
+            ->where('isCompleted', "0")
+            ->latest()
+            ->get();
 
         // Get the number of completed section tasks in the user's department, including those that were previously in the user's department
         $completedTasksCount = SectionTask::where(function ($query) use ($departmentId) {
@@ -128,12 +135,11 @@ class DashBoardController extends Controller
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->count();
-
         $stationsCount = Station::all()->count();
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
 
-        return view('dashboard.index', compact('departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        return view('dashboard.index', compact('unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
 
     // return MainTask::with('station')->whereHas('station', function ($query) {
@@ -368,7 +374,9 @@ class DashBoardController extends Controller
         if (!$tasks) {
             abort(404);
         }
-
+        $tasks->update([
+            'isSeen' => 1
+        ]);
         if ($tasks->eng_id != Auth::user()->id) {
             return view('dashboard.unauthorized');
         }
@@ -701,7 +709,6 @@ class DashBoardController extends Controller
             'date' => now(),
             'isCompleted' =>  $isCompleted
         ]);
-
         // Step 4: Create a TaskTimeline entry for adding the report
         TaskTimeline::create([
             'main_tasks_id' => $mainTask->id,
@@ -758,13 +765,16 @@ class DashBoardController extends Controller
         SectionTask::create($sectionTaskData);
 
         // Create a task timeline entry to indicate the report has been added
-        TaskTimeline::create([
-            'main_tasks_id' => $mainTask->id,
-            'department_id' => Auth::user()->department_id,
-            'status' => 'Adding Report',
-            'action' => 'The Report has been added',
-            'user_id' => Auth::user()->id,
-        ]);
+        if ($isCompleted) {
+            TaskTimeline::create([
+                'main_tasks_id' => $mainTask->id,
+                'department_id' => Auth::user()->department_id,
+                'status' => 'Report Added',
+                'action' => 'The Report has been added',
+                'user_id' => Auth::user()->id,
+            ]);
+        }
+
 
         // Prepare updates for the main task and department task
         $mainTaskUpdates = [
@@ -783,7 +793,7 @@ class DashBoardController extends Controller
 
 
         // Update the main task and department task with the prepared updates
-        $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates);
+        $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates, $actionContent);
     }
 
     /**
@@ -794,7 +804,7 @@ class DashBoardController extends Controller
      * @param array $mainTaskUpdates The updates for the main task
      * @param array $departmentTaskUpdates The updates for the department task
      */
-    private function updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates)
+    private function updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates, $actionContent)
     {
         // Update the main task with the provided updates
         $mainTask->update($mainTaskUpdates);
@@ -809,6 +819,8 @@ class DashBoardController extends Controller
             'status' => $mainTaskUpdates['status'],
             'action' => 'The status has been updated',
             'user_id' => Auth::user()->id,
+            'engineer_note' => $actionContent,
+
         ]);
     }
 
@@ -1230,7 +1242,7 @@ class DashBoardController extends Controller
         ]);
         if ($task) {
             $task->delete();
-            return redirect()->back()->with('success', 'تم الحذف بنجاح');
+            return redirect()->back()->with('success', 'Successfully deleted');
         }
         return redirect()->back()->with('error', 'Record not found.');
     }
@@ -1443,5 +1455,22 @@ class DashBoardController extends Controller
                 $query->where('department_id', Auth::user()->department_id);
             })
             ->get();
+    }
+    public function tasksSentByUser($id)
+    {
+        // Retrieve the user by ID
+        $user = User::findOrFail($id);
+
+        // Retrieve the department task assignments related to the user
+        $mainTasks = department_task_assignment::whereHas('main_task', function ($query) use ($id) {
+            $query->where('user_id', $id);
+        })->latest()->get();
+
+        $departments = Department::all();
+        // Pass the user and tasks to the view
+        if ($user->id != Auth::user()->id) {
+            return view('dashboard.unauthorized');
+        }
+        return view('dashboard.adminAssignedTasks', compact('user', 'mainTasks', 'departments'));
     }
 }

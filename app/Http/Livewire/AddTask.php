@@ -544,7 +544,7 @@ class AddTask extends Component
     {
         // Step 3.1: Logic for handling main alarm selection
         if ($this->selectedMainAlarm === '') {
-            return null;
+            $this->selectedMainAlarm = null;
         } else {
             return ($this->otherMainAlarm)
                 ? MainAlarm::create(['name' => $this->otherMainAlarm, 'department_id' => Auth::user()->department_id])->id

@@ -67,6 +67,22 @@
                 lengthMenu: "_MENU_ items/page",
             },
         });
+        $("#unassigned-tasks").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
+        $("#user-tasks").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
         $("#incoming-tasks").DataTable({
             responsive: true,
             language: {

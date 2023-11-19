@@ -42,7 +42,7 @@
                 <div class="card-body">
                     <div class="counter-status d-flex md-mb-0">
                         <div class="counter-icon text-warning">
-                            <i class="icon icon-rocket"></i>
+                            <i class="fas fa-hourglass-half"></i>
                         </div>
                         <div class="ms-auto">
                             <h5 class="tx-18 tx-white-8 mb-3">Pending Tasks</h5>
@@ -59,7 +59,7 @@
                 <div class="card-body">
                     <div class="counter-status d-flex md-mb-0">
                         <div class="counter-icon text-primary">
-                            <i class="icon icon-docs"></i>
+                            <i class="far fa-check-circle"></i>
                         </div>
                         <div class="ms-auto">
                             <h5 class="tx-18 tx-white-8 mb-3">Completed Tasks</h5>
@@ -77,7 +77,7 @@
                 <div class="card-body">
                     <div class="counter-status d-flex md-mb-0">
                         <div class="counter-icon text-success">
-                            <i class="icon icon-emotsmile"></i>
+                            <i class="fas fa-folder-open"></i>
                         </div>
                         <div class="ms-auto">
                             <h5 class="tx-18 tx-white-8 mb-3">Reports Archive</h5>
@@ -120,16 +120,15 @@
             </div>
             <div class="card-footer">
 
-                <button data-bs-toggle="dropdown" class="btn btn-danger btn-block w-100">Actions <i
-                        class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
+                <a href="/engineer-task-page/{{$task->main_tasks_id}}"
+                    class="btn btn-danger btn-block w-100 btn-rounded">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Report
+                </a>
 
-                <div class="dropdown-menu">
-                    {{-- <a href="{{route('dashboard.editTask',['id'=>$task->id])}}" class="dropdown-item">تعديل</a>
-                    --}}
-                    <a href="/engineer-task-page/{{$task->main_tasks_id}}"
-                        class="btn btn-outline-secondary dropdown-item">Engineer
-                        report</a>
-                </div><!-- dropdown-menu -->
+
+
+
 
             </div>
         </div>

@@ -39,7 +39,7 @@
                                                 class="sign-favicon-b ht-40" alt="logo">
                                         </a> --}}
                                         <h3 class="main-logo1 ms-1 me-0 my-auto tx-28">
-                                            Transsmison Electrical Networks
+                                            Transmison Electrical Networks
                                         </h3>
                                     </div>
                                     <div class="card-sigin">
