@@ -300,7 +300,13 @@
                         @foreach($pendingTasks as $task)
                         <tr>
                             <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
-                            <td class="text-lg"> {{$task->main_task->station->SSNAME}} </td>
+                            <td class="text-lg">
+                                @if($task->main_task->station_id)
+                                {{$task->main_task->station->SSNAME}}
+                                @else
+                                -
+                                @endif
+                            </td>
                             @if(isset($task->main_task->main_alarm_id))
                             <td class="text-lg d-none d-md-table-cell">{{$task->main_task->main_alarm->name}}</td>
                             <td class="d-none d-md-table-cell">

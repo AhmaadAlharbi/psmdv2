@@ -166,11 +166,14 @@
                 <label for="inputName" class="control-label">Please select an engineer</label>
                 <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
                     class="form-control engineerSelect m-1">
-                    <option value="">-</option>
+                    <option>-</option>
                     @foreach($engineers as $engineer)
                     <option value="{{$engineer->user->id}}">{{$engineer->user->name}}</option>
                     @endforeach
                 </select>
+
+
+
                 <div class="form-check mb-4">
                     <input wire:model="duty" wire:change="getEngineer" class="form-check-input" type="checkbox" value=""
                         id="defaultCheck1">
@@ -220,8 +223,12 @@
             <div id="attachment">
                 <input class="form-control form-control-lg" id="formFileLg" type="file" wire:model="photos" multiple>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary" id="but4">Submit
-                    </button>
+                    <button type="submit" class="btn btn-primary btn-block" id="but4" @if($selectedStation==null)
+                        disabled @endif>Submit</button>
+                    @if($selectedStation != null)
+
+
+
                     <script>
                         const btnid = document.getElementById('but4');
                                 btnid.addEventListener('click', () => {
@@ -249,6 +256,7 @@
                                     })
                                 })
                     </script>
+                    @endif
                 </div>
             </div>
         </div>

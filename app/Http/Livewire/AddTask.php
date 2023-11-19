@@ -63,6 +63,7 @@ class AddTask extends Component
     public $otherVoltage = '';
     public $otherEquip = '';
     public $is_emergency = false;
+    public $user_name;
     protected $listeners = ['callEngineer' => 'getEngineer'];
     public function mount()
     {
@@ -113,7 +114,7 @@ class AddTask extends Component
         $this->engineerEmail = '';
         $this->selectedVoltage = '';
         $this->selectedEquip = '';
-        $this->selectedEngineer = '';
+        $this->selectedEngineer = null;
     }
 
     // Set the details of the given Station.
@@ -308,7 +309,8 @@ class AddTask extends Component
         $shiftId = $this->duty ? 2 : 1; // Assuming 2 is the ID for night shift, and 1 for day shift
 
         // Start building the query
-        $query = Engineer::where('department_id', $userDepartmentId)
+        $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+            ->where('engineers.department_id', $userDepartmentId)
             ->when($userDepartmentId === 2, function ($query) use ($area) {
                 // Filter by area if the user's department is Protection
                 return $query->when($area !== 3, function ($query) use ($area) {
@@ -333,16 +335,25 @@ class AddTask extends Component
             });
 
         // Retrieve the engineers based on the conditions
-        $engineers = $query->get();
+        $engineers = $query->orderBy('users.name', 'asc')
+            ->get();
         $this->engineers = $engineers;
     }
 
 
 
+
     public function getEmail()
     {
-        $this->engineerEmail = User::where('id', $this->selectedEngineer)->pluck('email')->first();
+        $selectedUserId = $this->selectedEngineer;
+
+        // Retrieve the user's email
+        $this->engineerEmail = User::where('id', $selectedUserId)->pluck('email')->first();
+
+        // Retrieve the user's name and set it as the selectedEngineer
+        $this->user_name = User::where('id', $selectedUserId)->pluck('name')->first();
     }
+
     protected $rules = [
         'selectedStation' => 'required',
     ];
@@ -468,6 +479,7 @@ class AddTask extends Component
     // }
     public function submit(Request $request)
     {
+        $this->validate();
         $refNum = $this->generateReferenceNumber();
         list($equip_number, $equip_name) = $this->handleEquipmentSelection();
         $mainAlarmId = $this->handleMainAlarmSelection();
@@ -495,10 +507,8 @@ class AddTask extends Component
         } else {
             $mainTask = $this->handleDepartmentTaskAssignment();
         }
-
         // Retrieve the main task ID from the created MainTask instance
         $main_task_id = $mainTask->id;
-
         $this->uploadAttachments($main_task->id);
         $this->sendNotifications($main_task, $this->engineerEmail);
         session()->flash('success', 'The Task has been added');
