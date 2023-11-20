@@ -19,17 +19,25 @@
                 @endforeach
             </select>
             <label for=" ssname">Please select the station name</label>
-            @if($selectedStation == null)
+            <div class="input-group">
+                @if($selectedStation == null)
 
-            <input list="ssnames" wire:change="getStationInfo" class="form-control " wire:model="selectedStation"
-                name="station_code" id="ssname" type="search">
-            @else
-            <input list="ssnames" wire:change="getStationInfo" class="form-control  {{$stationDetails  ? " is-valid"
-                : " is-invalid" }}" value="{{ old('station_code') }}" wire:model="selectedStation" name="station_code"
-                id="ssname" type="search">
+                <input list="ssnames" wire:change="getStationInfo" class="form-control " wire:model="selectedStation"
+                    name="station_code" id="ssname" type="search" autocomplete="off">
+                @else
+                <input list="ssnames" wire:change="getStationInfo" class="form-control  {{$stationDetails  ? " is-valid"
+                    : " is-invalid" }}" value="{{ old('station_code') }}" wire:model="selectedStation"
+                    name="station_code" id="ssname" type="search" autocomplete="off">
+                @if($selectedStation)
+                <div class="input-group-append">
+                    <button class="btn btn-danger" type="button" wire:click="clearStation">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @endif
 
-            @endif
-
+                @endif
+            </div>
             <datalist id="ssnames">
                 @foreach ($stations as $station)
                 <option value="{{ $station->SSNAME }}">
@@ -158,14 +166,28 @@
 
 
                 <div class="">
-                    <label for="inputName" class="control-label">Please select engineer name</label>
-                    <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
-                        class="form-control engineerSelect my-4">
-                        <option>-</option>
-                        @foreach($engineers as $engineer)
-                        <option value="{{$engineer->user->id}}">{{$engineer->user->name}}</option>
-                        @endforeach
-                    </select>
+                    <div class="">
+                        <label for="inputName" class="control-label">Please select an engineer</label>
+                        <div class="input-group">
+                            <!-- Replace select tag with datalist tag -->
+                            <input wire:model="selectedEngineer" list="engineerList" id="eng_name" name="eng_name"
+                                class="form-control engineerSelect m-1" wire:change="getEmail" autocomplete="off">
+                            @if($selectedEngineer)
+                            <div class="input-group-append">
+                                <button class="btn btn-danger" type="button" wire:click="clearEngineer">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            @endif
+                            <datalist id="engineerList">
+                                <option value="-">-</option>
+                                @foreach($engineers as $engineer)
+                                <option value="{{$engineer->user->name}}">{{$engineer->user->name}}</option>
+                                @endforeach
+                            </datalist>
+                            <input type="hidden" wire:model="user_id">
+                        </div>
+                    </div>
                     <div class="form-check mb-4">
                         <input wire:model="duty" wire:change="getEngineer" class="form-check-input" type="checkbox"
                             value="" id="defaultCheck1">

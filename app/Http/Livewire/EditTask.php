@@ -64,6 +64,7 @@ class EditTask extends Component
     public $otherEquip = '';
     public $departmentTask = '';
     public $mainTasksConverted = '';
+    public $user_id;
     public function __construct($task_id)
     {
         $this->task_id = $task_id;
@@ -91,7 +92,8 @@ class EditTask extends Component
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;
         // $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
-        $this->selectedEngineer = $this->departmentTask ? $this->departmentTask->eng_id : $this->selectedEngineer;
+        $this->selectedEngineer =  $this->departmentTask->engineer->name;
+        $this->user_id = $this->departmentTask ? $this->departmentTask->eng_id : null;
         $userDepartmentId = Auth::user()->department_id;
         // Set the Area based on the Department of the authenticated User.
         $this->setArea();
@@ -275,6 +277,7 @@ class EditTask extends Component
     {
         $userDepartmentId = Auth::user()->department_id;
         $area = $this->area;
+
         // Default to showing day shift engineers
         $shiftId = 1; // Assuming 1 is the ID for the day shift
 
@@ -283,30 +286,28 @@ class EditTask extends Component
             $shiftId = 2; // Assuming 2 is the ID for the night shift
         }
 
-        // Query engineers based on the department
-        $engineers = Engineer::where('department_id', $userDepartmentId)
+        // Start building the query
+        $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+            ->where('engineers.department_id', $userDepartmentId);
 
-            // Use a conditional 'when' clause to filter by area if not equal to 3
-            ->when($area != 3, function ($query) use ($area) {
-                $query->whereHas('areas', function ($subquery) use ($area) {
-                    $subquery->where('areas.id', $area); // Filter by the specified area ID
-                });
-            })
-
-            // Further filter by shift using 'whereHas'
-            ->whereHas('shifts', function ($subquery) use ($shiftId) {
-                $subquery->where('shifts.id', $shiftId); // Filter by the specified shift ID
-            })
-
-            // Get the resulting collection of engineers
+        // Retrieve the engineers based on the conditions
+        $engineers = $query->orderBy('users.name', 'asc')
             ->get();
-
-
         $this->engineers = $engineers;
     }
     public function getEmail()
     {
-        $this->engineerEmail = User::where('id', $this->selectedEngineer)->pluck('email')->first();
+        $selectedUserId = $this->selectedEngineer;
+        // dd($selectedUserId);
+        // Retrieve the user's email
+        $user = User::where('name', $selectedUserId)->first();
+        if ($user) {
+            $this->engineerEmail = $user->email;
+            $this->user_id = $user->id;
+        } else {
+            $this->engineerEmail = null; // Handle the case when the user is not found
+            $this->user_id = null;
+        }
     }
 
     public function update2()
@@ -352,11 +353,10 @@ class EditTask extends Component
             'notes' => $this->notes,
             'status' => 'pending',
             'main_alarm_id' => $mainAlarmId,
-            'user_id' => Auth::user()->id,
         ]);
         $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
         if ($this->selectedEngineer) {
-            $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
+            $selectedEngineerName = User::where('id', $this->user_id)->first()->name;
         } else {
             $selectedEngineerName = null;
         }
@@ -365,7 +365,7 @@ class EditTask extends Component
         if ($assignments && $this->selectedEngineer !== $assignments->eng_id) {
             // Update the assignment
             $assignments->update([
-                'eng_id' => $this->selectedEngineer,
+                'eng_id' => $this->user_id
             ]);
 
             TaskTimeline::create([
@@ -411,7 +411,7 @@ class EditTask extends Component
                 $departmentTask = department_task_assignment::create([
                     'department_id' => $this->selectedDepartment,
                     'main_tasks_id' => $main_task_id,
-                    'eng_id' => $this->selectedEngineer,
+                    'eng_id' => $this->user_id,
                     'status' => 'pending'
                 ]);
             }
@@ -423,7 +423,7 @@ class EditTask extends Component
 
             if ($userDepartmentTask) {
                 $userDepartmentTask->update([
-                    'eng_id' => $this->selectedEngineer,
+                    'eng_id' => $this->user_id,
                     'status' => 'pending'
                 ]);
             } else {
@@ -431,7 +431,7 @@ class EditTask extends Component
                 $userDepartmentTask = department_task_assignment::create([
                     'department_id' => Auth::user()->department_id,
                     'main_tasks_id' => $main_task_id,
-                    'eng_id' => $this->selectedEngineer,
+                    'eng_id' => $this->user_id,
                     'status' => 'pending'
                 ]);
             }
@@ -542,14 +542,24 @@ class EditTask extends Component
             'notes' => $this->notes,
             'status' => 'pending',
             'main_alarm_id' => $mainAlarmId,
-            'user_id' => Auth::user()->id,
         ]);
+    }
+    public function clearStation()
+    {
+        $this->selectedStation = null;
+        $this->stationDetails = null;
+    }
+    public function clearEngineer()
+    {
+        $this->selectedEngineer = null;
+        $this->engineerEmail = null;
+        $this->getEngineer();
     }
     private function recordTaskTimeline()
     {
         // Record timeline events
         $mainTaskId = $this->task->id;
-        $selectedEngineerName = User::where('id', $this->selectedEngineer)->first()->name;
+        $selectedEngineerName = User::where('id', $this->user_id)->first()->name;
         $userDepartmentId = Auth::user()->department_id;
         $mainTask = $this->task;
 
@@ -557,7 +567,7 @@ class EditTask extends Component
         if ($assignments && $this->selectedEngineer !== $assignments->eng_id) {
             // Update the assignment
             $assignments->update([
-                'eng_id' => $this->selectedEngineer,
+                'eng_id' => $this->user_id,
             ]);
 
             TaskTimeline::create([
@@ -608,7 +618,7 @@ class EditTask extends Component
             $departmentTask = department_task_assignment::create([
                 'department_id' => $this->selectedDepartment,
                 'main_tasks_id' => $mainTaskId,
-                'eng_id' => $this->selectedEngineer,
+                'eng_id' => $this->user_id,
                 'status' => 'pending'
             ]);
         }
@@ -631,7 +641,7 @@ class EditTask extends Component
             ->first();
         if ($userDepartmentTask) {
             $userDepartmentTask->update([
-                'eng_id' => $this->selectedEngineer,
+                'eng_id' => $this->user_id,
                 'status' => 'pending',
                 'isCompleted' => "0"
             ]);

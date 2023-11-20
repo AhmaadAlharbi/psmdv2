@@ -10,8 +10,7 @@
     <form wire:submit.prevent="submit">
 
         <div class="text-center ">
-            <label for=" ssname">Department Task</label>
-
+            <label for="ssname">Department Task</label>
             <select name="department" wire:model="selectedDepartment" class="form-control">
                 <option selected value="{{Auth::user()->department_id}}">{{Auth::user()->department->name}}</option>
                 @foreach($departments as $department)
@@ -19,22 +18,23 @@
                 @endforeach
             </select>
             <label for=" ssname" class="mt-2">Please Choose a Station Name.</label>
-            @if($selectedStation == null)
-
-            <input list="ssnames" wire:change="getStationInfo" class="form-control " wire:model="selectedStation"
-                name="station_code" id="ssname" type="search" autocomplete="off">
-            @else
-            <input list="ssnames" wire:change="getStationInfo" class="form-control  {{$stationDetails  ? " is-valid"
-                : " is-invalid" }}" value="{{ old('station_code') }}" wire:model="selectedStation" name="station_code"
-                id="ssname" type="search" autocomplete="off">
-
-            @endif
-
+            <div class="input-group">
+                <input list="ssnames" wire:change="getStationInfo" class="form-control" wire:model="selectedStation"
+                    name="station_code" id="ssname" type="search" autocomplete="off">
+                @if($selectedStation)
+                <div class="input-group-append">
+                    <button class="btn btn-danger" type="button" wire:click="clearStation">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @endif
+            </div>
             <datalist id="ssnames">
                 @foreach ($stations as $station)
                 <option value="{{ $station->SSNAME }}">
                     @endforeach
             </datalist>
+
 
             @error('selectedStation') <span class="error text-danger">{{ $message }}</span> @enderror
             {{--
@@ -163,14 +163,36 @@
 
 
             <div class="">
-                <label for="inputName" class="control-label">Please select an engineer</label>
-                <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
+                {{-- <label for="inputName" class="control-label">Please select an engineer</label> --}}
+                {{-- <select wire:model="selectedEngineer" id="eng_name" wire:change="getEmail" name="eng_name"
                     class="form-control engineerSelect m-1">
                     <option>-</option>
                     @foreach($engineers as $engineer)
                     <option value="{{$engineer->user->id}}">{{$engineer->user->name}}</option>
                     @endforeach
-                </select>
+                </select> --}}
+                <div class="mb-3">
+                    <label for="inputName" class="control-label">Please select an engineer</label>
+                    <!-- Replace select tag with datalist tag -->
+                    <div class="input-group">
+                        <input wire:model="selectedEngineer" list="engineerList" id="eng_name" name="eng_name"
+                            class="form-control engineerSelect m-1" wire:change="getEmail" autocomplete="off">
+                        @if($selectedEngineer)
+                        <div class="input-group-append">
+                            <button class="btn btn-danger" type="button" wire:click="clearEngineer">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        @endif
+                    </div>
+                    <datalist id="engineerList">
+                        <option value="-">-</option>
+                        @foreach($engineers as $engineer)
+                        <option value="{{$engineer->user->name}}">{{$engineer->user->name}}</option>
+                        @endforeach
+                    </datalist>
+                    <input type="hidden" wire:model="user_id">
+                </div>
 
 
 

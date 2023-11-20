@@ -63,7 +63,7 @@ class AddTask extends Component
     public $otherVoltage = '';
     public $otherEquip = '';
     public $is_emergency = false;
-    public $user_name;
+    public $user_id;
     protected $listeners = ['callEngineer' => 'getEngineer'];
     public function mount()
     {
@@ -310,48 +310,68 @@ class AddTask extends Component
 
         // Start building the query
         $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
-            ->where('engineers.department_id', $userDepartmentId)
-            ->when($userDepartmentId === 2, function ($query) use ($area) {
-                // Filter by area if the user's department is Protection
-                return $query->when($area !== 3, function ($query) use ($area) {
-                    return $query->whereHas('areas', function ($subquery) use ($area) {
-                        $subquery->where('areas.id', $area);
-                    });
-                });
-            })
-            ->when($userDepartmentId === 5, function ($query) use ($area) {
-                // Filter by area if the user's department is Switchgears
-                return $query->when($area !== 4, function ($query) use ($area) {
-                    return $query->whereHas('areas', function ($subquery) use ($area) {
-                        $subquery->where('areas.id', $area);
-                    });
-                });
-            })
-            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
-                // Filter by shift if the user's department is Batteries or Transformers
-                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
-                    $subquery->where('shifts.id', $shiftId);
-                });
-            });
+            ->where('engineers.department_id', $userDepartmentId);
 
         // Retrieve the engineers based on the conditions
         $engineers = $query->orderBy('users.name', 'asc')
             ->get();
         $this->engineers = $engineers;
+
+        // $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+        //     ->where('engineers.department_id', $userDepartmentId)
+        //     ->when($userDepartmentId === 2, function ($query) use ($area) {
+        //         // Filter by area if the user's department is Protection
+        //         return $query->when($area !== 3, function ($query) use ($area) {
+        //             return $query->whereHas('areas', function ($subquery) use ($area) {
+        //                 $subquery->where('areas.id', $area);
+        //             });
+        //         });
+        //     })
+        //     ->when($userDepartmentId === 5, function ($query) use ($area) {
+        //         // Filter by area if the user's department is Switchgears
+        //         return $query->when($area !== 4, function ($query) use ($area) {
+        //             return $query->whereHas('areas', function ($subquery) use ($area) {
+        //                 $subquery->where('areas.id', $area);
+        //             });
+        //         });
+        //     })
+        //     ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
+        //         // Filter by shift if the user's department is Batteries or Transformers
+        //         return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+        //             $subquery->where('shifts.id', $shiftId);
+        //         });
+        //     });
+
+        // // Retrieve the engineers based on the conditions
+        // $engineers = $query->orderBy('users.name', 'asc')
+        //     ->get();
+        // $this->engineers = $engineers;
     }
-
-
-
-
+    public function clearStation()
+    {
+        $this->selectedStation = null;
+        $this->stationDetails = null;
+    }
+    public function clearEngineer()
+    {
+        $this->selectedEngineer = null;
+        $this->user_id = null;
+        $this->engineerEmail = null;
+        $this->getEngineer();
+    }
     public function getEmail()
     {
         $selectedUserId = $this->selectedEngineer;
-
+        // dd($selectedUserId);
         // Retrieve the user's email
-        $this->engineerEmail = User::where('id', $selectedUserId)->pluck('email')->first();
-
-        // Retrieve the user's name and set it as the selectedEngineer
-        $this->user_name = User::where('id', $selectedUserId)->pluck('name')->first();
+        $user = User::where('name', $selectedUserId)->first();
+        if ($user) {
+            $this->engineerEmail = $user->email;
+            $this->user_id = $user->id;
+        } else {
+            $this->engineerEmail = null; // Handle the case when the user is not found
+            $this->user_id = null;
+        }
     }
 
     protected $rules = [
@@ -620,7 +640,7 @@ class AddTask extends Component
             $user = User::where('email', $engineerEmail)->first();
             if ($user) {
                 // Assuming you have defined a notification class called TaskReport
-                // Notification::send($user, new TaskReport($mainTask, $this->photos));
+                Notification::send($user, new TaskReport($mainTask, $this->photos));
             }
         }
 
@@ -676,13 +696,13 @@ class AddTask extends Component
         $departmentTask = department_task_assignment::create([
             'department_id' => $destinationDepartment,
             'main_tasks_id' => $main_task_id,
-            'eng_id' => $selectedEngineer,
+            'eng_id' => $this->user_id,
             'status' => 'pending',
             'is_emergency' => $this->is_emergency
         ]);
 
         // Step 2: Record timeline event for department task assignment
-        $this->recordDepartmentTaskAssignmentTimeline($main_task_id, $engineerName);
+        $this->recordDepartmentTaskAssignmentTimeline($main_task_id, $this->selectedEngineer);
 
         // Continue with any additional logic as needed
 
