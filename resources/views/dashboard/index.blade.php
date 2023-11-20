@@ -183,7 +183,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-sm-1 col-md-6 text-center">
+                    <div class="col-sm-12 col-md-6 text-center">
                         <div class="fw-bold tx-20">
                             <div class="text-primary"> Today Tasks</div>
                             <div>{{ $totalTasksInDay }}</div>
@@ -202,7 +202,7 @@
                         </div>
 
                     </div><!-- col -->
-                    <div class="col-sm-1 col-md-6 border-start text-center">
+                    <div class="col-sm-12 col-md-6 border-start text-center">
                         <div class="fw-bold tx-20">
                             <div class="text-warning">This Week Tasks</div>
                             <div>{{ $totalTasksInWeek }}</div>
@@ -220,7 +220,7 @@
 
                         </div>
                     </div><!-- col -->
-                    <div class="col border-start text-center">
+                    <div class="col-sm-12 col-md-6 border-start text-center">
                         <div class="fw-bold tx-20">
                             <div class="text-danger"> This Month Tasks</div>
                             <div>{{ $totalTasksInMonth }}</div>

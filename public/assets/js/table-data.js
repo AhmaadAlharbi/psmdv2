@@ -116,6 +116,14 @@
                 lengthMenu: "_MENU_ items/page",
             },
         });
+        $("#jabryia-dcc").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
         $("#town-dcc").DataTable({
             responsive: true,
             language: {

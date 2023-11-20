@@ -10,8 +10,8 @@
 <div class="breadcrumb-header justify-content-between">
     <div class="my-auto">
         <div class="d-flex">
-            <h4 class="content-title mb-0 my-auto">Pages</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
-                Empty</span>
+            <h4 class="content-title mb-0 my-auto">Daily Reports</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
+                {{Auth::user()->department->name}}</span>
         </div>
 
     </div>
@@ -47,6 +47,11 @@
                     </form>
 
                 </div><!-- input-group -->
+                @if ($shuaibaDccTasks->isEmpty() && $nationalDccTasks->isEmpty() && $jahraDccTasks->isEmpty() &&
+                $jabriaDccTasks->isEmpty() && $townDccTasks->isEmpty())
+                <p>There are no tasks available for the selected date.</p>
+                @endif
+
             </div>
             {{-- town dcc table --}}
             @if (!$townDccTasks->isEmpty())
@@ -127,6 +132,67 @@
                         </thead>
                         <tbody>
                             @foreach ( $jahraDccTasks as $task )
+                            <tr>
+                                <td>{{$task->station->SSNAME}}</td>
+                                <td>{{$task->equip_number}}</td>
+                                <td>{{ $task->created_at->format('Y-m-d') }}</td>
+                                <td>{{ $task->created_at->format('H:i') }}</td>
+                                <td>
+                                    @if($task->main_alarm_id)
+                                    {{$task->main_alarm->first()->name}}
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($task->section_tasks->isNotEmpty())
+                                    {!! $task->section_tasks->first()->action_take !!}
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($task->section_tasks->isNotEmpty())
+                                    {{$task->section_tasks->first()->user->name }}
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+
+                                <td>{{$task->status}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+        {{-- Jabryia dcc table--}}
+        @if (!$jabriaDccTasks->isEmpty())
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title mt-5 bg-info text-white px-2 py-3 text-center">JABRIYA-DCC</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    <table id="jabryia-dcc" class="border-top-0  table table-bordered text-nowrap border-bottom">
+
+                        <thead>
+                            <tr>
+                                <th class="wd-15p border-bottom-0">Substation</th>
+                                <th class="wd-15p border-bottom-0">Circuit / Equipment</th>
+                                <th class="wd-20p border-bottom-0">Date</th>
+                                <th class="wd-15p border-bottom-0">Time</th>
+                                <th class="wd-10p border-bottom-0">Alarms/indication</th>
+                                <th class="wd-25p border-bottom-0">Observation & Action take</th>
+                                <th class="wd-25p border-bottom-0">Engineer Name</th>
+                                <th class="wd-25p border-bottom-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ( $jabriaDccTasks as $task )
                             <tr>
                                 <td>{{$task->station->SSNAME}}</td>
                                 <td>{{$task->equip_number}}</td>
@@ -286,7 +352,11 @@
             </div>
         </div>
         @endif
+
+
+
     </div>
+
 </div>
 <!-- row closed -->
 

@@ -1421,7 +1421,8 @@ class DashBoardController extends Controller
         $jahraDccTasks = $this->getTasksForControlCenter('JAHRA CONTROL CENTER', $todayDate);
         $shuaibaDccTasks = $this->getTasksForControlCenter('SHUAIBA CONTROL CENTER', $todayDate);
         $nationalDccTasks = $this->getTasksForControlCenter('NATIONAL CONTROL CENTER', $todayDate);
-        return view('dashboard.daily-reports', compact('selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
+        $jabriaDccTasks = $this->getTasksForControlCenter('JABRIYA CONTROL CENTER', $todayDate);
+        return view('dashboard.daily-reports', compact('jabriaDccTasks', 'selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
     }
     public function dailyReportSearchTasks(Request $request)
     {
@@ -1433,8 +1434,9 @@ class DashBoardController extends Controller
         $jahraDccTasks = $this->getTasksForControlCenter('JAHRA CONTROL CENTER', $parsedDate);
         $shuaibaDccTasks = $this->getTasksForControlCenter('SHUAIBA CONTROL CENTER', $parsedDate);
         $nationalDccTasks = $this->getTasksForControlCenter('NATIONAL CONTROL CENTER', $parsedDate);
+        $jabriaDccTasks = $this->getTasksForControlCenter('JABRIYA CONTROL CENTER', $parsedDate);
 
-        return view('dashboard.daily-reports', compact('selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
+        return view('dashboard.daily-reports', compact('jabriaDccTasks', 'selectedDate', 'townDccTasks', 'jahraDccTasks', 'shuaibaDccTasks', 'nationalDccTasks'));
     }
 
     /**
