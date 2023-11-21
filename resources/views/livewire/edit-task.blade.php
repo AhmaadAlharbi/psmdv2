@@ -180,9 +180,9 @@
                             </div>
                             @endif
                             <datalist id="engineerList">
-                                <option value="-">-</option>
-                                @foreach($engineers as $engineer)
-                                <option value="{{$engineer->user->name}}">{{$engineer->user->name}}</option>
+
+                                @foreach($names as $name)
+                                <option value="{{$name}}"></option>
                                 @endforeach
                             </datalist>
                             <input type="hidden" wire:model="user_id">
@@ -239,33 +239,35 @@
                             Submit</button>
                     </div>
 
+                    @if($selectedStation != null)
                     <script>
                         const btnid = document.getElementById('but4');
-                            btnid.addEventListener('click', () => {
-                                let timerInterval
-                                Swal.fire({
-                                    title: 'Sending Data in progress',
-                                    html: 'Please wait and do not close the page'',
-                                    timer: 60000,
-                                    timerProgressBar: true,
-                                    didOpen: () => {
-                                        Swal.showLoading()
-                                        const b = Swal.getHtmlContainer().querySelector('b')
-                                        timerInterval = setInterval(() => {
-                                            b.textContent = Swal.getTimerLeft()
-                                        }, 100)
-                                    },
-                                    willClose: () => {
-                                        clearInterval(timerInterval)
-                                    }
-                                }).then((result) => {
-                                    /* Read more about handling dismissals below */
-                                    if (result.dismiss === Swal.DismissReason.timer) {
-                                        console.log('I was closed by the timer')
-                                    }
+                                btnid.addEventListener('click', () => {
+                                    let timerInterval
+                                    Swal.fire({
+                                        title: 'Data Submission in Progress',
+                                        html: 'Please wait and do not close the page',
+                                        timer: 60000,
+                                        timerProgressBar: true,
+                                        didOpen: () => {
+                                            Swal.showLoading()
+                                            const b = Swal.getHtmlContainer().querySelector('b')
+                                            timerInterval = setInterval(() => {
+                                                b.textContent = Swal.getTimerLeft()
+                                            }, 100)
+                                        },
+                                        willClose: () => {
+                                            clearInterval(timerInterval)
+                                        }
+                                    }).then((result) => {
+                                        /* Read more about handling dismissals below */
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            console.log('I was closed by the timer')
+                                        }
+                                    })
                                 })
-                            })
                     </script>
+                    @endif
                 </div>
 
 

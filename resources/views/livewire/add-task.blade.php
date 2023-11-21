@@ -173,7 +173,6 @@
                 </select> --}}
                 <div class="mb-3">
                     <label for="inputName" class="control-label">Please select an engineer</label>
-                    <!-- Replace select tag with datalist tag -->
                     <div class="input-group">
                         <input wire:model="selectedEngineer" list="engineerList" id="eng_name" name="eng_name"
                             class="form-control engineerSelect m-1" wire:change="getEmail" autocomplete="off">
@@ -184,16 +183,15 @@
                             </button>
                         </div>
                         @endif
+                        <!-- Use Livewire to dynamically update datalist options -->
+                        <datalist id="engineerList">
+                            @foreach($names as $name)
+                            <option value="{{$name}}"></option>
+                            @endforeach
+                        </datalist>
+                        <input type="hidden" wire:model="user_id">
                     </div>
-                    <datalist id="engineerList">
-                        <option value="-">-</option>
-                        @foreach($engineers as $engineer)
-                        <option value="{{$engineer->user->name}}">{{$engineer->user->name}}</option>
-                        @endforeach
-                    </datalist>
-                    <input type="hidden" wire:model="user_id">
                 </div>
-
 
 
                 <div class="form-check mb-4">

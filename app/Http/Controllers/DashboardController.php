@@ -1475,4 +1475,34 @@ class DashBoardController extends Controller
         }
         return view('dashboard.adminAssignedTasks', compact('user', 'mainTasks', 'departments'));
     }
+    public function importOldReports()
+    {
+        $userDepartmentId = Auth::user()->department_id;
+        $stations = Station::all();
+        $main_alarms = MainAlarm::where('department_id', $userDepartmentId)->get();
+        $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+            ->where('engineers.department_id', $userDepartmentId);
+
+        // Retrieve the engineers based on the conditions
+        $engineers = $query->orderBy('users.name', 'asc')
+            ->get();
+        return view('dashboard.importReport', compact('stations', 'main_alarms', 'engineers'));
+    }
+    // public function submitOldReport(Request $request)
+    // {
+    //     $main_task = MainTask::create([
+    //         'refNum' => $refNum,
+    //         'station_id' =>  $this->station_id,
+    //         'voltage_level' => $this->selectedVoltage,
+    //         'equip_number' =>  $equip_number . ' - ' . $equip_name,
+    //         'date' => $this->date,
+    //         'problem' => $this->problem,
+    //         'work_type' => $this->work_type,
+    //         'notes' => $this->notes,
+    //         'status' => 'pending',
+    //         'main_alarm_id' => $mainAlarmId,
+    //         'user_id' => Auth::user()->id,
+    //         'is_emergency' => $this->is_emergency
+    //     ]);
+    // }
 }

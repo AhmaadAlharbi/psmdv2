@@ -426,7 +426,7 @@
                             <th class="text-lg d-none d-md-table-cell">Status</th>
                             <th class="text-lg">ENGINEER</th>
                             <th class="text-lg d-none d-md-table-cell">DATE</th>
-                            <td class="text-lg">Seen</td>
+                            <td class="text-lg">Viewed</td>
                             <th class="text-lg">OPERATION</th>
                         </tr>
                     </thead>

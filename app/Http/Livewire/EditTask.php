@@ -65,6 +65,8 @@ class EditTask extends Component
     public $departmentTask = '';
     public $mainTasksConverted = '';
     public $user_id;
+    public $names = [];
+
     public function __construct($task_id)
     {
         $this->task_id = $task_id;
@@ -294,6 +296,8 @@ class EditTask extends Component
         $engineers = $query->orderBy('users.name', 'asc')
             ->get();
         $this->engineers = $engineers;
+        // Extract names from the collection
+        $this->names = array_column($engineers->toArray(), 'name');
     }
     public function getEmail()
     {

@@ -321,6 +321,8 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/dashboard/daily-reports', [DashboardController::class, 'dailyReports'])->name('dailyReports');
     Route::post('/daily-reports/search-tasks', [DashboardController::class, 'dailyReportSearchTasks'])->name('dailyReportSearchTasks');
     Route::get('/dashboard/tasks/sent-by/{id}', [DashboardController::class, 'tasksSentByUser'])->name('tasksSentByUser');
+    Route::get('/import-old-reports', [DashboardController::class, 'importOldReports'])->name('importOldReports');
+    Route::post('/submit-old-reports', [DashboardController::class, 'submitOldReport'])->name('submitOldReport');
 });
 
 Route::middleware(['auth', 'confirmed'])->group(function () {

@@ -64,7 +64,9 @@ class AddTask extends Component
     public $otherEquip = '';
     public $is_emergency = false;
     public $user_id;
+    public $names = [];
     protected $listeners = ['callEngineer' => 'getEngineer'];
+
     public function mount()
     {
         $this->stations = Station::all();
@@ -298,7 +300,9 @@ class AddTask extends Component
     //         $this->engineers = $engineers;
     //     }
     // }
-
+    protected $debounce = [
+        'getEngineer' => 300, // milliseconds
+    ];
 
     public function getEngineer()
     {
@@ -311,11 +315,17 @@ class AddTask extends Component
         // Start building the query
         $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
             ->where('engineers.department_id', $userDepartmentId);
+        // Filter by user input if available
 
         // Retrieve the engineers based on the conditions
         $engineers = $query->orderBy('users.name', 'asc')
             ->get();
+
         $this->engineers = $engineers;
+        // Extract names from the collection
+        $this->names = array_column($engineers->toArray(), 'name');
+
+
 
         // $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
         //     ->where('engineers.department_id', $userDepartmentId)
