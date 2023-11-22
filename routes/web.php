@@ -111,6 +111,7 @@ use App\Http\Livewire\FormElements;
 use App\Http\Livewire\ImageCompare;
 use App\Http\Livewire\MailSettings;
 use App\Http\Livewire\Notification;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\ChartSparkline;
 use App\Http\Livewire\Draggablecards;
 use App\Http\Livewire\FormValidation;
@@ -141,6 +142,14 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 */
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        // User is already logged in, redirect to the index page
+        if (Auth::user()->role_id == 2) {
+            return redirect('/dashboard/admin');
+        } else {
+            return redirect('/dashboard/user');
+        }
+    }
     return view('livewire.signin');
 });
 Route::get('about', About::class);
