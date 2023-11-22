@@ -31,6 +31,40 @@ class DashBoardController extends Controller
     public function index()
     {
         $departmentId = Auth::user()->department_id;
+        $mainTasks = MainTask::whereHas('departmentsAssienments', function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })->get();
+        $engineerNames = [];
+
+        foreach ($mainTasks as $task) {
+            foreach ($task->departmentsAssienments as $assignment) {
+                $engineerNames[] = $assignment->engineer->name;
+                $engineerName = $assignment->engineer->name;
+
+                // If the engineerName is not yet in the array, initialize the counts
+                if (!isset($engineerData[$engineerName])) {
+                    $engineerData[$engineerName] = [
+                        'name' => $engineerName,
+                        'assigned_tasks' => 0,
+                        'completed_tasks' => 0,
+                        'pending_tasks' => 0,
+                    ];
+                }
+
+                // Increment counts based on the task status
+                $engineerData[$engineerName]['assigned_tasks']++;
+                $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+            }
+        }
+        // Order the engineerData array by assigned_tasks in descending order
+        // Sort the $engineerData array by assigned_tasks in descending order
+        usort($engineerData, function ($a, $b) {
+            return $b['completed_tasks'] - $a['completed_tasks'];
+        });
+
+
+
         if (Auth::user()->role_id !== 2) {
             return redirect()->route('dashboard.userIndex');
         }
@@ -139,7 +173,7 @@ class DashBoardController extends Controller
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
 
-        return view('dashboard.index', compact('unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        return view('dashboard.index', compact('engineerData', 'unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
 
     // return MainTask::with('station')->whereHas('station', function ($query) {
@@ -151,6 +185,40 @@ class DashBoardController extends Controller
     // return Auth::user()->role->title;
     public function indexControl($control)
     {
+
+        $departmentId = Auth::user()->department_id;
+        $mainTasks = MainTask::whereHas('departmentsAssienments', function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })->get();
+        $engineerNames = [];
+        $engineerNames = [];
+
+        foreach ($mainTasks as $task) {
+            foreach ($task->departmentsAssienments as $assignment) {
+                $engineerNames[] = $assignment->engineer->name;
+                $engineerName = $assignment->engineer->name;
+
+                // If the engineerName is not yet in the array, initialize the counts
+                if (!isset($engineerData[$engineerName])) {
+                    $engineerData[$engineerName] = [
+                        'name' => $engineerName,
+                        'assigned_tasks' => 0,
+                        'completed_tasks' => 0,
+                        'pending_tasks' => 0,
+                    ];
+                }
+
+                // Increment counts based on the task status
+                $engineerData[$engineerName]['assigned_tasks']++;
+                $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+            }
+        }
+        // Order the engineerData array by assigned_tasks in descending order
+        // Sort the $engineerData array by assigned_tasks in descending order
+        usort($engineerData, function ($a, $b) {
+            return $b['completed_tasks'] - $a['completed_tasks'];
+        });
 
         // Switch statement to set the control name based on the input
         switch ($control) {
@@ -351,7 +419,14 @@ class DashBoardController extends Controller
         $stationsCount = Station::where('control', $controlName)->count();
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
-        return view('dashboard.index', compact('departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        $unAssignedTasks =  department_task_assignment::where(function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })
+            ->whereNull('eng_id')
+            ->where('isCompleted', "0")
+            ->latest()
+            ->get();
+        return view('dashboard.index', compact('engineerData', 'unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
     public function userIndex()
     {
