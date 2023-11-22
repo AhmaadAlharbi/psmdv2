@@ -1216,22 +1216,33 @@ class DashBoardController extends Controller
      */
     public function destroy($id)
     {
-        $task = MainTask::findOrFail($id);
-        $departmentTask = department_task_assignment::where('main_tasks_id', $id)
-            ->where('department_id', Auth::user()->department_id)
-            ->first();
-        if ($task) {
-            if ($task->department_id === Auth::user()->department_id) {
-                $task->delete();
+        try {
+            $task = MainTask::findOrFail($id);
+            $departmentTask = department_task_assignment::where('main_tasks_id', $id)
+                ->where('department_id', Auth::user()->department_id)
+                ->first();
+
+            $user_department_id = $task->user->department_id;
+
+            // Check if task sent from the department that the user belongs to
+            if ($user_department_id == Auth::user()->department_id) {
+                if ($departmentTask) {
+                    $departmentTask->delete();
+                }
+                $task->forceDelete();
                 return redirect()->back()->with('success', 'تم الحذف بنجاح');
             } else {
-                $departmentTask->delete();
+                // If the task is not from the user's department, only delete the departmentTask
+                if ($departmentTask) {
+                    $departmentTask->delete();
+                }
                 return redirect()->back()->with('success', 'تم حذف المهمة من القسم بنجاح');
             }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'لم يتم العثور على السجل.');
         }
-
-        return redirect()->back()->with('error', 'لم يتم العثور على السجل.');
     }
+
 
     public function destroySectionTasks($id)
     {

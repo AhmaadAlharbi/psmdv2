@@ -333,6 +333,17 @@
                                             <i class="fas fa-exchange-alt"></i> Move to Another Department
                                         </a>
                                     </li>
+                                    <li>
+                                        <form method="post"
+                                            action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
+                                            id="delete-form-{{ $task->main_task->id }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
+                                                class="dropdown-item"> <i class="fas fa-trash "></i> Delete
+                                                Task</button>
+                                        </form>
+                                    </li>
 
 
 
@@ -499,6 +510,17 @@
                                             data-bs-target="#moveTask-{{ $task->id }}">
                                             <i class="fas fa-exchange-alt"></i> Move to Another Department
                                         </a>
+                                    </li>
+                                    <li>
+                                        <form method="post"
+                                            action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
+                                            id="delete-form-{{ $task->main_task->id }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
+                                                class="dropdown-item"> <i class="fas fa-trash "></i> Delete
+                                                Task</button>
+                                        </form>
                                     </li>
 
 
@@ -961,6 +983,24 @@
         data: data,
         options: options
     });
+</script>
+<script>
+    function deleteRecord(id) {
+          Swal.fire({
+            title: 'Are you sure about the deletion choice?',
+            text: 'Please select your option below',
+            icon: 'Warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete the task',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              document.getElementById('delete-form-' + id).submit();
+            }
+          });
+        }
 </script>
 <script src="{{asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
