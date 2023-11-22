@@ -88,13 +88,14 @@ class EditTask extends Component
 
         //  $this->mainTasksConverted->eng_id;
         $this->departmentTask = department_task_assignment::where('main_tasks_id', $this->task_id)->where('department_id', Auth::user()->department_id)->first();
+
         $this->station_id =  $this->task->station->id;
         $this->selectedStation = Station::where('id', $this->station_id)->value('SSNAME');
         $this->stationDetails = Station::where('id',  $this->task->station_id)->first();
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;
         // $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
-        $this->selectedEngineer =  $this->departmentTask->engineer->name;
+        $this->selectedEngineer = $this->departmentTask->eng_id ? $this->departmentTask->engineer->name : null;
         $this->user_id = $this->departmentTask ? $this->departmentTask->eng_id : null;
         $userDepartmentId = Auth::user()->department_id;
         // Set the Area based on the Department of the authenticated User.

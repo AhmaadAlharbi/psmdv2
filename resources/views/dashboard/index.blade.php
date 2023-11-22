@@ -327,10 +327,10 @@
 
                                                     <td>{{ $data['name'] }}</td>
                                                     <td>{{ $data['assigned_tasks'] }}</td>
-                                                    <td class=" bg-success">
+                                                    <td class=" bg-light">
                                                         {{
                                                         $data['completed_tasks'] }}</td>
-                                                    <td class="bg-warning">{{
+                                                    <td class="bg-secondary">{{
                                                         $data['pending_tasks']}}
                                                     </td>
                                                 </tr>

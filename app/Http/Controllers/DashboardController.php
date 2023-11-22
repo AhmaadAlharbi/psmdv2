@@ -38,23 +38,25 @@ class DashBoardController extends Controller
 
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
-                $engineerNames[] = $assignment->engineer->name;
-                $engineerName = $assignment->engineer->name;
+                if ($assignment->eng_id) {
+                    $engineerNames[] = $assignment->engineer->name;
+                    $engineerName = $assignment->engineer->name;
 
-                // If the engineerName is not yet in the array, initialize the counts
-                if (!isset($engineerData[$engineerName])) {
-                    $engineerData[$engineerName] = [
-                        'name' => $engineerName,
-                        'assigned_tasks' => 0,
-                        'completed_tasks' => 0,
-                        'pending_tasks' => 0,
-                    ];
+                    // If the engineerName is not yet in the array, initialize the counts
+                    if (!isset($engineerData[$engineerName])) {
+                        $engineerData[$engineerName] = [
+                            'name' => $engineerName,
+                            'assigned_tasks' => 0,
+                            'completed_tasks' => 0,
+                            'pending_tasks' => 0,
+                        ];
+                    }
+
+                    // Increment counts based on the task status
+                    $engineerData[$engineerName]['assigned_tasks']++;
+                    $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                    $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
                 }
-
-                // Increment counts based on the task status
-                $engineerData[$engineerName]['assigned_tasks']++;
-                $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
-                $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
             }
         }
         // Order the engineerData array by assigned_tasks in descending order
@@ -195,23 +197,25 @@ class DashBoardController extends Controller
 
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
-                $engineerNames[] = $assignment->engineer->name;
-                $engineerName = $assignment->engineer->name;
+                if ($assignment->eng_id) {
+                    $engineerNames[] = $assignment->engineer->name;
+                    $engineerName = $assignment->engineer->name;
 
-                // If the engineerName is not yet in the array, initialize the counts
-                if (!isset($engineerData[$engineerName])) {
-                    $engineerData[$engineerName] = [
-                        'name' => $engineerName,
-                        'assigned_tasks' => 0,
-                        'completed_tasks' => 0,
-                        'pending_tasks' => 0,
-                    ];
+                    // If the engineerName is not yet in the array, initialize the counts
+                    if (!isset($engineerData[$engineerName])) {
+                        $engineerData[$engineerName] = [
+                            'name' => $engineerName,
+                            'assigned_tasks' => 0,
+                            'completed_tasks' => 0,
+                            'pending_tasks' => 0,
+                        ];
+                    }
+
+                    // Increment counts based on the task status
+                    $engineerData[$engineerName]['assigned_tasks']++;
+                    $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                    $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
                 }
-
-                // Increment counts based on the task status
-                $engineerData[$engineerName]['assigned_tasks']++;
-                $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
-                $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
             }
         }
         // Order the engineerData array by assigned_tasks in descending order
