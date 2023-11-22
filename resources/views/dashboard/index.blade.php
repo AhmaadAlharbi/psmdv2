@@ -318,6 +318,9 @@
                                                         Tasks</th>
                                                     <th class="wd-15p border-bottom-0"><i class="fas fa-clock"></i>
                                                         Pending Tasks</th>
+                                                    <th class="wd-15p border-bottom-0"><i class="fas fa-percent"></i>
+                                                        Completion Percentage</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -333,6 +336,14 @@
                                                     <td class="bg-secondary">{{
                                                         $data['pending_tasks']}}
                                                     </td>
+                                                    <td>
+                                                        @if (array_key_exists('completion_percentage', $data))
+                                                        {{ $data['completion_percentage'] }}%
+                                                        @else
+                                                        N/A
+                                                        @endif
+                                                    </td>
+
                                                 </tr>
                                                 @endforeach
                                             </tbody>

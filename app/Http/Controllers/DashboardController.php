@@ -39,7 +39,6 @@ class DashBoardController extends Controller
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
                 if ($assignment->eng_id) {
-                    $engineerNames[] = $assignment->engineer->name;
                     $engineerName = $assignment->engineer->name;
 
                     // If the engineerName is not yet in the array, initialize the counts
@@ -49,6 +48,7 @@ class DashBoardController extends Controller
                             'assigned_tasks' => 0,
                             'completed_tasks' => 0,
                             'pending_tasks' => 0,
+                            'completion_percentage' => 0, // Initialize completion percentage
                         ];
                     }
 
@@ -56,9 +56,18 @@ class DashBoardController extends Controller
                     $engineerData[$engineerName]['assigned_tasks']++;
                     $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
                     $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+
+                    // Calculate completion percentage
+                    $completedTasks = $engineerData[$engineerName]['completed_tasks'];
+                    $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
+                    $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+
+                    // Update completion percentage in the data array
+                    $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                 }
             }
         }
+
         // Order the engineerData array by assigned_tasks in descending order
         // Sort the $engineerData array by assigned_tasks in descending order
         usort($engineerData, function ($a, $b) {
@@ -198,7 +207,6 @@ class DashBoardController extends Controller
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
                 if ($assignment->eng_id) {
-                    $engineerNames[] = $assignment->engineer->name;
                     $engineerName = $assignment->engineer->name;
 
                     // If the engineerName is not yet in the array, initialize the counts
@@ -208,6 +216,7 @@ class DashBoardController extends Controller
                             'assigned_tasks' => 0,
                             'completed_tasks' => 0,
                             'pending_tasks' => 0,
+                            'completion_percentage' => 0, // Initialize completion percentage
                         ];
                     }
 
@@ -215,6 +224,14 @@ class DashBoardController extends Controller
                     $engineerData[$engineerName]['assigned_tasks']++;
                     $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
                     $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+
+                    // Calculate completion percentage
+                    $completedTasks = $engineerData[$engineerName]['completed_tasks'];
+                    $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
+                    $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+
+                    // Update completion percentage in the data array
+                    $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                 }
             }
         }
