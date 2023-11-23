@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('styles')
-
+<style>
+    .task-action-container * {
+        color: #646464 !important;
+        font-size: 15px !important;
+        font-style: italic !important;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -193,11 +199,12 @@
                                     <li><a href="#tab4" class="nav-link me-1 active" data-bs-toggle="tab">Tasks
                                             Statistics</a>
                                     </li>
+                                    <li><a href="#tab6" class="nav-link" data-bs-toggle="tab">Engineers Statistics</a>
+                                    </li>
                                     <li><a href="#tab5" class="nav-link me-1" data-bs-toggle="tab">Reports & User
                                             Approvals</a></li>
 
-                                    <li><a href="#tab6" class="nav-link" data-bs-toggle="tab">Engineers Statistics</a>
-                                    </li>
+
                                 </ul>
                             </div>
                         </div>
@@ -521,12 +528,8 @@
                         <tr class="bg-warning-gradient">
                             <th class="text-lg">ID</th>
                             <th class="text-lg">STATION</th>
-                            <th class="text-lg d-none d-md-table-cell">Main Alarm</th>
-                            <th class="text-lg d-none d-md-table-cell">Status</th>
-                            <th class="text-lg">ENGINEER</th>
-                            <th class="text-lg d-none d-md-table-cell">DATE</th>
-                            <td class="text-lg">Viewed</td>
-                            <th class="text-lg">OPERATION</th>
+                            <th class="text-lg">Main Alarm</th>
+                            <th class="text-lg">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -541,7 +544,7 @@
                                 @endif
                             </td>
 
-                            <td class="text-lg d-none d-md-table-cell">
+                            <td class="text-lg">
                                 @if(isset($task->main_task->main_alarm_id))
                                 {{$task->main_task->main_alarm->name}}
                                 @else
@@ -549,22 +552,25 @@
 
                             </td>
                             @endif
-                            <td class="d-none d-md-table-cell">
-                                <span class="badge bg-danger me-1">{{$task->status}}</span>
-                            </td>
-
-
-                            <td class="text-lg">
+                            <td>
+                                <br>
                                 @if($task->eng_id)
+                                <Strong>Engineer</Strong>:
                                 <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
                                     {{$task->engineer->name}} - {{$task->engineer->department->name}}
                                 </a>
                                 @else
                                 -
                                 @endif
-                            </td>
-                            <td class="text-lg d-none d-md-table-cell">{{$task->created_at}}</td>
-                            <td>
+                                <br>
+
+                                <strong>Status</strong> <span class="badge bg-danger me-1">{{$task->status}}</span>
+                                <br>
+
+                                <strong>Date:</strong>{{$task->created_at}}
+                                <br>
+                                <Strong>Viewed</Strong> :
+
                                 @if($task->isSeen)
                                 <i class="fas fa-check-circle text-success"></i>
                                 <!-- Font Awesome check-circle icon for "Yes" -->
@@ -572,14 +578,8 @@
                                 <i class="fas fa-times-circle text-danger"></i>
                                 <!-- Font Awesome times-circle icon for "No" -->
                                 @endif
-                            </td>
-
-
-
-
-
-                            <td>
-                                <button type="button" class="btn btn-outline-danger dropdown-toggle"
+                                <br>
+                                <button type="button" class="btn btn-outline-danger btn-sm mb-1 dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fe fe-settings"></i>
                                 </button>
@@ -907,16 +907,14 @@
         </div>
         <div class="card-body ">
             <div class="table-responsive">
-                <table id="completed-tasks" class="border-top-0  table table-bordered text-nowrap border-bottom">
+                <table id="completed-tasks" class="border-top-0 table table-bordered text-nowrap border-bottom">
                     <thead>
                         <tr class="bg-success-gradient">
                             <th>ID</th>
                             <th>STATION</th>
                             <th>Main alarm</th>
-                            <th>Status</th>
-                            <th>ENGINEER</th>
-                            <th>Date</th>
-                            <th>Report</th>
+                            <th>Engineer Details</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -930,47 +928,55 @@
                                 @endisset
                             </td>
                             <td>
-                                @if($task->status === 'completed')
-                                <span class="badge bg-success me-1">{{$task->status}}</span>
-                                @else
-                                <span class="badge bg-warning me-1">{{$task->status}}</span>
+                                <div class="details-container">
+                                    <div class="engineer-details">
+                                        <strong>Engineer:</strong>
+                                        <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
+                                            {{$task->engineer->name}} - {{$task->engineer->department->name}}
+                                        </a>
+                                    </div>
+                                    <div class="additional-details">
+                                        <strong>Action Take:</strong>
+                                        <div class="task-action-container">
+                                            {!! $task->action_take !!}
+                                        </div>
+                                        <br>
 
-                                @endif
+                                        <strong>Status:</strong> <span
+                                            class="badge bg-success me-1">{{$task->status}}</span>
+                                    </div>
+                                </div>
+                                <div class="actions-dropdown mt-3">
+
+                                    <button type="button" class="btn btn-outline-success btn-sm mb-1 dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fe fe-settings"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.reportPage',['id'=>$task->id]) }}">
+                                                <i class="fas fa-eye"></i> View Report</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-edit"></i> Edit</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                <i class="fas fa-history"></i> History</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0);">
+                                                <i class="fas fa-exchange-alt"></i> Move to Another Department</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
-                            <td>
-                                <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
 
-                                    {{$task->engineer->name}} - {{$task->engineer->department->name}}
-                                </a>
-                            </td>
-                            <td>{{$task->created_at}}</td>
 
-                            <td>
 
-                                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <i class="fe fe-settings"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item"
-                                            href="{{route('dashboard.reportPage',['id'=>$task->id])}}">
-                                            <i class="fas fa-eye"></i> View Report</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
-                                            <i class="fas fa-edit"></i> Edit</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
-                                            <i class="fas fa-history"></i> History</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0);">
-                                            <i class="fas fa-exchange-alt"></i> Move to Another Department</a>
-                                    </li>
-                                </ul>
 
                         </tr>
                         @endforeach
-
                     </tbody>
                 </table>
+
 
             </div>
         </div>
@@ -1033,24 +1039,7 @@
 
 
 
-<script>
-    function deleteRecord(id) {
-      Swal.fire({
-        title: 'هل أنت متأكد من خيار الحذف؟',
-        text: 'يرجى تحديد خيارك بالأسفل',
-        icon: 'تحذير',
-        showCancelButton: true,
-        confirmButtonText: 'نعم ، احذف المهمة',
-        cancelButtonText: 'إلغاء',
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          document.getElementById('delete-form-' + id).submit();
-        }
-      });
-    }
-</script>
+
 
 
 <script>

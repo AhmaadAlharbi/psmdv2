@@ -152,7 +152,7 @@
                 </select>
                 @if($selectedTransformer === 'other')
                 <label for="">Enter equip number and name</label>
-                <input type="text" wire:model="selectedTransformer" class="form-control">
+                <input type="text" wire:model="otherEquip" class="form-control">
                 @endif
                 @endif
 

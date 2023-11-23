@@ -465,19 +465,28 @@ class DashBoardController extends Controller
     }
     public function engineerTaskPage($id)
     {
-        $tasks = department_task_assignment::where('main_tasks_id', $id)->where('department_id', Auth::user()->department_id)->first();
+        $tasks = department_task_assignment::where('main_tasks_id', $id)
+            ->where('department_id', Auth::user()->department_id)
+            ->first();
+
         $files = TaskAttachment::where('main_tasks_id', $id)->get();
+
         if (!$tasks) {
-            abort(404);
+            // Flash message and then redirect to the home page
+            return redirect()->route('dashboard.userIndex')->with('warning', 'This task may have been deleted.');
         }
+
         $tasks->update([
             'isSeen' => 1
         ]);
+
         if ($tasks->eng_id != Auth::user()->id) {
             return view('dashboard.unauthorized');
         }
+
         return view('dashboard.engineerTaskPage2', compact('tasks', 'files'));
     }
+
     // public function submitEngineerReport3(Request $request, $id)
     // {
     //     $status_raidoBtn =  $request->input('action_take_status');
@@ -1326,16 +1335,16 @@ class DashBoardController extends Controller
                     $departmentTask->delete();
                 }
                 $task->forceDelete();
-                return redirect()->back()->with('success', 'تم الحذف بنجاح');
+                return redirect()->back()->with('success', 'Deleted successfully.');
             } else {
                 // If the task is not from the user's department, only delete the departmentTask
                 if ($departmentTask) {
                     $departmentTask->delete();
                 }
-                return redirect()->back()->with('success', 'تم حذف المهمة من القسم بنجاح');
+                return redirect()->back()->with('success', 'Deleted successfully');
             }
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->back()->with('error', 'لم يتم العثور على السجل.');
+            return redirect()->back()->with('error', 'Record not found.');
         }
     }
 

@@ -23,6 +23,12 @@
 
 </div>
 <div class="row ">
+    @if(session('warning'))
+    <div class="alert alert-warning">
+        {{ session('warning') }}
+    </div>
+    @endif
+
     {{-- @if(session('success'))
     <div class="alert alert-success">
         <div class="card bd-0 mg-b-20 bg-success">

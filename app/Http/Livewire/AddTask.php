@@ -62,6 +62,7 @@ class AddTask extends Component
     public $otherMainAlarm = '';
     public $otherVoltage = '';
     public $otherEquip = '';
+    public $otherTransformer = '';
     public $is_emergency = false;
     public $user_id;
     public $names = [];
@@ -562,6 +563,10 @@ class AddTask extends Component
         } elseif (!empty($this->selectedTransformer)) {
             $equip_number = $this->selectedTransformer;
             $equip_name = null;
+            if ($this->selectedTransformer == 'other') {
+                $equip_number = $this->otherEquip;
+                $equip_name = null;
+            }
         } else {
             $equip_number = $this->otherEquip;
             $equip_name = null;
