@@ -15,11 +15,11 @@
 <!-- breadcrumb -->
 <div class="breadcrumb-header justify-content-between">
 
+
     <div class="my-auto">
         <div class="d-flex">
             <h4 class="content-title mb-0 my-auto">Dashboard</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
                 {{Auth::user()->department->name}}</span>
-
         </div>
 
     </div>
@@ -66,6 +66,11 @@
 
     {{--engineers --}}
     <div class="col-xl-4 col-lg-6 col-md-6">
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         <a href="{{ route('dashboard.engineersList') }}">
             <div class="card bg-primary-gradient">
                 <div class="card-body">
@@ -610,6 +615,36 @@
                                                 Task</button>
                                         </form>
                                     </li>
+                                    <li>
+                                        <form id="resendTaskForm" method="post"
+                                            action="{{ route('resendTask', ['id' => $task->main_task->id]) }}">
+                                            @csrf
+                                            <button type="button" class="dropdown-item" onclick="confirmResend()">
+                                                <i class="fas fa-paper-plane"></i> Resend Task
+                                            </button>
+                                        </form>
+                                    </li>
+
+                                    <script>
+                                        function confirmResend() {
+                                            // Use SweetAlert for confirmation
+                                            Swal.fire({
+                                                title: 'Are you sure?',
+                                                text: 'You are about to resend the task.',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#3085d6',
+                                                cancelButtonColor: '#d33',
+                                                confirmButtonText: 'Yes, resend it!'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    // If the user confirms, submit the form
+                                                    document.getElementById('resendTaskForm').submit();
+                                                }
+                                            });
+                                        }
+                                    </script>
+
 
 
 
@@ -944,6 +979,8 @@
 
                                         <strong>Status:</strong> <span
                                             class="badge bg-success me-1">{{$task->status}}</span>
+                                        <br>
+                                        <strong>Date:</strong>{{$task->created_at}}
                                     </div>
                                 </div>
                                 <div class="actions-dropdown mt-3">
@@ -1035,6 +1072,17 @@
             @endif
         });
 </script>
+@if(session('error'))
+<script>
+    $(document).ready(function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                html: '{!! session('error') !!}'
+            });
+        });
+</script>
+@endif
 
 
 

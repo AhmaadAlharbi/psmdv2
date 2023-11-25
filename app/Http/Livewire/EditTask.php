@@ -20,6 +20,7 @@ use Livewire\WithFileUploads;
 use App\Models\TaskAttachment;
 use App\Models\TaskConversions;
 use App\Notifications\TaskReport;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\department_task_assignment;
@@ -675,8 +676,24 @@ class EditTask extends Component
     }
     private function sendNotifications($mainTask, $engineerEmail)
     {
-        $user = User::where('email', $engineerEmail)->first();
-        Notification::send($user, new TaskReport($mainTask, $this->photos));
+
+        try {
+            if ($engineerEmail !== null) {
+                $user = User::where('email', $engineerEmail)->first();
+                if ($user) {
+                    // Assuming you have defined a notification class called TaskReport
+                    Notification::send($user, new TaskReport($mainTask, $this->photos));
+                }
+            }
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error sending notification email: ' . $e->getMessage());
+
+            // You can customize the error message based on your needs
+            session()->flash('error', 'An issue occurred while attempting to send the email. However, your data has been successfully saved.');
+            // Redirect to the homepage or any other desired location
+            return redirect('/');
+        }
     }
     private function isDepartmentDifferent($selectedDepartment)
     {

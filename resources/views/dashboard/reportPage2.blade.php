@@ -10,6 +10,16 @@
         .btn-group {
             display: none;
         }
+
+        body * {
+            font-size: 20px !important;
+        }
+
+        .task-action-container * {
+
+            font-size: 20px !important;
+            font-style: italic !important;
+        }
     }
 </style>
 @endsection
@@ -66,7 +76,7 @@
                         <p class="invoice-info-row"><span>Previous Maintenance</span> <span> {{
                                 $section_task->main_task->station->pm }}</span></p>
                     </div>
-                    <div class="invoice-notes border">
+                    <div class="invoice-notes border task-action-container">
                         <label class="main-content-label tx-16 mt-3">Nature of Fault <span
                                 class="badge bg-danger me-1"></span></label>
                         <p class="tx-20 text-secondary">{{
@@ -76,13 +86,15 @@
                     <div class="invoice-notes border">
                         <label class="main-content-label tx-16 mt-3">Action Take
                         </label>
-                        <p class=" text-dark">
+
+
+                        <div class="task-action-container">
                             @if (isset($section_task->action_take))
 
                             {!! $section_task->action_take !!}
 
                             @endif
-                        </p>
+                        </div>
                     </div><!-- invoice-notes -->
                     <div class="invoice-notes mt-5 "
                         style="display: flex;flex-direction:column;  align-items:flex-end;">

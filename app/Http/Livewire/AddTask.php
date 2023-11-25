@@ -20,9 +20,10 @@ use Livewire\WithFileUploads;
 use App\Models\TaskAttachment;
 use App\Models\TaskConversions;
 use App\Notifications\TaskReport;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\Storage;
 use App\Models\department_task_assignment;
 use Illuminate\Support\Facades\Notification;
 
@@ -177,65 +178,68 @@ class AddTask extends Component
         $this->transformers = [];
         $this->selectedEquip = ''; // Set equip_name to empty string
         $this->selectedTransformer = ''; // Set equip_name to empty string
-        if ($this->selectedVoltage !== '-1') {
-            $this->station_id = Station::where('SSNAME', $this->selectedStation)->pluck('id')->first();
-            // dd($this->main_alarm);
-            switch (MainAlarm::where('id', $this->selectedMainAlarm)->value('name')) {
-                case ('General Alarm 11KV'):
-                    $this->voltage = [];
-                    array_push($this->voltage, "11KV");
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
-                    break;
-                case ('Auto reclosure'):
-                case ('Pilot Cable Fault Alarm'):
-                case ('General Alarm 33KV'):
-                    $this->voltage = [];
-                    array_push($this->voltage, "33KV");
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
-                    break;
-                case ('Dist Prot Main Alaram'):
-                case ('Dist.Prot.Main B Alarm'):
-                case ('Pilot cable Superv.Supply Fail Alarm'):
-                case ('General Alarm 132KV'):
-                    $this->voltage = [];
-                    array_push($this->voltage, "132KV");
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
-                    break;
-                case ('DC Supply 1 & 2 Fail Alarm'):
-                    $this->voltage = [];
-                    break;
-                case ('General Alarm 300KV'):
-                    $this->voltage = [];
-                    array_push($this->voltage, "300KV");
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        // if ($this->selectedVoltage !== '-1') {
+        //     $this->station_id = Station::where('SSNAME', $this->selectedStation)->pluck('id')->first();
+        //     // dd($this->main_alarm);
+        //     switch (MainAlarm::where('id', $this->selectedMainAlarm)->value('name')) {
+        //         case ('General Alarm 11KV'):
+        //             $this->voltage = [];
+        //             array_push($this->voltage, "11KV");
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //             break;
+        //         case ('Auto reclosure'):
+        //         case ('Pilot Cable Fault Alarm'):
+        //         case ('General Alarm 33KV'):
+        //             $this->voltage = [];
+        //             array_push($this->voltage, "33KV");
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //             break;
+        //         case ('Dist Prot Main Alaram'):
+        //         case ('Dist.Prot.Main B Alarm'):
+        //         case ('Pilot cable Superv.Supply Fail Alarm'):
+        //         case ('General Alarm 132KV'):
+        //             $this->voltage = [];
+        //             array_push($this->voltage, "132KV");
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //             break;
+        //         case ('DC Supply 1 & 2 Fail Alarm'):
+        //             $this->voltage = [];
+        //             break;
+        //         case ('General Alarm 300KV'):
+        //             $this->voltage = [];
+        //             array_push($this->voltage, "300KV");
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
 
-                    break;
-                case ('B/Bar Protection Fail Alarm'):
-                    $this->voltage = [];
-                    array_push($this->voltage, "400KV", "300KV", "132KV", "33KV");
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //             break;
+        //         case ('B/Bar Protection Fail Alarm'):
+        //             $this->voltage = [];
+        //             array_push($this->voltage, "400KV", "300KV", "132KV", "33KV");
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
 
-                    break;
-                case ('Transformer Clearance'):
-                case ('Transformer out of step Alarm'):
-                    $this->voltage = [];
-                    $this->equip = [];
-                    // $this->voltage = Equip::where('station_id', $this->station_id)->where('equip_name', 'LIKE', '%TR%')->distinct()->pluck('equip_name');
-                    // $this->voltage = Equip::selectRaw('substr(equip_name,1,2)')->where('equip_name', 'LIKE', '%TR%')->distinct()->get();
-                    $this->transformers = Equip::where('station_id', $this->station_id)->where('equip_name', 'LIKE', '%TR%')->distinct()->pluck('equip_name');
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('equip_name', $this->selectedVoltage)->distinct()->pluck('equip_number');
-                    break;
-                default:
-                    // dd(MainAlarm::where('id', $this->main_alarm)->value('name'));
-                    $this->equip = [];
-                    $this->voltage = Equip::where('station_id', $this->station_id)->distinct()->pluck('voltage_level');
-                    $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
-            }
-            // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //             break;
+        //         case ('Transformer Clearance'):
+        //         case ('Transformer out of step Alarm'):
+        //             $this->voltage = [];
+        //             $this->equip = [];
+        //             // $this->voltage = Equip::where('station_id', $this->station_id)->where('equip_name', 'LIKE', '%TR%')->distinct()->pluck('equip_name');
+        //             // $this->voltage = Equip::selectRaw('substr(equip_name,1,2)')->where('equip_name', 'LIKE', '%TR%')->distinct()->get();
+        //             $this->transformers = Equip::where('station_id', $this->station_id)->where('equip_name', 'LIKE', '%TR%')->distinct()->pluck('equip_name');
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('equip_name', $this->selectedVoltage)->distinct()->pluck('equip_number');
+        //             break;
+        //         default:
+        //             // dd(MainAlarm::where('id', $this->main_alarm)->value('name'));
+        //             $this->equip = [];
+        //             $this->voltage = Equip::where('station_id', $this->station_id)->distinct()->pluck('voltage_level');
+        //             $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //     }
+        //     // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
 
-            // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        //     // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
 
-        }
+        // }
+        $this->equip = [];
+        $this->voltage = Equip::where('station_id', $this->station_id)->distinct()->pluck('voltage_level');
+        $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
     }
     /**
      * Get engineers based on department, area, and shift criteria.
@@ -541,7 +545,17 @@ class AddTask extends Component
         // Retrieve the main task ID from the created MainTask instance
         $main_task_id = $mainTask->id;
         $this->uploadAttachments($main_task->id);
-        $this->sendNotifications($main_task, $this->engineerEmail);
+        // $this->sendNotifications($main_task, $this->engineerEmail);
+        try {
+            $this->sendNotifications($main_task, $this->engineerEmail);
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error sending notification email: ' . $e->getMessage());
+
+            // You can customize the error message based on your needs
+            session()->flash('error', 'An issue occurred while attempting to send the email. However, your data has been successfully saved.');
+            return redirect('/');
+        }
         session()->flash('success', 'The Task has been added');
 
         // Step 7.2: Redirect the user to a specific page
@@ -651,13 +665,24 @@ class AddTask extends Component
 
     private function sendNotifications($mainTask, $engineerEmail)
     {
-        if ($engineerEmail !== null) {
-            $user = User::where('email', $engineerEmail)->first();
-            if ($user) {
-                // Assuming you have defined a notification class called TaskReport
-                Notification::send($user, new TaskReport($mainTask, $this->photos));
+        try {
+            if ($engineerEmail !== null) {
+                $user = User::where('email', $engineerEmail)->first();
+                if ($user) {
+                    // Assuming you have defined a notification class called TaskReport
+                    Notification::send($user, new TaskReport($mainTask, $this->photos));
+                }
             }
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error sending notification email: ' . $e->getMessage());
+
+            // You can customize the error message based on your needs
+            session()->flash('error', 'An issue occurred while attempting to send the email. However, your data has been successfully saved.');
+            // Redirect to the homepage or any other desired location
+            return redirect()->route('dashboard.userIndex');
         }
+
 
         // Add more notification methods as per your application's requirements
     }

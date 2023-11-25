@@ -4,9 +4,25 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Swift_TransportException;
 
 class Handler extends ExceptionHandler
 {
+    public function render($request, Throwable $e)
+    {
+        // Check if it's a Swift_TransportException
+        if ($e instanceof Swift_TransportException) {
+            // Log the error
+            \Log::error('Error sending email: ' . $e->getMessage());
+
+            // Show a custom error message and redirect to the index page
+            return redirect()->route('dashboard.userIndex')->with('error', 'An issue occurred while attempting to send the email. However, your data has been successfully saved.');
+        }
+
+        // Continue with the default Laravel exception handling
+        return parent::render($request, $e);
+    }
     /**
      * A list of exception types with their corresponding custom log levels.
      *

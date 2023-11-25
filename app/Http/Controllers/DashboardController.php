@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Mail\ContactFormMail;
 use App\Models\TaskAttachment;
 use App\Models\TaskConversions;
+use App\Notifications\TaskReport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -1603,6 +1604,37 @@ class DashBoardController extends Controller
         $engineers = $query->orderBy('users.name', 'asc')
             ->get();
         return view('dashboard.importReport', compact('stations', 'main_alarms', 'engineers'));
+    }
+    public function resendTask($taskId)
+    {
+        // Retrieve the task
+        $task = MainTask::findOrFail($taskId);
+
+        $engineerAssignment = $task->departmentsAssienments->first();
+
+        if ($engineerAssignment) {
+            $engineerId = $engineerAssignment->eng_id;
+        } else {
+            // Handle the case where no assignment is found
+            return null;
+        }
+        // Retrieve attachments for the task
+        $taskAttachments = TaskAttachment::where('main_tasks_id', $taskId)->get();
+        // Send the notification to the engineer's email
+        try {
+            $user = User::where('id', $engineerId)->first();
+            if ($user) {
+                // Assuming your TaskReport notification class accepts attachments
+                $user->notify(new TaskReport($task, $taskAttachments));
+                session()->flash('success', 'Email has been sent successfully.');
+            } else {
+                session()->flash('error', 'Engineer not found. Please check the email address.');
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while re-sending the task.');
+        }
+
+        return redirect()->back();
     }
     // public function submitOldReport(Request $request)
     // {
