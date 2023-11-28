@@ -128,6 +128,8 @@ use App\Http\Controllers\StationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EngineersController;
 use App\Http\Controllers\MainAlarmController;
+use App\Http\Controllers\FileActivityController;
+use App\Http\Controllers\FileRelaySettingController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -350,6 +352,13 @@ Route::middleware(['auth', 'confirmed'])->group(function () {
     Route::get('/contact', [DashboardController::class, 'contactPage'])->name('contactPage');
     Route::post('/contact', [DashboardController::class, 'sendEmail'])->name('sendEmail');
 });
+Route::get('/file-activities', [FileActivityController::class, 'index']);
+Route::get('/file-relay-settings', [FileRelaySettingController::class, 'index']);
+Route::get('/file-relay-settings/create', [FileRelaySettingController::class, 'create']);
+Route::post('/file-relay-settings/store', [FileRelaySettingController::class, 'store']);
+Route::get('/file-relay-settings/{id}', [FileRelaySettingController::class, 'show']);
+Route::get('/file-relay-settings/{id}/edit', [FileRelaySettingController::class, 'edit']);
+Route::put('/file-relay-settings/{id}', [FileRelaySettingController::class, 'update']);
 
 
 Route::get('/unapproved-access', function () {
