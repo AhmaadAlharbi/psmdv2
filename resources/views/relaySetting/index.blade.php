@@ -49,15 +49,48 @@
 <div class="row">
     <h1>File Activities</h1>
 
-    <ul>
-        @foreach ($fileActivities as $activity)
-        <li>
-            {{ $activity->user_id }} \ {{ $activity->file_id }} - {{ $activity->activity_type }} - {{
-            $activity->created_at }}
-            <!-- Add other fields as needed -->
-        </li>
-        @endforeach
-    </ul>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Files Table</h3>
+            <a class="btn btn-outline-success" href="/file-relay-settings/create">Add files</a>
+            <a class="btn btn-success" href="/file-relay-settings">Relay Setting files</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table border-top-0  table-bordered text-nowrap border-bottom" id="responsive-datatable">
+                    <thead>
+                        <tr>
+                            <th class="wd-15p border-bottom-0">#</th>
+                            <th class="wd-15p border-bottom-0">User</th>
+                            <th class="wd-20p border-bottom-0">file</th>
+                            <th class="wd-15p border-bottom-0">Status</th>
+                            <th class="wd-10p border-bottom-0">Date</th>
+                            {{-- <th class="wd-25p border-bottom-0">Actions</th> --}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($fileActivities as $activity)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+
+                            <td>{{ $activity->user->name }}</td>
+                            <td>{{ $activity->filename }}</td>
+                            <td>{{ $activity->activity_type }}</td>
+                            <td>{{ $activity->created_at->format('Y-m-d') }}</td>
+
+                            {{-- <td>
+                                <a href="" class="btn btn-info">Download</a>
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td> --}}
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- row closed -->
 
@@ -69,5 +102,24 @@
 <script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
+<!-- Internal Select2.min js -->
+<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
+
+<!-- DATA TABLE JS-->
+<script src="{{asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.print.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.colVis.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/responsive.bootstrap5.min.js')}}"></script>
+
+<!--Internal  Datatable js -->
+<script src="{{asset('assets/js/table-data.js')}}"></script>
 
 @endsection

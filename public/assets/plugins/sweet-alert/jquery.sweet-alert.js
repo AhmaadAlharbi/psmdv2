@@ -33,15 +33,20 @@ $(function (e) {
                 confirmButtonClass: "btn btn-danger",
                 confirmButtonText: "Yes, delete it!",
                 closeOnConfirm: false,
-            },
-            function () {
-                swal(
-                    "Deleted!",
-                    "Your imaginary file has been deleted.",
-                    "success"
-                );
             }
-        );
+            // function () {
+            //     swal(
+            //         "Deleted!",
+            //         "Your imaginary file has been deleted.",
+            //         "success"
+            //     );
+            // }
+        ).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, submit the form
+                document.getElementById("deleteForm").submit();
+            }
+        });
     });
 
     //Parameter

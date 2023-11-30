@@ -47,31 +47,39 @@
 
 <!-- row -->
 <div class="row">
-
     <div class="card">
         <div class="py-2">
-            <h1>Create Setting File</h1>
-
-            <form method="POST" action="/file-relay-settings/store" enctype="multipart/form-data">
+            <form action="{{ route('relaySetting.update', ['id' => $setting->id]) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
 
                 <label for="station_id">Station:</label>
-                <select class="select-form" name="station_id" id="">
-                    @foreach($stations as $station)
-                    <option value="{{$station->id}}">{{$station->SSNAME}}</option>
-                    @endforeach
-                </select>
-
-                <label for="files">Upload Files:</label>
-                <input type="file" name="files[]" required class="dropify" data-height="100" multiple />
-
+                <!-- Add your station dropdown or input field here -->
+                <div>
+                    <select class="select-form my-2" name="station_id" id="">
+                        <option value="{{$setting->station_id}}"> {{ $setting->station->SSNAME }}</option>
+                        @foreach($stations as $station)
+                        <option value="{{$station->id}}"> {{ $station->SSNAME }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <label for="new_file" class="text-muted">Upload a New File to Replace the Current File : <span
+                        class="text-success fw-bold">
+                        (
+                        {{$setting->filename}})</span></label>
+                <input type="file" name="new_file" class="dropify" data-height="100" />
                 <!-- Add other input fields as needed -->
-
-                <button class="btn btn-primary btn-lg mt-3" type="submit">Create Setting Files</button>
+                <button type="submit" class="btn btn-primary btn-lg mt-3" type="submit">Update File</button>
+                <a href="{{route('station_settings_file',$setting->station_id)}}" class="btn btn-secondary btn-lg mt-3"
+                    type="submit">Back to
+                    {{$setting->station->SSNAME}} Page</a>
             </form>
-
         </div>
+
     </div>
+
+
 </div>
 <!-- row closed -->
 
@@ -79,10 +87,7 @@
 
 @section('scripts')
 
-<script src="{{asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
-<script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
+
 <!--Internal Fileuploads js-->
 <script src="{{asset('assets/plugins/fileuploads/js/fileupload.js')}}"></script>
 <script src="{{asset('assets/plugins/fileuploads/js/file-upload.js')}}"></script>

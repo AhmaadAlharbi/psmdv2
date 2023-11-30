@@ -108,6 +108,19 @@
 					<li><a class="slide-item" href="{{ route('stations.create') }}">Add Station</a></li>
 				</ul>
 			</li>
+			<li class="slide">
+				<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
+					<i class="fas fa-cogs side-menu__icon"></i> <!-- Updated icon for Relay settings -->
+					<span class="side-menu__label"> Relay settings</span>
+					<i class="angle fe fe-chevron-down"></i>
+				</a>
+				<ul class="slide-menu">
+					<li class="side-menu__label1"><a href="javascript:void(0);">Charts</a></li>
+					<li><a class="slide-item" href="/file-relay-settings">Relay settings files</a></li>
+					{{-- <li><a class="slide-item" href="{{ route('stations.create') }}">Add Station</a></li> --}}
+				</ul>
+			</li>
+
 
 
 

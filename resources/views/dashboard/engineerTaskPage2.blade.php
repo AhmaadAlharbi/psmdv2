@@ -39,7 +39,11 @@
                     <div class="col-md ">
                         <label class="tx-gray-600">Task Details</label>
                         <div class="">
+
+
                             <h1 class="fw-bold">{{ $tasks->main_task->station->SSNAME }}</h1>
+
+
                             <p class="font-italic tx-15"> @isset($tasks->main_task->main_alarm_id)
                                 {{$tasks->main_task->main_alarm->name}}
                                 @endisset<br>
@@ -49,6 +53,10 @@
                     </div>
                     <div class="col-md">
                         <label class="tx-gray-600">Station Information</label>
+                        @if($tasks->main_task->station->FULLNAME)
+                        <p class="invoice-info-row"><span> Full name </span> <span>{{
+                                $tasks->main_task->station->FULLNAME }}</span></p>
+                        @endif
                         <p class="invoice-info-row"><span>Company Make</span> <span>{{
                                 $tasks->main_task->station->COMPANY_MAKE
                                 }}</span></p>

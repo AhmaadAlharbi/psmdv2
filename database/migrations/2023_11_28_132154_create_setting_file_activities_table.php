@@ -16,11 +16,10 @@ return new class extends Migration
         Schema::create('setting_file_activities', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('file_id');
+            $table->string('filename');
             $table->string('activity_type'); // 'upload', 'update', 'delete'
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('file_id')->references('id')->on('setting_files');
         });
     }
 

@@ -47,24 +47,58 @@
 
 <!-- row -->
 <div class="row">
-    <a href="/file-relay-settings/create" class="btn btn-primary btn-lg">add files</a>
-    <ul>
-        @foreach ($settings as $setting)
-        <li>
-            <a href="{{ url("/file-relay-settings/{$setting->id}") }}">{{ $setting->name }}</a>
-        </li>
-        @endforeach
-    </ul>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Files Table</h3>
+
+
+            <a class="btn btn-outline-success" href="/file-relay-settings/create">Add files</a>
+            <a class="btn btn-success" href="file-activities">Relay Setting files activity</a>
+        </div>
+        <div class="card-body d-flex justify-content-start align-items-center">
+            @foreach ($uniqueStations as $file)
+            <a href="{{route('station_settings_file',$file->station_id)}}">
+                <div class="d-flex flex-column align-items-center m-2 px-4">
+                    <img src="{{ asset('assets/img/files/folder.png') }}" alt="Your Image">
+                    <p class="mt-2">{{ $file->station->SSNAME }}</p>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+    </div>
 </div>
 <!-- row closed -->
 
 @endsection
 
 @section('scripts')
-
+<!-- Include SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="{{asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
+
+<script>
+    document.getElementById('swal-warning').addEventListener('click', function () {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, submit the form
+                document.getElementById('deleteForm').submit();
+            }
+        });
+    });
+</script>
+
+
 
 @endsection

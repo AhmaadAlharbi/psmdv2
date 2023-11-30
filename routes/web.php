@@ -353,12 +353,16 @@ Route::middleware(['auth', 'confirmed'])->group(function () {
     Route::post('/contact', [DashboardController::class, 'sendEmail'])->name('sendEmail');
 });
 Route::get('/file-activities', [FileActivityController::class, 'index']);
-Route::get('/file-relay-settings', [FileRelaySettingController::class, 'index']);
+Route::get('/file-relay-settings', [FileRelaySettingController::class, 'index'])->name('relaySetting.index');
+Route::get('/file-relay-settings/{station}/station', [FileRelaySettingController::class, 'indexStation'])->name('station_settings_file');
 Route::get('/file-relay-settings/create', [FileRelaySettingController::class, 'create']);
 Route::post('/file-relay-settings/store', [FileRelaySettingController::class, 'store']);
 Route::get('/file-relay-settings/{id}', [FileRelaySettingController::class, 'show']);
-Route::get('/file-relay-settings/{id}/edit', [FileRelaySettingController::class, 'edit']);
-Route::put('/file-relay-settings/{id}', [FileRelaySettingController::class, 'update']);
+Route::get('/file-relay-settings/{id}/edit', [FileRelaySettingController::class, 'edit'])->name('relaySetting.edit');
+Route::put('/file-relay-settings/{id}/UPDATE', [FileRelaySettingController::class, 'update'])->name('relaySetting.update');
+Route::get('/files/{id}/view', [FileRelaySettingController::class, 'viewFile'])->name('file.show');
+Route::get('/files/{id}/download',  [FileRelaySettingController::class, 'download'])->name('file.download');
+Route::delete('/files/{id}/delete',  [FileRelaySettingController::class, 'destroy'])->name('relaySetting.destroy');
 
 
 Route::get('/unapproved-access', function () {

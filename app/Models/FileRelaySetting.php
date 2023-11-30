@@ -11,4 +11,12 @@ class FileRelaySetting extends Model
     protected $guarded = [];
 
     use HasFactory;
+    public function station()
+    {
+        return $this->belongsTo(Station::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
