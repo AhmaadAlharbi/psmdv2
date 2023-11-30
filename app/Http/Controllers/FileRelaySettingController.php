@@ -30,7 +30,7 @@ class FileRelaySettingController extends Controller
     public function indexStation($id)
     {
         $relaySettingFiles = FileRelaySetting::where('station_id', $id)->get();
-        return view('relaySetting.station.index', compact('relaySettingFiles'));
+        return view('relaySetting.station.index', compact('relaySettingFiles', 'id'));
     }
     public function store(Request $request)
     {
@@ -48,16 +48,20 @@ class FileRelaySettingController extends Controller
                 // Process each uploaded file
                 $path = $file->store("files/$stationName", 'public');
                 // Store file information in the database
-                FileRelaySetting::create([
+                $settingFile = FileRelaySetting::create([
                     'station_id' => $stationId,
                     'filename' => $file->getClientOriginalName(),
-                    'user_id' => auth()->user()->id, // Assuming you have authentication
+                    'user_id' => auth()->user()->id,
                     'path' => $path,
                 ]);
+
+                // Retrieve the just-created file's ID
+                $fileId = $settingFile->id;
                 FileActivity::create([
                     'filename' => $file->getClientOriginalName(),
                     'activity_type' => 'created',
                     'user_id' => auth()->user()->id,
+                    'file_id' => $fileId
                 ]);
             }
 
@@ -122,7 +126,8 @@ class FileRelaySettingController extends Controller
 
     public function download($id)
     {
-        $file = FileRelaySetting::findOrFail($id);
+        // Use `withTrashed` to include trashed files
+        $file = FileRelaySetting::withTrashed()->findOrFail($id);
         $filePath = storage_path('app/public/' . $file->path);
         return response()->download($filePath, $file->filename);
     }
@@ -137,11 +142,12 @@ class FileRelaySettingController extends Controller
         $file = FileRelaySetting::findOrFail($id);
         FileActivity::create([
             'filename' => $file->filename,
-            'activity_type' => 'delete',
+            'activity_type' => 'deleted',
             'user_id' => auth()->user()->id,
+            'file_id' => $id
         ]);
         // Delete the file from storage
-        Storage::delete('app/public/' . $file->path);
+        // Storage::delete('app/public/' . $file->path);
 
         // Delete the file record from the database
         $file->delete();
@@ -149,5 +155,33 @@ class FileRelaySettingController extends Controller
         // Add any additional logic after deleting the file
 
         return back()->with('success', 'File deleted successfully');
+    }
+    public function showDeletedFiles()
+    {
+        $deletedFiles = FileRelaySetting::onlyTrashed()->get();
+        foreach ($deletedFiles as $file) {
+            $latestDeletedActivity = $file->activity()->latest()->where('activity_type', 'deleted')->first();
+
+            if ($latestDeletedActivity) {
+                // Access the information of the user who deleted the file
+                $deletedBy = $latestDeletedActivity->user;
+
+                // Access other information as needed
+                $deletedFilename = $latestDeletedActivity->filename;
+
+                // Now you have information about the last user who deleted the file
+            }
+        }
+
+
+        return view('relaySetting.deleted_files', compact('latestDeletedActivity', 'deletedFiles'));
+    }
+    public function restoreDeletedFile($id)
+    {
+        $file = FileRelaySetting::withTrashed()->findOrFail($id);
+        $file->restore();
+
+        // return redirect()->route('deleted-files.index')->with('success', 'File restored successfully');
+        return redirect()->route('station_settings_file', ['station' => $file->station_id])->with('success', 'File restored successfully');
     }
 }

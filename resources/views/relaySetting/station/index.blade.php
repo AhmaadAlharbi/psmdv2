@@ -52,6 +52,9 @@
             <h3 class="card-title">Setting files</h3>
             <a class="btn btn-outline-success" href="/file-relay-settings/create">Add files</a>
             <a class="btn btn-success" href="{{route('relaySetting.index')}}">Relay Settings Home</a>
+            <a href="{{ route('relaySetting.deleted-files.index',$id) }}" class="btn btn-secondary">
+                <i class="fas fa-archive"></i> View Archived Files
+            </a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -92,10 +95,8 @@
                             </td>
                             <td>{{$file->created_at}}</td>
                             <td>
+
                                 <div class="btn-group" role="group" aria-label="File Actions">
-                                    {{-- <a href="" class="btn btn-primary">
-                                        <i class="fas fa-eye"></i> View
-                                    </a> --}}
                                     <a href="{{route('file.download',$file->id)}}" class="btn btn-success">
                                         <i class="fas fa-download"></i> Download
                                     </a>
@@ -105,17 +106,18 @@
                                     {{-- <button type="button" class="btn btn-info" id="history-button">
                                         <i class="fas fa-history"></i> History
                                     </button> --}}
-                                    <form action="{{route('relaySetting.destroy',$file->id)}}" method="POST"
+                                    {{-- ... (your existing code) ... --}}
+                                    <form id="delete-form-{{$file->id}}"
+                                        action="{{ route('relaySetting.destroy', $file->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" id="swal-warning">
+                                        <button type="button" class="btn btn-danger swal-warning"
+                                            data-file-id="{{$file->id}}">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </form>
                                 </div>
-
-
                             </td>
 
                         </tr>
@@ -141,23 +143,26 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('swal-warning').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent the default form submission
+        // Iterate through all delete forms and attach Swal event listeners
+        document.querySelectorAll('.swal-warning').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                var fileId = this.getAttribute('data-file-id');
 
-            Swal.fire({
-                title: 'Confirm Deletion',
-text: 'Are you sure you want to delete this file? This action cannot be undone.',
-icon: 'warning',
-
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // If the user clicks "Yes, delete it!", submit the form
-                    document.getElementById('delete-form').submit();
-                }
+                Swal.fire({
+                    title: 'Confirm Deletion',
+                    text: 'Are you sure you want to delete this file? This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If the user clicks "Yes, delete it!", submit the form
+                        document.getElementById('delete-form-' + fileId).submit();
+                    }
+                });
             });
         });
     });

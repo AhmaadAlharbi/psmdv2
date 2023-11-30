@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('path');
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('station_id')->references('id')->on('stations');
             $table->foreign('user_id')->references('id')->on('users');
         });

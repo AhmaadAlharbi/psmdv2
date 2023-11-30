@@ -363,6 +363,9 @@ Route::put('/file-relay-settings/{id}/UPDATE', [FileRelaySettingController::clas
 Route::get('/files/{id}/view', [FileRelaySettingController::class, 'viewFile'])->name('file.show');
 Route::get('/files/{id}/download',  [FileRelaySettingController::class, 'download'])->name('file.download');
 Route::delete('/files/{id}/delete',  [FileRelaySettingController::class, 'destroy'])->name('relaySetting.destroy');
+Route::get('/deleted-files/{station}', [FileRelaySettingController::class, 'showDeletedFiles'])->name('relaySetting.deleted-files.index');
+Route::patch('/deleted-files/{id}/restore', [FileRelaySettingController::class, 'restoreDeletedFile'])->name('deleted-files.restore');
+
 
 
 Route::get('/unapproved-access', function () {
