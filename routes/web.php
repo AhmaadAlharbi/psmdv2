@@ -130,6 +130,7 @@ use App\Http\Controllers\EngineersController;
 use App\Http\Controllers\MainAlarmController;
 use App\Http\Controllers\FileActivityController;
 use App\Http\Controllers\FileRelaySettingController;
+use App\Http\Controllers\RelaySettingTasksController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -365,16 +366,20 @@ Route::get('/files/{id}/download',  [FileRelaySettingController::class, 'downloa
 Route::delete('/files/{id}/delete',  [FileRelaySettingController::class, 'destroy'])->name('relaySetting.destroy');
 Route::get('/deleted-files/{station}', [FileRelaySettingController::class, 'showDeletedFiles'])->name('relaySetting.deleted-files.index');
 Route::patch('/deleted-files/{id}/restore', [FileRelaySettingController::class, 'restoreDeletedFile'])->name('deleted-files.restore');
-
-
+Route::get('/relay-settings/my-tasks/', [RelaySettingTasksController::class, 'index'])->name('relaySetting.index');
+Route::get('/relay-settings-assign-task', [RelaySettingTasksController::class, 'showAssignTaskForm'])->name('realySetting.tasks.create');
+Route::post('/assign-task', [RelaySettingTasksController::class, 'assignTask'])->name('relaySetting.assignTask');
+Route::post('/relay-settings/tasks/toggle-completion/{id}', [RelaySettingTasksController::class, 'toggleCompletion'])->name('realySetting.toggleCompletion');
+Route::get('/relay_setting_tasks/{id}/files', [RelaySettingTasksController::class, 'getTaskFiles'])->name('relaySetting.getTaskFiles');
+Route::get('/relay-settings-tasks/files/{id}/download',  [RelaySettingTasksController::class, 'download'])->name('relay.tasks.download');
+Route::get('/relay-settings-tasks/{id}/edit', [RelaySettingTasksController::class, 'edit'])->name('relay.tasks.edit');
+Route::put('/relay-settings-tasks/{id}/UPDATE', [RelaySettingTasksController::class, 'update'])->name('relay.tasks.update');
+Route::delete('/relay-settings-tasks/{id}/delete',  [RelaySettingTasksController::class, 'destroy'])->name('relay.tasks.destroy');
 
 Route::get('/unapproved-access', function () {
     return view('waiting-approval');
 })->name('unapproved.access')->middleware('check_approval');
-
-
 Route::get('/logout2', [EngineersController::class, 'logout'])->name('engineer.logout');
-
 Route::get('/dashboard/admin/timeline/{id}', [DashboardController::class, 'timeline'])->name('dashboard.timeline');
 Route::get('/dashbaord/user/engineer-tasks/{status}', [DashboardController::class, 'ShowTasksEngineer'])->name('dashboard.ShowTasksEngineer');
 Route::get('/dashboard/user/request-to-update-report/{main_task_id}', [DashboardController::class, 'requestToUpdateReport'])->name('dashboard.requestToUpdateReport');

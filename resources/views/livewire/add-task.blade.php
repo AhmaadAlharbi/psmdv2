@@ -11,7 +11,8 @@
 
         <div class="text-center ">
             <label for="ssname">Department Task</label>
-            <select name="department" wire:model="selectedDepartment" class="form-control">
+            <p class="text-muted bg-light px-1 py-2">{{Auth::user()->department->name}}</p>
+            <select name="department" wire:model="selectedDepartment" class="form-control d-none">
                 <option selected value="{{Auth::user()->department_id}}">{{Auth::user()->department->name}}</option>
                 @foreach($departments as $department)
                 <option value="{{$department->id}}">{{$department->name}}</option>
