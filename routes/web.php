@@ -343,6 +343,7 @@ Route::middleware(['auth', 'confirmed'])->group(function () {
     Route::get('/engineer-task-page/{task}', [DashboardController::class, 'engineerTaskPage'])->name('dashboard.engineerTaskPage');
     Route::post('/submit-engineer-report/{id}', [DashboardController::class, 'submitEngineerReport'])->name('dashboard.submitEngineerReport');
     Route::get('/report-page/{id}', [DashboardController::class, 'reportPage'])->name('dashboard.reportPage');
+    Route::get('/tasks/{taskId}/reports', [DashboardController::class, 'getAllReportsForAtask'])->name('dashboard.getAllReportsForAtask');
     Route::get('/report-page/{main_task_id}/{department_id}', [DashboardController::class, 'reportDepartment'])->name('dashboard.reportDepartment');
     Route::get('/tasks/{status}', [DashboardController::class, 'showTasks'])->name('dashboard.showTasks');
     Route::get('/search/station', [DashboardController::class, 'searchStation'])->name('dashboard.searchStation');

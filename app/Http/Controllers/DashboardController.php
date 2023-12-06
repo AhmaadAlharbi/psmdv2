@@ -36,38 +36,42 @@ class DashBoardController extends Controller
             $query->where('department_id', $departmentId);
         })->get();
         $engineerNames = [];
-
+        $engineerData = [];
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
-                if ($assignment->eng_id) {
-                    $engineerName = $assignment->engineer->name;
+                if ($assignment->eng_id && $assignment->department_id == $departmentId) {
 
-                    // If the engineerName is not yet in the array, initialize the counts
-                    if (!isset($engineerData[$engineerName])) {
-                        $engineerData[$engineerName] = [
-                            'name' => $engineerName,
-                            'assigned_tasks' => 0,
-                            'completed_tasks' => 0,
-                            'pending_tasks' => 0,
-                            'completion_percentage' => 0, // Initialize completion percentage
-                        ];
+                    if ($assignment->eng_id) {
+                        $engineerName = $assignment->engineer->name;
+
+                        // If the engineerName is not yet in the array, initialize the counts
+                        if (!isset($engineerData[$engineerName])) {
+                            $engineerData[$engineerName] = [
+                                'name' => $engineerName,
+                                'assigned_tasks' => 0,
+                                'completed_tasks' => 0,
+                                'pending_tasks' => 0,
+                                'completion_percentage' => 0, // Initialize completion percentage
+                            ];
+                        }
+
+                        // Increment counts based on the task status
+                        $engineerData[$engineerName]['assigned_tasks']++;
+                        $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                        $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+
+                        // Calculate completion percentage
+                        $completedTasks = $engineerData[$engineerName]['completed_tasks'];
+                        $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
+                        $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+
+                        // Update completion percentage in the data array
+                        $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                     }
-
-                    // Increment counts based on the task status
-                    $engineerData[$engineerName]['assigned_tasks']++;
-                    $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
-                    $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
-
-                    // Calculate completion percentage
-                    $completedTasks = $engineerData[$engineerName]['completed_tasks'];
-                    $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
-                    $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
-
-                    // Update completion percentage in the data array
-                    $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                 }
             }
         }
+
 
         // Order the engineerData array by assigned_tasks in descending order
         // Sort the $engineerData array by assigned_tasks in descending order
@@ -129,6 +133,7 @@ class DashBoardController extends Controller
             $query->where('department_id', $departmentId);
         })
             ->where('status', "!=", 'converted')
+            ->whereNotNull('eng_id')
             ->where('isCompleted', "0")->latest()->get();
 
         $unAssignedTasks =  department_task_assignment::where(function ($query) use ($departmentId) {
@@ -204,35 +209,38 @@ class DashBoardController extends Controller
         })->get();
         $engineerNames = [];
         $engineerNames = [];
-
+        $engineerData = [];
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
-                if ($assignment->eng_id) {
-                    $engineerName = $assignment->engineer->name;
+                if ($assignment->eng_id && $assignment->department_id == $departmentId) {
 
-                    // If the engineerName is not yet in the array, initialize the counts
-                    if (!isset($engineerData[$engineerName])) {
-                        $engineerData[$engineerName] = [
-                            'name' => $engineerName,
-                            'assigned_tasks' => 0,
-                            'completed_tasks' => 0,
-                            'pending_tasks' => 0,
-                            'completion_percentage' => 0, // Initialize completion percentage
-                        ];
+                    if ($assignment->eng_id) {
+                        $engineerName = $assignment->engineer->name;
+
+                        // If the engineerName is not yet in the array, initialize the counts
+                        if (!isset($engineerData[$engineerName])) {
+                            $engineerData[$engineerName] = [
+                                'name' => $engineerName,
+                                'assigned_tasks' => 0,
+                                'completed_tasks' => 0,
+                                'pending_tasks' => 0,
+                                'completion_percentage' => 0, // Initialize completion percentage
+                            ];
+                        }
+
+                        // Increment counts based on the task status
+                        $engineerData[$engineerName]['assigned_tasks']++;
+                        $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                        $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+
+                        // Calculate completion percentage
+                        $completedTasks = $engineerData[$engineerName]['completed_tasks'];
+                        $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
+                        $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+
+                        // Update completion percentage in the data array
+                        $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                     }
-
-                    // Increment counts based on the task status
-                    $engineerData[$engineerName]['assigned_tasks']++;
-                    $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
-                    $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
-
-                    // Calculate completion percentage
-                    $completedTasks = $engineerData[$engineerName]['completed_tasks'];
-                    $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
-                    $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
-
-                    // Update completion percentage in the data array
-                    $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                 }
             }
         }
@@ -1020,6 +1028,32 @@ class DashBoardController extends Controller
         $files = TaskAttachment::where('main_tasks_id', $section_task->main_tasks_id)->where('department_id', $department_id)->get();
         $departments = Department::all();
         return view('dashboard.reportPage2', compact('departments', 'section_task', 'sections_tasks', 'shared_reports_count', 'files', 'files_count'));
+    }
+    public function getAllReportsForAtask($id)
+    {
+        $department_id = Auth::user()->department_id;
+        $shared_reports_count = SectionTask::where('main_tasks_id', $id)
+            ->where('isCompleted', "1")
+            ->where('approved', true)
+            ->count();
+        $sections_tasks = SectionTask::where('main_tasks_id', $id)
+            ->where('isCompleted', "1")
+            ->where('approved', true)
+            ->get();
+        $files_count = TaskAttachment::where('main_tasks_id', $id)->where('department_id', $department_id)->count();
+        $files = TaskAttachment::where('main_tasks_id', $id)->where('department_id', $department_id)->get();
+        $departments = Department::all();
+        $taskConverted = TaskConversions::where('main_tasks_id', $id)
+            ->where(function ($query) use ($department_id) {
+                $query->where('source_department', $department_id)
+                    ->orWhere('destination_department', $department_id);
+            })
+            ->first();
+
+        if ($taskConverted) {
+            $section_task = SectionTask::where('main_tasks_id', $id)->where('isCompleted', "1")->first();
+            return view('dashboard.reportPage2', compact('departments', 'section_task', 'sections_tasks', 'shared_reports_count', 'files', 'files_count'));
+        }
     }
     public function pendingReports()
     {

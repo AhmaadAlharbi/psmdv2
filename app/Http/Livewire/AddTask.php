@@ -83,7 +83,7 @@ class AddTask extends Component
     }
     public function getStationInfo()
     {
-        $this->main_alarms = MainAlarm::where('department_id', $this->selectedDepartment)->get();
+        $this->main_alarms = MainAlarm::where('department_id', Auth::user()->department_id)->get();
 
         // Reset all the properties to their default values.
         $this->resetProperties();
@@ -537,8 +537,10 @@ class AddTask extends Component
         $this->recordTaskTimeline($main_task->id, $selectedEngineer);
         // Step 1.1: Check if the selected department is different from the user's department
         // Step 1.1: Check if the selected department is different from the user's department
-        if ($this->selectedDepartment !== Auth::user()->department_id) {
+        if ($this->selectedDepartment != Auth::user()->department_id) {
             $mainTask = $this->handleTaskConversion();
+
+            // gettype($this->selectedDepartment) !== gettype(Auth::user()->department_id)
         } else {
             $mainTask = $this->handleDepartmentTaskAssignment();
         }
@@ -547,7 +549,7 @@ class AddTask extends Component
         $this->uploadAttachments($main_task->id);
         // $this->sendNotifications($main_task, $this->engineerEmail);
         try {
-            $this->sendNotifications($main_task, $this->engineerEmail);
+            // $this->sendNotifications($main_task, $this->engineerEmail);
         } catch (\Exception $e) {
             // Log the error
             Log::error('Error sending notification email: ' . $e->getMessage());

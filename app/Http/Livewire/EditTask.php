@@ -96,7 +96,11 @@ class EditTask extends Component
         $this->selectedVoltage = $this->task->voltage_level;
         $this->work_type = $this->task->work_type;
         // $this->selectedMainAlarm = optional($this->task->main_alarm)->id;
-        $this->selectedEngineer = $this->departmentTask->eng_id ? $this->departmentTask->engineer->name : null;
+        $this->selectedEngineer = $this->departmentTask && $this->departmentTask->eng_id
+            // If the above condition is true, set $this->selectedEngineer to the name of the associated engineer
+            ? $this->departmentTask->engineer->name
+            // If the condition is false (either $this->departmentTask is null or 'eng_id' is null), set $this->selectedEngineer to null
+            : null;
         $this->user_id = $this->departmentTask ? $this->departmentTask->eng_id : null;
         $userDepartmentId = Auth::user()->department_id;
         // Set the Area based on the Department of the authenticated User.
@@ -316,153 +320,7 @@ class EditTask extends Component
         }
     }
 
-    public function update2()
-    {
-        if ($this->selectedVoltage === 'other' && isset($this->otherVoltage)) {
-            $this->selectedVoltage = $this->otherVoltage;
-        }
-        $date = Carbon::now();
-        $equip_number = null; // Initialize the variable
-        if (!empty($this->selectedEquip && $this->selectedEquip !== 'other')) {
-            // If selectedEquip is not empty, set $equip_number to the selected value
-            $selectedEquipArr = explode(" - ", $this->selectedEquip);
-            $equip_number = $selectedEquipArr[0];
-            $equip_name = $selectedEquipArr[1];
-        } elseif (!empty($this->selectedTransformer)) {
-            // If selectedTransformer is not empty, set $equip_number to the selected value
-            $equip_number = $this->selectedTransformer;
-            $equip_name = null;
-        } else {
-            $equip_number = $this->otherEquip;
-            $equip_name = null;
-        }
-        //cehck main alarm if it is empty or not before saving to db
-        if ($this->selectedMainAlarm !== 'other') {
-            $mainAlarmId = $this->selectedMainAlarm;
-        } else {
-            $newMainAlarm = MainAlarm::create([
-                'name' => $this->otherMainAlarm,
-                'department_id' => Auth::user()->department_id,
-            ]);
-            $mainAlarmId = $newMainAlarm->id;
-        }
-        //check if engineer select is empty to set it null
-        if ($this->selectedEngineer === '') {
-            $this->selectedEngineer = null;
-        }
-        $this->task->update([
-            'station_id' =>  $this->station_id,
-            'voltage_level' => $this->selectedVoltage,
-            'equip_number' =>  $equip_number . ' - ' . $equip_name,
-            'problem' => $this->problem,
-            'work_type' => $this->work_type,
-            'notes' => $this->notes,
-            'status' => 'pending',
-            'main_alarm_id' => $mainAlarmId,
-        ]);
-        $selectedDepartmentName = Department::where('id', $this->selectedDepartment)->first()->name;
-        if ($this->selectedEngineer) {
-            $selectedEngineerName = User::where('id', $this->user_id)->first()->name;
-        } else {
-            $selectedEngineerName = null;
-        }
-        $main_task_id = $this->task->id;
-        $assignments = $this->task->departmentsAssienments->where('department_id', Auth::user()->department_id)->first();
-        if ($assignments && $this->selectedEngineer !== $assignments->eng_id) {
-            // Update the assignment
-            $assignments->update([
-                'eng_id' => $this->user_id
-            ]);
 
-            TaskTimeline::create([
-                'main_tasks_id' => $main_task_id,
-                'department_id' => Auth::user()->department_id,
-                'status' => 'Updated Engineer',
-                'Action' => 'The Department has assined Engineer ' . $selectedEngineerName,
-                'user_id' => Auth::user()->id
-            ]);
-        } else {
-            TaskTimeline::create([
-                'main_tasks_id' => $main_task_id,
-                'department_id' => Auth::user()->department_id,
-                'status' => 'Updated Task',
-                'action' => "The task has been Updated",
-                'user_id' => Auth::user()->id
-            ]);
-        }
-        // Check if the selected department is different from the user's department
-        if ($this->selectedDepartment != Auth::user()->department_id) {
-            // Create a conversion record
-            // $isTaskedConvered = $this->task->conversions;
-            $isTaskedConverted = $this->task->conversions->filter(function ($conversion) {
-                return $conversion->source_department == Auth::user()->department_id || $conversion->destination_department == Auth::user()->department_id;
-            });
-            if ($isTaskedConverted) {
-                $converted_task = TaskConversions::create([
-                    'main_tasks_id' => $main_task_id,
-                    'source_department' => Auth::user()->department_id,
-                    'destination_department' => $this->selectedDepartment,
-                    'status' => 'pending'
-                ]);
-
-                TaskTimeline::create([
-                    'main_tasks_id' => $main_task_id,
-                    'department_id' => Auth::user()->department_id,
-                    'status' => 'Converted',
-                    'Action' => 'The Task has been Converted from ' . Auth::user()->department->name . ' to ' . $selectedDepartmentName,
-                    'user_id' => Auth::user()->id
-                ]);
-
-                // Create a new department task assignment for the selected department
-                $departmentTask = department_task_assignment::create([
-                    'department_id' => $this->selectedDepartment,
-                    'main_tasks_id' => $main_task_id,
-                    'eng_id' => $this->user_id,
-                    'status' => 'pending'
-                ]);
-            }
-        } else {
-            // Update the existing department task assignment for the user's department
-            $userDepartmentTask = department_task_assignment::where('main_tasks_id', $main_task_id)
-                ->where('department_id', Auth::user()->department_id)
-                ->first();
-
-            if ($userDepartmentTask) {
-                $userDepartmentTask->update([
-                    'eng_id' => $this->user_id,
-                    'status' => 'pending'
-                ]);
-            } else {
-                // Create a new department task assignment for the user's department
-                $userDepartmentTask = department_task_assignment::create([
-                    'department_id' => Auth::user()->department_id,
-                    'main_tasks_id' => $main_task_id,
-                    'eng_id' => $this->user_id,
-                    'status' => 'pending'
-                ]);
-            }
-        }
-
-        foreach ($this->photos as $photo) {
-            // $photo->store('photos');
-            $name = $photo->getClientOriginalName();
-            // $photo->storeAs('public', $name);
-            $photo->storeAs('attachments/' . $main_task_id, $name, 'public');
-            $attachments = new TaskAttachment();
-            $attachments->main_tasks_id = $main_task_id;
-            $attachments->department_id = Auth::user()->department_id;
-            $attachments->file = $name;
-            $attachments->user_id = Auth::user()->id;
-            $attachments->save();
-        }
-        if ($this->selectedEngineer !== null) {
-            $user = User::where('email', $this->engineerEmail)->first();
-            // Notification::send($user, new TaskReport($this->task, $this->photos));
-        }
-
-        session()->flash('success', 'Updated successfully.');
-        return redirect("/dashboard/admin");
-    }
     public function update()
     {
         // Step 1: Handle Voltage Selection
@@ -481,8 +339,6 @@ class EditTask extends Component
         if ($this->selectedEngineer) {
             $this->recordTaskTimeline();
         }
-
-
         // Step 6: Check for Department Differences
         if ($this->isDepartmentDifferent($this->selectedDepartment)) {
             // Step 7: Handle Task Conversion
@@ -491,7 +347,7 @@ class EditTask extends Component
             // Step 8: Handle Department Task Assignment
             $this->handleDepartmentTaskAssignment();
         }
-        $this->sendNotifications($this->task, $this->engineerEmail);
+        // $this->sendNotifications($this->task, $this->engineerEmail);
         session()->flash('success', 'Updated successfully.');
         return redirect("/dashboard/admin");
     }
@@ -653,10 +509,11 @@ class EditTask extends Component
             ]);
         } else {
             // Create a new department task assignment for the user's department
+
             $userDepartmentTask = department_task_assignment::create([
                 'department_id' => $userDepartmentId,
                 'main_tasks_id' => $mainTaskId,
-                'eng_id' => $this->selectedEngineer,
+                'eng_id' => $this->user_id,
                 'status' => 'pending'
             ]);
         }
@@ -697,6 +554,7 @@ class EditTask extends Component
     }
     private function isDepartmentDifferent($selectedDepartment)
     {
-        return $selectedDepartment !== Auth::user()->department_id;
+
+        return $selectedDepartment != Auth::user()->department_id;
     }
 }

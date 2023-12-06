@@ -822,8 +822,10 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         @if($task->status =='completed')
+                                        <a href="{{route('dashboard.getAllReportsForAtask',$task->main_tasks_id)}}"
+                                            class="dropdown-item">View Report</a>
                                         <a href="{{route('dashboard.editTask',$task->main_tasks_id)}}"
-                                            class="dropdown-item">View</a>
+                                            class="dropdown-item">Edit</a>
                                         @endif
                                     </li>
 
