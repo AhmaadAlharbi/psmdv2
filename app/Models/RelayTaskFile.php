@@ -16,5 +16,13 @@ class RelayTaskFile extends Model
     {
         return $this->belongsTo(RelaySettingTask::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function activity()
+    {
+        return $this->hasMany(RelayTaskFilesActivity::class, 'file_id');
+    }
     use HasFactory;
 }

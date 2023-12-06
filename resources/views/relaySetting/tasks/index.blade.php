@@ -111,6 +111,8 @@
 
 
                                 </form>
+                                <a href="{{route('relay.tasks.edit',$task->id)}}"
+                                    class="btn btn-outline-primary">Edit</a>
                             </td>
                         </tr>
                         @endforeach

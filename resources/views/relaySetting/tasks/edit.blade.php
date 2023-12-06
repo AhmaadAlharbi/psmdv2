@@ -55,29 +55,31 @@
             {{ session('success') }}
         </div>
         @endif
-
-        <form action="" method="POST" enctype="multipart/form-data">
+        <a href="{{ route('relay.tasks.deleted-files.index',$task->id) }}" class="btn btn-secondary">
+            <i class="fas fa-archive"></i> View Archived Files
+        </a>
+        <form action="{{route('relay.tasks.update',$task->id)}}" method="POST" enctype="multipart/form-data">
             @csrf
-
+            @method('PATCH')
             <div class="mb-3">
                 <label for="title" class="form-label">Task Title</label>
-                <input type="text" class="form-control" id="title" value="{{$task->task->title}}" name="title" required
+                <input type="text" class="form-control" id="title" value="{{$task->title}}" name="title" required
                     autocomplete="off">
             </div>
 
             <div class="mb-3">
                 <label for="description" class="form-label">Task Description</label>
                 <textarea class="form-control" id="description" name="description" rows="3"
-                    required>{{$task->task->description}}</textarea>
+                    required>{{$task->description}}</textarea>
             </div>
 
             <div class="mb-3">
-                <input type="text" class="form-control" value="{{$task->task->user->name}}" id="currentUserName"
-                    readonly>
+                <input type="text" class="form-control" value="{{$task->user->name}}" id="currentUserName" readonly>
                 <div class="row">
                     <div class="col">
                         <input placeholder="select a name" type="text" id="user" name="user" list="users"
-                            class="form-control" required autocomplete="off" style="display:none;">
+                            class="form-control" autocomplete="off" style="display:none;">
+
                         <datalist id="users">
                             @foreach($users as $user)
                             <option value="{{ $user->name }}">
@@ -96,8 +98,51 @@
                 <input type="file" name="files[]">
             </div>
 
-            <button type="submit" class="btn btn-primary">Assign Task</button>
+            <button type="submit" class="btn btn-primary btn-lg">Assign Task</button>
         </form>
+        <div>
+            <table class="table border-top-0 table-bordered text-nowrap border-bottom" id="basic-datatable">
+                <thead>
+                    <tr>
+                        <th class="wd-15p border-bottom-0">#</th>
+                        <th class="wd-15p border-bottom-0">file</th>
+                        <th class="wd-20p border-bottom-0">date</th>
+                        <th class="wd-15p border-bottom-0">by</th>
+                        <th class="wd-10p border-bottom-0">Actions</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($task_files as $file)
+                    <tr>
+                        <td>{{ $loop->iteration}}</td>
+                        <td>{{$file->filename}}</td>
+                        <td>{{$file->created_at}}</td>
+                        <td>{{$file->user->name}}</td>
+                        <td>
+
+                            <div class="btn-group" role="group" aria-label="File Actions">
+                                <a href="{{route('relay.task.file.download',$file->id)}}" class="btn btn-success">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                                <form id="delete-form-{{$file->id}}"
+                                    action="{{ route('relay.task.destroy', $file->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-danger swal-warning"
+                                        data-file-id="{{$file->id}}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <!-- row closed -->
@@ -105,6 +150,7 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.getElementById('changeUserBtn').addEventListener('click', function() {
@@ -129,4 +175,30 @@
 <script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
 <script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Iterate through all delete forms and attach Swal event listeners
+        document.querySelectorAll('.swal-warning').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                var fileId = this.getAttribute('data-file-id');
+
+                Swal.fire({
+                    title: 'Confirm Deletion',
+                    text: 'Are you sure you want to delete this file? This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If the user clicks "Yes, delete it!", submit the form
+                        document.getElementById('delete-form-' + fileId).submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection

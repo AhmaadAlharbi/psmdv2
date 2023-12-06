@@ -9,6 +9,7 @@ use App\Models\RelayTaskFile;
 use App\Models\RelaySettingTask;
 use App\Models\RelaySettingTasks;
 use Illuminate\Support\Facades\Auth;
+use App\Models\RelayTaskFilesActivity;
 use Illuminate\Support\Facades\Storage;
 
 class RelaySettingTasksController extends Controller
@@ -60,7 +61,14 @@ class RelaySettingTasksController extends Controller
                 $fileTask = RelayTaskFile::create([
                     'task_id' => $task->id,
                     'filename' => $file->getClientOriginalName(),
-                    'path' => $path
+                    'path' => $path,
+                    'user_id' => Auth::user()->id
+                ]);
+                RelayTaskFilesActivity::create([
+                    'filename' => $file->getClientOriginalName(),
+                    'activity_type' => 'created',
+                    'user_id' => auth()->user()->id,
+                    'file_id' => $fileTask->id
                 ]);
             }
         }
@@ -78,7 +86,7 @@ class RelaySettingTasksController extends Controller
             $files[] = Storage::url($file->path);
         }
 
-        return view('relaySetting.tasks.files', ['tasks' => $tasks, 'files' => $files]);
+        return view('relaySetting.tasks.files', ['tasks' => $tasks, 'files' => $files, 'id' => $id]);
     }
     /**
      * Show the form for creating a new resource.
@@ -102,22 +110,92 @@ class RelaySettingTasksController extends Controller
     public function destroy($id)
     {
         $file = RelayTaskFile::findOrFail($id);
-        // FileActivity::create([
-        //     'filename' => $file->filename,
-        //     'activity_type' => 'deleted',
-        //     'user_id' => auth()->user()->id,
-        //     'file_id' => $id
-        // ]);
+
+        RelayTaskFilesActivity::create([
+            'filename' => $file->filename,
+            'activity_type' => 'deleted',
+            'user_id' => auth()->user()->id,
+            'file_id' => $file->id
+        ]);
         $file->delete();
 
         // Add any additional logic after deleting the file
 
         return back()->with('success', 'File deleted successfully');
     }
+    public function showDeletedFiles($id)
+    {
+        $deletedFiles = RelayTaskFile::onlyTrashed()->where('task_id', $id)->get();
+        $latestDeletedActivity = null;
+        foreach ($deletedFiles as $file) {
+            $latestDeletedActivity = $file->activity()->latest()->where('activity_type', 'deleted')->first();
+
+            if ($latestDeletedActivity) {
+                // Access the information of the user who deleted the file
+                $deletedBy = $latestDeletedActivity->user;
+
+                // Access other information as needed
+                $deletedFilename = $latestDeletedActivity->filename;
+
+                // Now you have information about the last user who deleted the file
+            }
+        }
+        return view('relaySetting.tasks.trashFiles', compact('deletedFiles', 'latestDeletedActivity'));
+    }
+    public function restoreDeletedFile($id)
+    {
+        $file = RelayTaskFile::withTrashed()->findOrFail($id);
+        $file->restore();
+
+        // return redirect()->route('deleted-files.index')->with('success', 'File restored successfully');
+        return redirect()->route('relay.tasks.edit', ['id' => $file->task_id])->with('success', 'File restored successfully');
+    }
     public function edit($id)
     {
-        $task = RelayTaskFile::findOrFail($id);
+        $task = RelaySettingTask::findOrFail($id);
+        $task_files = RelayTaskFile::where('task_id', $id)->get();
         $users = User::all();
-        return view('relaySetting.tasks.edit', compact('task', 'users'));
+        return view('relaySetting.tasks.edit', compact('task', 'users', 'task_files'));
+    }
+    public function update(Request $request, $id)
+    {
+        // Validate the form data
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        // Find the task by ID
+        $task = RelaySettingTask::findOrFail($id);
+
+        // Update task data
+        $task->title = $request->input('title');
+        $task->description = $request->input('description');
+
+        // Handle file upload if provided
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                // Process each uploaded file
+                $path = $file->store("setting_tasks/$task->id", 'public');
+                $fileTask = RelayTaskFile::create([
+                    'task_id' => $task->id,
+                    'filename' => $file->getClientOriginalName(),
+                    'path' => $path,
+                    'user_id' => Auth::user()->id
+                ]);
+                RelayTaskFilesActivity::create([
+                    'filename' => $file->getClientOriginalName(),
+                    'activity_type' => 'created',
+                    'user_id' => auth()->user()->id,
+                    'file_id' => $fileTask->id
+                ]);
+            }
+        }
+
+        // Save the updated task
+        $task->save();
+
+        // Redirect to a success page or wherever you want
+        return back();
     }
 }

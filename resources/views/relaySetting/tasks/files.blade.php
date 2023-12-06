@@ -49,7 +49,7 @@
 <div class="row">
     <div class="card">
         <div class="card-header">
-
+            <a href="{{route('relay.tasks.edit',$id)}}" class="btn btn-outline-primary">Add files</a>
 
         </div>
         <div class="card-body">

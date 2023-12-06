@@ -375,6 +375,11 @@ Route::get('/relay-settings-tasks/files/{id}/download',  [RelaySettingTasksContr
 Route::get('/relay-settings-tasks/{id}/edit', [RelaySettingTasksController::class, 'edit'])->name('relay.tasks.edit');
 Route::put('/relay-settings-tasks/{id}/UPDATE', [RelaySettingTasksController::class, 'update'])->name('relay.tasks.update');
 Route::delete('/relay-settings-tasks/{id}/delete',  [RelaySettingTasksController::class, 'destroy'])->name('relay.tasks.destroy');
+Route::get('/tasks-files/{id}/download',  [RelaySettingTasksController::class, 'download'])->name('relay.task.file.download');
+Route::delete('/tasks-files/{id}/delete',  [RelaySettingTasksController::class, 'destroy'])->name('relay.task.destroy');
+Route::get('/tasks-deleted-files/{id}', [RelaySettingTasksController::class, 'showDeletedFiles'])->name('relay.tasks.deleted-files.index');
+Route::patch('/tasks-deleted-files/{id}/restore', [RelaySettingTasksController::class, 'restoreDeletedFile'])->name('relay.tasks.deleted-files.restore');
+Route::patch('/relay-tasks/{id}/update', [RelaySettingTasksController::class, 'update'])->name('relay.tasks.update');
 
 Route::get('/unapproved-access', function () {
     return view('waiting-approval');
