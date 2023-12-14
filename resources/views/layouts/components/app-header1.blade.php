@@ -314,8 +314,9 @@
 								<div class="menu-header-content bg-primary text-start">
 									<div class="d-flex">
 										<h6 class="dropdown-title mb-1 tx-15 text-white fw-semibold">Notifications</h6>
-										<span class="badge rounded-pill bg-warning ms-auto my-auto float-end">Mark All
-											Read</span>
+										{{-- <span class="badge rounded-pill bg-warning ms-auto my-auto float-end">Mark
+											All
+											Read</span> --}}
 									</div>
 									{{-- <p class="dropdown-title-text subtext mb-0 text-white op-6 pb-0 tx-12 ">You
 										have

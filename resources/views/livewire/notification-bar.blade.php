@@ -1,43 +1,93 @@
 <div class="mt-1">
-    @if (count($usersNotifications) > 0 || count($reportsNotifications) > 0)
-
-    <!-- Users Notifications -->
-    @foreach($usersNotifications as $notification)
-
-    <a wire:click.prevent="markNotificationAsRead('{{ $notification['type'] }}', {{ $notification['id'] }})"
-        class="d-flex p-3 border-bottom" href="javascript:void(0);">
-        <div class="notifyimg bg-danger ht-40">
-            <i class="{{ $notification['icon'] }} text-white"></i>
+    @if ($usersNotificationsCount > 0)
+    <a href="{{route('dashboard.pendingUsers')}}" class="d-flex p-3 border-bottom" href="javascript:void(0);">
+        <div class="notifyimg bg-purple ht-40">
+            <i class="la la-user-check text-white"></i>
         </div>
         <div class="ms-3">
-            <h5 class="notification-label mb-1">{{ $notification['label'] }}</h5>
-            @if ($notification['subtext'])
-            <div class="notification-subtext">{{ $notification['subtext'] }}</div>
-            @endif
+            <h5 class="notification-label mb-1">Users approval</h5>
+            <div class="notification-subtext">{{ $usersNotificationsCount }} new</div>
         </div>
         <div class="ms-auto">
             <i class="las la-angle-right text-end text-muted"></i>
         </div>
     </a>
-    @endforeach
-
-    <!-- Reports Notifications -->
-    @foreach($reportsNotifications as $notification)
-    <a class="d-flex p-3 border-bottom" href="javascript:void(0);">
-        <div class="notifyimg bg-danger ht-40">
-            <i class="{{ $notification['icon'] }} text-white"></i>
+    @endif
+    @if ($reportsNotificationsCount > 0)
+    <a href="{{route('dashboard.pendingReports')}}" class="d-flex p-3 border-bottom" href="javascript:void(0);">
+        <div class="notifyimg bg-warning ht-40">
+            <i class="la la-file-alt text-white"></i>
         </div>
         <div class="ms-3">
-            <h5 class="notification-label mb-1">{{ $notification['label'] }}</h5>
-            @if ($notification['subtext'])
-            <div class="notification-subtext">{{ $notification['subtext'] }}</div>
-            @endif
+            <h5 class="notification-label mb-1">Reports Approval</h5>
+            <div class="notification-subtext">{{ $reportsNotificationsCount }} new</div>
         </div>
         <div class="ms-auto">
             <i class="las la-angle-right text-end text-muted"></i>
         </div>
     </a>
-    @endforeach
-
+    @endif
+    @if ($incomingTasksNotificationsCount > 0)
+    <a href="{{ route('dashboard.showTasks', ['status' => 'mutual-tasks']) }}" class="d-flex p-3 border-bottom"
+        href="javascript:void(0);">
+        <div class="notifyimg bg-success ht-40">
+            <i class="la la-refresh text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h5 class="notification-label mb-1">Incoming Tasks</h5>
+            <div class="notification-subtext">{{ $incomingTasksNotificationsCount }} new</div>
+        </div>
+        <div class="ms-auto">
+            <i class="las la-angle-right text-end text-muted"></i>
+        </div>
+    </a>
     @endif
 </div>
+
+
+{{-- <div class="mt-1">
+    @if (count($usersNotifications) > 0 || count($reportsNotifications) > 0 ||
+    count($incomingTasksConvertedNotifications) > 0)
+
+
+    <a class="d-flex p-3 border-bottom" href="javascript:void(0);">
+        <div class="notifyimg bg-purple ht-40">
+            <i class="la la-gem text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h5 class="notification-label mb-1">Users approval</h5>
+            <div class="notification-subtext">2 days ago</div>
+        </div>
+        <div class="ms-auto">
+            <i class="las la-angle-right text-end text-muted"></i>
+        </div>
+    </a>
+
+
+    <a class="d-flex p-3 border-bottom" href="javascript:void(0);">
+        <div class="notifyimg bg-purple ht-40">
+            <i class="la la-gem text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h5 class="notification-label mb-1">Reports Approval</h5>
+            <div class="notification-subtext">2 days ago</div>
+        </div>
+        <div class="ms-auto">
+            <i class="las la-angle-right text-end text-muted"></i>
+        </div>
+    </a>
+
+    <a class="d-flex p-3 border-bottom" href="javascript:void(0);">
+        <div class="notifyimg bg-purple ht-40">
+            <i class="la la-gem text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h5 class="notification-label mb-1">Incoming Tasks</h5>
+            <div class="notification-subtext">2 days ago</div>
+        </div>
+        <div class="ms-auto">
+            <i class="las la-angle-right text-end text-muted"></i>
+        </div>
+    </a>
+    @endif
+</div> --}}

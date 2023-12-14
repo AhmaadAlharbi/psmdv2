@@ -123,8 +123,8 @@
                         Task #
                         {{$task->main_task->id}}
                     </li>
-                    <li class="list-group-item ">{{$task->main_task->created_at}} -
-                        {{ $task->toDepartment ? $task->toDepartment->name : $task->department->name }}
+                    <li class="list-group-item ">{{$task->main_task->created_at}} <br>
+                        <span class="list-group-item bg-light rounded ">{{ $task->department->name}}</span>
                     </li>
                     <li class="list-group-item "> <strong>Station<br>
                         </strong>
@@ -136,14 +136,23 @@
                     <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
 
                     <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
+                    <li class="list-group-item"><strong>Notes<br></strong>{{$task->main_task->notes}}
                     </li>
                     <li class="list-group-item">Action Take <br>
+
+                        @foreach ($task->main_task->section_tasks as $sectionTask)
+                        <div class="italic text-muted">
+                            {!! strip_tags($sectionTask->action_take) !!}
+
+                        </div>
+                        @endforeach
+
                         @isset($reports)
                         @foreach($reports as $report)
                         <!-- Start of the foreach loop, iterating through $reports -->
                         @if(isset($report['main_tasks_id']) && $report['main_tasks_id'] === $task->main_tasks_id)
                         <!-- Check if $report has 'main_tasks_id' property and it matches the current $task's 'main_tasks_id' -->
-                        {!! strip_tags($report['action_take']) !!}
+                        {{-- {!! strip_tags($report['action_take']) !!} --}}
 
                         <!-- Display the 'action_take' property of the matching $report -->
                         @if ($report['department_id'] === Auth::user()->department_id &&
@@ -186,9 +195,10 @@
                             class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
 
                     <div class="dropdown-menu">
-                        @if(Auth::user()->role->title === 'Admin' && $task->main_task->status !== 'completed')
+                        @if(Auth::user()->role->title === 'Admin' )
                         <a href="{{ route('dashboard.editTask', ['id' => $task->main_task->id]) }}"
                             class="dropdown-item">Edit</a>
+                        @if(Auth::user()->department_id == $task->department_id)
                         <form method="post" action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
                             id="delete-form-{{ $task->main_task->id }}">
                             @csrf
@@ -196,6 +206,7 @@
                             <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
                                 class="dropdown-item">Delete Task</button>
                         </form>
+                        @endif
                         @endif
 
                         @if($task->isCompleted === '1')

@@ -62,11 +62,20 @@
         $("#completed-tasks").DataTable({
             responsive: true,
             language: {
-                searchPlaceholder: "Search...",
+                searchPlaceholder: "Search ...",
                 sSearch: "",
                 lengthMenu: "_MENU_ items/page",
             },
         });
+        $("#stations-list").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search ...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
+
         $("#unassigned-tasks").DataTable({
             responsive: true,
             language: {

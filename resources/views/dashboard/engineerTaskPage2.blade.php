@@ -82,6 +82,12 @@
                                                 class="badge bg-danger me-1"></span></label>
                                         <p class="tx-20 text-secondary">{{
                                             $tasks->main_task->problem }} </p>
+                                        @if( $tasks->main_task->notes)
+                                        <label class="main-content-label tx-16">Notes <span
+                                                class="badge bg-danger me-1"></span></label>
+                                        <p class="tx-20 text-secondary">{{
+                                            $tasks->main_task->notes }} </p>
+                                        @endif
                                     </div><!-- invoice-notes -->
                                 </td>
                             </tr>

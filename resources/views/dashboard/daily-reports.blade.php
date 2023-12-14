@@ -139,7 +139,7 @@
                                 <td>{{ $task->created_at->format('H:i') }}</td>
                                 <td>
                                     @if($task->main_alarm_id)
-                                    {{$task->main_alarm->first()->name}}
+                                    {{$task->main_alarm->name}}
                                     @else
                                     -
                                     @endif
@@ -200,7 +200,7 @@
                                 <td>{{ $task->created_at->format('H:i') }}</td>
                                 <td>
                                     @if($task->main_alarm_id)
-                                    {{$task->main_alarm->first()->name}}
+                                    {{$task->main_alarm->name}}
                                     @else
                                     -
                                     @endif
@@ -262,7 +262,7 @@
                                 <td>{{ $task->created_at->format('H:i') }}</td>
                                 <td>
                                     @if($task->main_alarm_id)
-                                    {{$task->main_alarm->first()->name}}
+                                    {{$task->main_alarm->name}}
                                     @else
                                     -
                                     @endif
@@ -323,7 +323,7 @@
                                 <td>{{ $task->created_at->format('H:i') }}</td>
                                 <td>
                                     @if($task->main_alarm_id)
-                                    {{$task->main_alarm->first()->name}}
+                                    {{$task->main_alarm->name}}
                                     @else
                                     -
                                     @endif

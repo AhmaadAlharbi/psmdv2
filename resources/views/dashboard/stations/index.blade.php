@@ -48,7 +48,8 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table border-top-0  table-bordered text-nowrap border-bottom" id="responsive-datatable">
+                <table id="stations-list" class="table border-top-0  table-bordered text-nowrap border-bottom"
+                    id="responsive-datatable">
 
                     <thead>
                         <tr>
@@ -107,7 +108,7 @@
 
                     </tbody>
                 </table>
-                {{ $stations->links() }}
+
 
 
             </div>

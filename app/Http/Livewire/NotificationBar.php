@@ -5,13 +5,19 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\SectionTask;
+use App\Models\TaskConversions;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationBar extends Component
 {
     public $usersNotifications = [];
     public $reportsNotifications = [];
-
+    public $incomingTasksConvertedNotifications = []; // Incoming tasks
+    public $outgoingTasksConvertedNotifications = []; // Outgoing tasks
+    public $totalNotifications = 0;
+    public $usersNotificationsCount = 0;
+    public $reportsNotificationsCount = 0;
+    public $incomingTasksNotificationsCount = 0;
     public function render()
     {
         return view('livewire.notification-bar');
@@ -21,35 +27,59 @@ class NotificationBar extends Component
     {
         $this->checkForPendingUsersApprovals();
         $this->checkForPendingReportsApprovals();
+        $this->checkForIncomingTasks();
     }
 
     public function checkForPendingUsersApprovals()
     {
-        $pendingUsers = User::where('approved', false)->get();
-        if ($pendingUsers->isNotEmpty()) {
-            // Get the name of the first user
-            $firstUserName = $pendingUsers->first()->name;
+        $department_id = Auth::user()->department_id;
+        $pendingUsers = User::where('approved', false)
+            ->where('department_id', $department_id)
+            ->get();
 
-            // Display a message with the name of the first user
+        // Calculate the count of new notifications
+        $newNotificationsCount = $pendingUsers->count();
+
+        // Update the total notifications count and specific type count
+        $this->totalNotifications += $newNotificationsCount;
+        $this->usersNotificationsCount = $newNotificationsCount;
+
+        // Process each pending user and add to notifications
+        foreach ($pendingUsers as $pendingUser) {
             $this->usersNotifications[] = [
-                'id' => $pendingUsers->first()->id,
+                'id' => $pendingUser->id,
                 'type' => 'registration',
                 'icon' => 'la la-user-check',
-                'label' => $firstUserName . ' registered',
-                'subtext' => $pendingUsers->count() > 1
-                    ? ($pendingUsers->count() - 1) . ' others are also waiting for approval'
+                'label' => $pendingUser->name . ' registered',
+                'subtext' => $newNotificationsCount > 1
+                    ? ($newNotificationsCount - 1) . ' others are also waiting for approval'
                     : null,
             ];
         }
-        // foreach ($pendingUsers as $user) {
-        //     $this->notifications[] = [
-        //         'type' => 'approval',
-        //         'icon' => 'la la-clock',
-        //         'label' => $user->name . ' is waiting for approval',
-        //         'subtext' => 'Registration pending',
-        //     ];
-        // }
     }
+    // public function checkForPendingReportsApprovals()
+    // {
+    //     $reports = SectionTask::where('department_id', Auth::user()->department_id)
+    //         ->where('isCompleted', "1")
+    //         ->where('approved', 0)
+    //         ->get();
+
+    //     if ($reports->isNotEmpty()) {
+    //         // Get the first report
+    //         $firstReport = $reports->first();
+
+    //         // Display a message with information about the first report
+    //         $this->reportsNotifications[] = [
+    //             'id' => $firstReport->id, // Add the ID of the user or report
+    //             'type' => 'report',
+    //             'icon' => 'la la-file-alt',
+    //             'label' => $firstReport->main_task->station->SSNAME . ' report (Eng ID: ' . $firstReport->user->name . ') waiting for approval',
+    //             'subtext' => $reports->count() > 1
+    //                 ? ($reports->count() - 1) . ' other reports are also waiting for approval'
+    //                 : null,
+    //         ];
+    //     }
+    // }
     public function checkForPendingReportsApprovals()
     {
         $reports = SectionTask::where('department_id', Auth::user()->department_id)
@@ -57,20 +87,131 @@ class NotificationBar extends Component
             ->where('approved', 0)
             ->get();
 
-        if ($reports->isNotEmpty()) {
-            // Get the first report
-            $firstReport = $reports->first();
+        // Calculate the count of new notifications
+        $newNotificationsCount = $reports->count();
 
-            // Display a message with information about the first report
+        // Update the total notifications count and specific type count
+        $this->totalNotifications += $newNotificationsCount;
+        $this->reportsNotificationsCount = $newNotificationsCount;
+
+        // Process each pending report and add to notifications
+        foreach ($reports as $report) {
             $this->reportsNotifications[] = [
-                'id' => $firstReport->id, // Add the ID of the user or report
+                'id' => $report->id,
                 'type' => 'report',
                 'icon' => 'la la-file-alt',
-                'label' => $firstReport->main_task->station->SSNAME . ' report (Eng ID: ' . $firstReport->user->name . ') waiting for approval',
-                'subtext' => $reports->count() > 1
-                    ? ($reports->count() - 1) . ' other reports are also waiting for approval'
+                'label' => $report->main_task->station->SSNAME . ' report (Eng ID: ' . $report->user->name . ') waiting for approval',
+                'subtext' => $newNotificationsCount > 1
+                    ? ($newNotificationsCount - 1) . ' other reports are also waiting for approval'
                     : null,
             ];
+        }
+    }
+
+    // public function checkForIncomingTasks()
+    // {
+    //     $user = auth()->user();
+
+    //     // Check if the user is authenticated and has a department_id
+    //     if ($user && $user->department_id) {
+    //         $department_id = $user->department_id;
+
+    //         // Use a more explicit query to avoid potential issues
+    //         $task_converted = TaskConversions::where('destination_department', $department_id)
+    //             ->where('is_notified', false)
+    //             ->get();
+
+    //         // Calculate the count of new notifications
+    //         $newNotificationsCount = $task_converted->count();
+
+    //         // Update the total notifications count and specific type count
+    //         $this->totalNotifications += $newNotificationsCount;
+    //         $this->incomingTasksNotificationsCount = $newNotificationsCount;
+
+    //         // Process each converted task and add to notifications
+    //         foreach ($task_converted as $task) {
+    //             // Utilize optional() to handle potential null values more gracefully
+    //             $label = optional($task->main_task->station)->SSNAME ?? 'Unknown Station';
+
+    //             $this->incomingTasksConvertedNotifications[] = [
+    //                 'type' => 'converted',
+    //                 'icon' => 'la la-refresh', // Updated icon
+    //                 'label' => $label,
+    //                 'subtext' => "A task is being converted from {$task->department->name}",
+    //             ];
+    //         }
+    //     }
+    // }
+    public function checkForIncomingTasks()
+    {
+        $user = auth()->user();
+
+        // Check if the user is authenticated and has a department_id
+        if ($user && $user->department_id) {
+            $department_id = $user->department_id;
+
+            // Use a more explicit query to avoid potential issues
+            $task_converted = TaskConversions::where('destination_department', $department_id)
+                ->where('is_notified', false)
+                ->get();
+
+            // Process each converted task and add to notifications
+            foreach ($task_converted as $task) {
+                // Utilize optional() to handle potential null values more gracefully
+                $label = optional($task->main_task->station)->SSNAME ?? 'Unknown Station';
+
+                // Check if the task is new or has been updated
+                $notificationType = $task->is_notified ? 'updated' : 'new';
+
+                // Determine the appropriate message based on the notification type
+                $message = ($notificationType === 'new')
+                    ? "A new task is being converted from {$task->department->name}"
+                    : "A task has been updated and is being converted from {$task->department->name}";
+
+                // Update the total notifications count and specific type count
+                $this->totalNotifications++;
+                $this->incomingTasksNotificationsCount++;
+
+                // // Mark the task as notified
+                // $task->update(['is_notified' => true]);
+
+                // Add the notification to the array
+                $this->incomingTasksConvertedNotifications[] = [
+                    'type' => 'converted',
+                    'icon' => 'la la-refresh', // Updated icon
+                    'label' => $label,
+                    'subtext' => $message,
+                ];
+            }
+        }
+    }
+
+    public function checkForOutgoingTasks()
+    {
+        $user = auth()->user();
+        // Check if the user is authenticated and has a department_id
+        if ($user && $user->department_id) {
+            $department_id = $user->department_id;
+
+            // Use a more explicit query to avoid potential issues
+            $task_converted = TaskConversions::Where('source_department', $department_id)
+                ->get();
+            // Check if there are any converted tasks
+            if ($task_converted->isNotEmpty()) {
+                foreach ($task_converted as $task) {
+                    // Utilize optional() to handle potential null values more gracefully
+                    $label = optional($task->main_task->station)->SSNAME ?? 'Unknown Station';
+                    // Check if the task is being converted from or to the user's department
+                    $this->incomingTasksConvertedNotifications[] = [
+                        'type' => 'converted',
+                        'icon' => 'la la-refresh', // Updated icon
+                        'label' => $label,
+                        'subtext' => "A task is being converted from {$task->department->name}",
+
+
+                    ];
+                }
+            }
         }
     }
 

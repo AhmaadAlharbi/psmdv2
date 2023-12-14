@@ -113,9 +113,12 @@
                     <li class="list-group-item"><strong>Main Alarm
                             <br></strong>@isset($task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
                     </li>
+
                     <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
 
                     <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
+                    </li>
+                    <li class="list-group-item"><strong>Notes<br></strong>{{$task->main_task->notes}}
                     </li>
                     <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
                         <li class="list-group-item text-dark bg-light"><strong>Engineer

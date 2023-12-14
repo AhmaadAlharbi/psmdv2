@@ -49,7 +49,7 @@ class StationController extends Controller
         }
 
         // Retrieve the stations based on the query and paginate the results (15 records per page).
-        $stations = $query->paginate(15);
+        $stations = $query->get();
 
         // Return the stations to the view, passing them in a 'stations' variable.
         return view('dashboard.stations.index', compact('stations'));

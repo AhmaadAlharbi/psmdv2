@@ -1243,7 +1243,17 @@ class DashBoardController extends Controller
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
                     ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
             case 'mutual-tasks':
-                return TaskConversions::where('source_department', Auth::user()->department_id)->orWhere('destination_department', Auth::user()->department_id)->latest()->paginate(6);;
+                $tasks = TaskConversions::where('source_department', Auth::user()->department_id)
+                    ->orWhere('destination_department', Auth::user()->department_id)
+                    ->latest()
+                    ->paginate(6);
+
+                // Update the is_notified column for each task
+                $tasks->each(function ($task) {
+                    $task->update(['is_notified' => true]);
+                });
+
+                return $tasks;
 
             default:
                 abort(403);

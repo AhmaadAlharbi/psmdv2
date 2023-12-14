@@ -16,12 +16,14 @@ return new class extends Migration
         Schema::create('setting_files', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('station_id');
+            $table->unsignedBigInteger('department_id');
             $table->string('filename');
             $table->unsignedBigInteger('user_id');
             $table->string('path');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('station_id')->references('id')->on('stations');
+            $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
