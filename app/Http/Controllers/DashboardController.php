@@ -1243,15 +1243,12 @@ class DashBoardController extends Controller
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
                     ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
             case 'mutual-tasks':
-                $tasks = TaskConversions::where('source_department', Auth::user()->department_id)
-                    ->orWhere('destination_department', Auth::user()->department_id)
+                $tasks = department_task_assignment::whereHas('main_task.sharedDepartments', function ($query) {
+                    $query->where('departments.id', Auth::user()->department_id);
+                })
+                    ->with('main_task') // Eager load the related MainTask records
                     ->latest()
                     ->paginate(6);
-
-                // Update the is_notified column for each task
-                $tasks->each(function ($task) {
-                    $task->update(['is_notified' => true]);
-                });
 
                 return $tasks;
 
@@ -1414,31 +1411,72 @@ class DashBoardController extends Controller
         $tasksTracking = TaskTimeline::where('main_tasks_id', $id)->orderBy('id', 'DESC')->get();
         return view('dashboard.timeline', compact('main_task', 'tasksTracking'));
     }
+    // public function convertTask(Request $request, $id)
+    // {
+    //     $main_task = MainTask::findOrFail($id);
+    //     $selectedDepartment = $request->input('departmentSelect');
+    //     $note = $request->input('notes');
+    //     $main_task->update([
+    //         'isCompleted' => "0",
+    //         'status' => 'pending',
+    //         'notes' => $note
+    //     ]);
+    //     $departmentTask = department_task_assignment::where('main_tasks_id')
+    //         ->where('department_id', $selectedDepartment)
+    //         ->first();
+    //     if ($departmentTask) {
+    //         $departmentTask->update([
+    //             'status' => 'pending'
+    //         ]);
+    //     } else {
+    //         $converted_task = TaskConversions::create([
+    //             'main_tasks_id' => $id,
+    //             'source_department' => Auth::user()->department_id,
+    //             'destination_department' => $selectedDepartment,
+    //             'status' => 'pending'
+    //         ]);
+    //     }
+    //     return back();
+    // }
     public function convertTask(Request $request, $id)
     {
-        $main_task = MainTask::findOrFail($id);
+        $mainTask = MainTask::findOrFail($id);
         $selectedDepartment = $request->input('departmentSelect');
         $note = $request->input('notes');
-        $main_task->update([
-            'isCompleted' => "0",
+
+        // Update MainTask details
+        $mainTask->update([
+            'isCompleted' => 0,
             'status' => 'pending',
-            'notes' => $note
+            'notes' => $note,
         ]);
-        $departmentTask = department_task_assignment::where('main_tasks_id')
+
+        // Check if the task is already assigned to the selected department
+        $departmentTask = $mainTask->departmentsAssienments()
             ->where('department_id', $selectedDepartment)
             ->first();
+
         if ($departmentTask) {
-            $departmentTask->update([
-                'status' => 'pending'
-            ]);
+            // Update the existing department task
+            $departmentTask->update(['status' => 'pending']);
         } else {
-            $converted_task = TaskConversions::create([
+            // Create a new department task and share the task with the destination department
+            $mainTask->departmentsAssienments()->create([
+                'department_id' => $selectedDepartment,
+                'status' => 'pending',
+            ]);
+
+            $mainTask->sharedDepartments()->attach($selectedDepartment);
+
+            // Record task conversion
+            TaskConversions::create([
                 'main_tasks_id' => $id,
                 'source_department' => Auth::user()->department_id,
                 'destination_department' => $selectedDepartment,
-                'status' => 'pending'
+                'status' => 'pending',
             ]);
         }
+
         return back();
     }
     public function deleteConvertedTask(Request $request, $id)

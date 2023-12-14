@@ -60,4 +60,9 @@ class MainTask extends Model
     {
         return $this->hasMany(TaskTimeline::class, 'main_tasks_id');
     }
+
+    public function sharedDepartments()
+    {
+        return $this->belongsToMany(Department::class, 'shared_tasks');
+    }
 }

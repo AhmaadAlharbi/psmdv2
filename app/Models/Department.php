@@ -15,4 +15,8 @@ class Department extends Model
     {
         return $this->hasMany(MainTask::class);
     }
+    public function sharedTasks()
+    {
+        return $this->belongsToMany(MainTask::class, 'shared_tasks');
+    }
 }
