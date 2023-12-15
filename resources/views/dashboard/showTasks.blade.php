@@ -142,7 +142,9 @@
 
                         @foreach ($task->main_task->section_tasks as $sectionTask)
                         <div class="italic text-muted">
+                            @if($sectionTask->department_id != Auth::user()->department_id)
                             {!! strip_tags($sectionTask->action_take) !!}
+                            @endif
 
                         </div>
                         @endforeach
@@ -195,6 +197,9 @@
                             class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
 
                     <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                            href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                            <i class="fas fa-history"></i> History</a></li>
                         @if(Auth::user()->role->title === 'Admin' )
                         <a href="{{ route('dashboard.editTask', ['id' => $task->main_task->id]) }}"
                             class="dropdown-item">Edit</a>

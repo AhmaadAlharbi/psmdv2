@@ -719,15 +719,19 @@ class DashBoardController extends Controller
                         ->orWhere('destination_department', Auth::user()->department_id);
                 })
                 ->first();
+            $sharedDepartments = $mainTask->sharedDepartments;
+
+            // $sharedDepartments;
+
 
 
             $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
                 ->where('main_tasks_id',  $mainTask->id)
                 ->first();
 
-            if ($taskConverted) {
+            if ($sharedDepartments) {
                 // Step 3: Handle the converted task
-                $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask);
+                $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $sharedDepartments);
             } else {
                 // Step 4: Handle the non-converted task
                 $this->handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask);
@@ -747,6 +751,7 @@ class DashBoardController extends Controller
 
     private function handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask)
     {
+        $sharedDepartments = $mainTask->sharedDepartments;
         // Calculate isCompleted based on $actionStatus
         $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
         // Step 1: Retrieve source and destination department tasks
@@ -1246,6 +1251,10 @@ class DashBoardController extends Controller
                 $tasks = department_task_assignment::whereHas('main_task.sharedDepartments', function ($query) {
                     $query->where('departments.id', Auth::user()->department_id);
                 })
+                    ->where('department_id', "!=", Auth::user()->department_id)
+                    ->whereHas('main_task', function ($query) {
+                        $query->where('isCompleted', '0');
+                    })
                     ->with('main_task') // Eager load the related MainTask records
                     ->latest()
                     ->paginate(6);
@@ -1443,39 +1452,40 @@ class DashBoardController extends Controller
         $mainTask = MainTask::findOrFail($id);
         $selectedDepartment = $request->input('departmentSelect');
         $note = $request->input('notes');
+        // $department_source = $mainTask->departmentsAssienments;
+        // $firstDepartment = $department_source->first();
+        // $department_id = $firstDepartment ? $firstDepartment->department_id : null;
 
         // Update MainTask details
         $mainTask->update([
-            'isCompleted' => 0,
+            'isCompleted' => "0",
             'status' => 'pending',
             'notes' => $note,
         ]);
 
         // Check if the task is already assigned to the selected department
         $departmentTask = $mainTask->departmentsAssienments()
-            ->where('department_id', $selectedDepartment)
+            ->where('department_id', Auth::user()->department_id)
             ->first();
+        // Create a new department task and share the task with the destination department
+        $mainTask->departmentsAssienments()->create([
+            'department_id' => $selectedDepartment,
+            'status' => 'pending',
+        ]);
 
         if ($departmentTask) {
-            // Update the existing department task
-            $departmentTask->update(['status' => 'pending']);
-        } else {
-            // Create a new department task and share the task with the destination department
-            $mainTask->departmentsAssienments()->create([
-                'department_id' => $selectedDepartment,
-                'status' => 'pending',
-            ]);
-
-            $mainTask->sharedDepartments()->attach($selectedDepartment);
-
-            // Record task conversion
-            TaskConversions::create([
-                'main_tasks_id' => $id,
-                'source_department' => Auth::user()->department_id,
-                'destination_department' => $selectedDepartment,
-                'status' => 'pending',
-            ]);
+            $mainTask->sharedDepartments()->attach($departmentTask->department_id);
         }
+        $mainTask->sharedDepartments()->attach($selectedDepartment);
+
+        // Record task conversion
+        TaskConversions::create([
+            'main_tasks_id' => $id,
+            'source_department' => Auth::user()->department_id,
+            'destination_department' => $selectedDepartment,
+            'status' => 'pending',
+        ]);
+
 
         return back();
     }
