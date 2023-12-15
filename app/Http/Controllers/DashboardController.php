@@ -719,20 +719,18 @@ class DashBoardController extends Controller
                         ->orWhere('destination_department', Auth::user()->department_id);
                 })
                 ->first();
-            $sharedDepartments = $mainTask->sharedDepartments;
-
-            // $sharedDepartments;
-
 
 
             $departmentTask = department_task_assignment::where('department_id', Auth::user()->department_id)
                 ->where('main_tasks_id',  $mainTask->id)
                 ->first();
 
-            if ($sharedDepartments) {
+            if ($taskConverted) {
                 // Step 3: Handle the converted task
-                $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $sharedDepartments);
+
+                $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask);
             } else {
+
                 // Step 4: Handle the non-converted task
                 $this->handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask);
             }
@@ -751,71 +749,17 @@ class DashBoardController extends Controller
 
     private function handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask)
     {
-        $sharedDepartments = $mainTask->sharedDepartments;
         // Calculate isCompleted based on $actionStatus
         $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
-        // Step 1: Retrieve source and destination department tasks
-        $taskSource = department_task_assignment::where('department_id', $taskConverted->source_department)
-            ->where('main_tasks_id', $mainTask->id)
+        // Retrieve all department_task_assignment records related to the specified $mainTask
+        $sharedDepartmentTask = department_task_assignment::where('main_tasks_id', $mainTask->id)
+            ->get()
+            // Filter the collection to include only records with department_id equal to current user
+            ->filter(function ($task) {
+                return $task->department_id == Auth::user()->department_id; // Adjust the condition as needed
+            })
+            // Retrieve the first matching record from the filtered collection
             ->first();
-        $taskDestination = department_task_assignment::where('department_id', $taskConverted->destination_department)
-            ->where('main_tasks_id', $mainTask->id)
-            ->first();
-        // Step 2: Handle tasks based on conditions
-        if ($taskSource && $taskConverted->source_department != $departmentTask->department_id) {
-            // Task is from source department and not currently assigned to the current department
-            $taskSource->update([
-                'status' => $actionStatus,
-                'isCompleted' =>  $isCompleted
-            ]);
-            $taskConverted->update([
-                'status' =>  $isCompleted ? 'waiting for approval' : $actionStatus,
-            ]);
-
-            // If source department is 1, create a SectionTask
-            if ($taskConverted->source_department == 1) {
-                SectionTask::create([
-                    'main_tasks_id' => $mainTask->id,
-                    'department_id' => $taskConverted->source_department,
-                    'eng_id' => Auth::user()->id,
-                    'action_take' => $actionContent,
-                    'main_alarm_id' => $mainTask->main_alarm_id,
-                    'status' => $actionStatus,
-                    'engineer-notes' => $request->notes ? $request->notes : $actionStatus,
-                    'user_id' => Auth::user()->id,
-                    'date' => now(),
-                    'isCompleted' => $isCompleted,
-                ]);
-            }
-        }
-
-        if ($taskConverted->source_department === Auth::user()->department_id) {
-            // Task is assigned to the current department
-            $taskSource->update([
-                'status' => $actionStatus,
-                'isCompleted' => $isCompleted
-            ]);
-            $taskConverted->update([
-                'status' =>  $isCompleted ? 'waiting for approval' : $actionStatus,
-            ]);
-        }
-
-        if ($taskConverted->destination_department === Auth::user()->department_id) {
-            // Task is assigned to the current department
-            $taskDestination->update([
-                'status' => $actionStatus,
-                'isCompleted' =>  $isCompleted
-            ]);
-        }
-
-        if ($taskDestination->status === 'completed' && $taskSource && $taskSource->status === 'completed') {
-            // If both source and destination tasks are completed, update the main task
-            $mainTask->update([
-                'status' => $actionStatus,
-            ]);
-        }
-
-        // Step 3: Create a SectionTask for the current department
         SectionTask::create([
             'main_tasks_id' => $mainTask->id,
             'department_id' => Auth::user()->department_id,
@@ -828,6 +772,9 @@ class DashBoardController extends Controller
             'date' => now(),
             'isCompleted' =>  $isCompleted
         ]);
+
+        // Step 3: Create a SectionTask for the current department
+
         // Step 4: Create a TaskTimeline entry for adding the report
         TaskTimeline::create([
             'main_tasks_id' => $mainTask->id,
@@ -837,10 +784,10 @@ class DashBoardController extends Controller
             'user_id' => Auth::user()->id
         ]);
         // Step 5: Update the department task status to 'completed'
-        $departmentTask->update([
+        $sharedDepartmentTask->update([
             'status' => 'completed',
+            'isCompleted' => "1"
         ]);
-
         // Continue with other relevant tasks and updates
         // if ($isCompleted) {
         //     $this->logTaskCompletion($departmentTask, $actionStatus);
@@ -1248,16 +1195,15 @@ class DashBoardController extends Controller
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
                     ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
             case 'mutual-tasks':
-                $tasks = department_task_assignment::whereHas('main_task.sharedDepartments', function ($query) {
-                    $query->where('departments.id', Auth::user()->department_id);
-                })
-                    ->where('department_id', "!=", Auth::user()->department_id)
-                    ->whereHas('main_task', function ($query) {
-                        $query->where('isCompleted', '0');
-                    })
-                    ->with('main_task') // Eager load the related MainTask records
+                $tasks = TaskConversions::where('source_department', Auth::user()->department_id)
+                    ->orWhere('destination_department', Auth::user()->department_id)
                     ->latest()
                     ->paginate(6);
+
+                // Update the is_notified column for each task
+                $tasks->each(function ($task) {
+                    $task->update(['is_notified' => true]);
+                });
 
                 return $tasks;
 
@@ -1420,33 +1366,6 @@ class DashBoardController extends Controller
         $tasksTracking = TaskTimeline::where('main_tasks_id', $id)->orderBy('id', 'DESC')->get();
         return view('dashboard.timeline', compact('main_task', 'tasksTracking'));
     }
-    // public function convertTask(Request $request, $id)
-    // {
-    //     $main_task = MainTask::findOrFail($id);
-    //     $selectedDepartment = $request->input('departmentSelect');
-    //     $note = $request->input('notes');
-    //     $main_task->update([
-    //         'isCompleted' => "0",
-    //         'status' => 'pending',
-    //         'notes' => $note
-    //     ]);
-    //     $departmentTask = department_task_assignment::where('main_tasks_id')
-    //         ->where('department_id', $selectedDepartment)
-    //         ->first();
-    //     if ($departmentTask) {
-    //         $departmentTask->update([
-    //             'status' => 'pending'
-    //         ]);
-    //     } else {
-    //         $converted_task = TaskConversions::create([
-    //             'main_tasks_id' => $id,
-    //             'source_department' => Auth::user()->department_id,
-    //             'destination_department' => $selectedDepartment,
-    //             'status' => 'pending'
-    //         ]);
-    //     }
-    //     return back();
-    // }
     public function convertTask(Request $request, $id)
     {
         $mainTask = MainTask::findOrFail($id);
