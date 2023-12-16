@@ -477,7 +477,16 @@ class DashBoardController extends Controller
         $tasks = department_task_assignment::where('main_tasks_id', $id)
             ->where('department_id', Auth::user()->department_id)
             ->first();
+        $mainTask = MainTask::findOrFail($id);
+        $task_shared = $mainTask->sharedDepartments ?? collect();
 
+        // Exclude the current user's department from the shared departments
+
+        $reportShared = SectionTask::where('main_tasks_id', $id)
+            ->whereIn('department_id', $task_shared->where('id', '!=', Auth::user()->department_id)->pluck('id')->toArray())
+            ->where('approved', 1)
+            ->get();
+        // return $task_shared;
         $files = TaskAttachment::where('main_tasks_id', $id)->get();
 
         if (!$tasks) {
@@ -493,7 +502,7 @@ class DashBoardController extends Controller
             return view('dashboard.unauthorized');
         }
 
-        return view('dashboard.engineerTaskPage2', compact('tasks', 'files'));
+        return view('dashboard.engineerTaskPage2', compact('tasks', 'files', 'reportShared'));
     }
 
     // public function submitEngineerReport3(Request $request, $id)

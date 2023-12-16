@@ -99,6 +99,32 @@
                             <div class="card">
                                 <div class="card-header border-bottom-0">
                                     <h2 class="card-title">Action Take</h2>
+                                    @if($reportShared->isNotEmpty())
+                                    <div class="mt-3">
+                                        <h5>Actions Taken by Other Departments:</h5>
+                                        <ul class="list-group">
+                                            <ul class="list-group">
+                                                @foreach($reportShared as $report)
+                                                <li class="list-group-item">
+                                                    <div class="mb-2">
+                                                        <strong>{{ $report->department->name }}:</strong>
+                                                        <br>
+                                                        <span>{!! $report->action_take !!}</span>
+                                                    </div>
+                                                    <div class="text-muted">
+                                                        <span class="fw-bold">Engineer:</span> {{
+                                                        $report->engineer->name }}<br>
+                                                        <span class="fw-bold">Created at:</span> {{
+                                                        $report->created_at->format('F j, Y h:i A') }}
+                                                    </div>
+                                                </li>
+                                                @endforeach
+                                            </ul>
+
+                                        </ul>
+                                    </div>
+                                    @endif
+
 
                                 </div>
 
