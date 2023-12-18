@@ -602,7 +602,7 @@
                                 </td>
                                 <td>
                                     <div class="dropdown">
-                                        <button type="button" class="btn btn-outline-danger btn-sm dropdown-toggle"
+                                        <button type="button" class="btn btn-danger btn-sm dropdown-toggle"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fe fe-settings me-2"></i> Actions
                                         </button>

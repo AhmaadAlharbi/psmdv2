@@ -212,6 +212,17 @@
 
     @section('scripts')
     <script src="{{asset('assets/js/index.js')}}"></script>
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
+    @endif
+
     <!--Internal Counters -->
     <script src="{{asset('assets/plugins/counters/waypoints.min.js')}}"></script>
     <script src="{{asset('assets/plugins/counters/counterup.min.js')}}"></script>

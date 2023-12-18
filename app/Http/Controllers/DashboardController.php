@@ -748,6 +748,8 @@ class DashBoardController extends Controller
             $this->handleFileUploads($request, $mainTask);
 
             // Step 6: Redirect the user to the appropriate page
+            session()->flash('success', 'Your report has been saved successfully.');
+
             return redirect("/dashboard/user");
         } catch (\Exception $e) {
             // Step 7: Handle any exceptions or errors
@@ -1071,7 +1073,9 @@ class DashBoardController extends Controller
             $report->save(); // Save the updated report
 
         }
-        return redirect()->back(); // Redirect back after processing
+        session()->flash('success', 'Your report has been updated successfully.');
+
+        return redirect("/dashboard/user");
     }
     public function approveReports($id)
     {
