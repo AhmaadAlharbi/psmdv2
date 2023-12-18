@@ -1286,8 +1286,8 @@ class DashBoardController extends Controller
         $currentMonth = Carbon::now()->month;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        $tasks = SectionTask::where('department_id', Auth::user()->department_id)->where('status', 'completed')->paginate(6);
-        return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
+        $tasks = SectionTask::where('department_id', Auth::user()->department_id)->where('isCompleted', "1")->latest()->paginate(6);
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
     public function searchArchive(Request $request)
     {

@@ -100,136 +100,111 @@
 <!-- row -->
 <div class="row">
     <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
-        @foreach($pendingTasks as $task)
-        <div class="card card-danger">
-            <h5 class="card-title p-4">Pending Tasks</h5>
-
-            <div class="card-body  ">
-                <ul class="list-group   text-center">
-                    <li class="list-group-item bg-danger-gradient text-white"> Task # {{$task->id}} </li>
-                    <li class="list-group-item ">{{$task->created_at}}</li>
-                    <li class="list-group-item "> <strong>Station<br> </strong> {{$task->main_task->station->SSNAME}}
-                    </li>
-                    <li class="list-group-item"><strong>Main Alarm
-                            <br></strong>@isset($task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
-                    </li>
-
-                    <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
-
-                    <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
-                    </li>
-                    <li class="list-group-item"><strong>Notes<br></strong>{{$task->main_task->notes}}
-                    </li>
-                    <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-                        <li class="list-group-item text-dark bg-light"><strong>Engineer
-                                <br></strong>{{$task->engineer->name}}
-                        </li>
-                    </a>
-                </ul>
+        <div class="card border">
+            <h5 class="card-header bg-danger text-white">Pending Tasks</h5>
+            <div class="card-body">
+                @forelse($pendingTasks as $task)
+                <div class="card mb-3">
+                    <div class="card-header bg-danger text-white">
+                        Task #{{$task->id}}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Created At:</strong> {{$task->created_at}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Main Alarm:</strong>
+                            @isset($task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
+                        </p>
+                        <p class="card-text">
+                            <strong>Equip:</strong> {{$task->main_task->equip_number}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Nature of Fault:</strong> {{$task->main_task->problem}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Notes:</strong> {{$task->main_task->notes}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Engineer:</strong> <a
+                                href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">{{$task->engineer->name}}</a>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
+                            <i class="fas fa-plus-circle"></i> Add Report
+                        </a>
+                    </div>
+                </div>
+                @empty
+                <div class="alert alert-danger" role="alert">
+                    <strong>No pending tasks!</strong> There are no pending tasks to display.
+                </div>
+                @endforelse
             </div>
-            <div class="card-footer">
-
-                <a href="/engineer-task-page/{{$task->main_tasks_id}}"
-                    class="btn btn-danger btn-block w-100 btn-rounded">
-                    <i class="fas fa-plus-circle"></i>
-                    Add Report
-                </a>
-
-
-
-
-
-            </div>
+            {{ $pendingTasks->links() }}
         </div>
-
-        @endforeach
-        @empty($pendingTasksCount)
-        <div class="card card-danger">
-
-            <div class="card-body  ">
-                <ul class="list-group   text-center">
-                    <li class="list-group-item bg-danger-gradient text-white"> Task </li>
-
-                    <li class="list-group-item"><strong>Nothing to view<br></strong>
-
-                    </li>
-
-
-                </ul>
-            </div>
-
-        </div>
-        @endempty
-
-        {{ $pendingTasks->links() }}
-
     </div>
+
+
 
 
     <div class="col-xl-8 col-md-12 col-lg-6">
-        <div class="card border ">
-            <h5 class="card-title p-4">التقارير المنجزة</h5>
+        <div class="card border">
+            <h5 class="card-header">Completed Tasks</h5>
+            <div class="card-body">
+                @foreach($completedTasks as $task)
+                <div class="card mb-3">
+                    <div class="card-header bg-dark text-white">
+                        Task #{{$task->id}}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text mb-2">
+                            <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
+                        </p>
+                        <p class="card-text mb-2">
+                            <strong>Date:</strong> {{ \Carbon\Carbon::parse($task->created_at)->format('Y-m-d H:i') }}
+                        </p>
+                        <div class="card-text mb-2">
+                            <strong>Nature of Fault:</strong>
+                            <p class="mb-0 fs-5 text-muted">{{$task->main_task->problem}}</p>
+                            <!-- Increased font size -->
 
-            @foreach($completedTasks as $task)
+                        </div>
+                        <div class="card-text mb-2">
+                            <strong>Action Take:</strong>
+                            <p class="mb-0 fs-5">{!! strip_tags($task->action_take) !!}</p> <!-- Increased font size -->
 
-            <div class="card card-info">
-
-                <div class="card-body  ">
-                    <ul class="list-group   text-center">
-                        <li class="list-group-item bg-info-gradient text-white">Task # {{$task->id}} </li>
-
-                        <li class="list-group-item " style="font-size:18px; font-wieght:bold;">
-                            Station :
-                            {{$task->main_task->station->SSNAME}}<br>
-                            <hr>
-                            <span style="font-size:16px">{{
-                                \Carbon\Carbon::parse($task->created_at)->format('Y-m-d') }} | {{
-                                \Carbon\Carbon::parse($task->created_at)->format('H:i') }}</span>
-                        </li>
-
-                        <li class="list-group-item " style="font-size:16px;"><strong>Nature of fault<br></strong>
-                            {{$task->main_task->problem}}
-                        </li>
-                        <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
-
-                        <li class="list-group-item bg-light" style="font-size:16px;"><strong>Action Take<br></strong>
-                            {!! strip_tags($task->action_take) !!}
-
-
-                        </li>
-                        <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-                            <li class="list-group-item text-dark bg-light"><strong>Engineer <br></strong>
-                                {{$task->engineer->name}}
-                                @if($task->eng_id === Auth::user()->id)
-                                <a href="{{ route('dashboard.requestToUpdateReport', $task->id) }}"
-                                    class="btn btn-primary mx-2">update report</a>
-                                @endif
-                            </li>
+                        </div>
+                        <p class="card-text mb-2">
+                            <strong>Engineer:</strong> {{$task->engineer->name}}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        @if($task->eng_id === Auth::user()->id)
+                        <a href="{{ route('dashboard.requestToUpdateReport', $task->id) }}" class="btn btn-dark">
+                            <i class="fas fa-pencil-alt"></i> Update Report
                         </a>
 
-                    </ul>
+                        @endif
+                        <a href="{{route('dashboard.reportPage',['id'=>$task->id])}}"
+                            class="btn btn-outline-dark float-end">
+                            <i class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
+                                data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report
+                        </a>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    {{-- <a href="{{route('dashboard.reportPage',['id'=>$task->main_task->id])}}" type="button"
-                        class="btn btn-info  button-icon "><i class="si si-notebook px-2" data-bs-toggle="tooltip"
-                            title="" data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report</a> --}}
-                    <a href="{{route('dashboard.reportPage',['id'=>$task->id])}}"
-                        class="btn btn-dark btn-lg btn-block"><i class="si si-notebook px-2" data-bs-toggle="tooltip"
-                            title="" data-bs-original-title="si-notebook"
-                            aria-label="si-notebook"></i>Report</a></button>
-
-                    {{-- <a href="/engineer-task-page/{{$task->id}}" class="btn btn-outline-secondary">Engineer
-                        report</a> --}}
-
-                </div>
+                @endforeach
             </div>
-            @endforeach
-
         </div>
         {{ $completedTasks->links() }}
-
-
     </div>
+
+
+
 
     <!-- row closed -->
 
