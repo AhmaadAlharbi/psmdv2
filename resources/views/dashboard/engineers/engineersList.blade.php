@@ -126,7 +126,7 @@
                                 <th class="wd-lg-20p"><span>#</span></th>
                                 <th class="wd-lg-20p"><span>Name</span></th>
                                 <th class="wd-lg-20p"><span>Department</span></th>
-                                <th class="wd-lg-20p"><span>Status</span></th>
+                                {{-- <th class="wd-lg-20p"><span>Status</span></th> --}}
                                 <th class="wd-lg-20p">Action</th>
                             </tr>
                         </thead>
@@ -143,43 +143,48 @@
                                         href="{{route('dashboard.engineerProfile',['eng_id'=>$engineer->user_id])}}">{{$engineer->user->name}}</a>
                                 </td>
 
-                                <td class="text-center">
+                                {{-- <td class="text-center">
                                     <span class="label text-success d-flex ">
                                         <div class="dot-label bg-success mx-3"></div><span class="mt-1">active</span>
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td>{{$engineer->user->department->name}}</td>
                                 <td>
 
-                                    <a href="{{route('engineer.edit',['id'=>$engineer->id])}} "
-                                        class="btn btn-sm btn-info btn-b" data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="edit">
-                                        <i class="las la-pen"></i>
-                                    </a>
-                                    @if($engineer->user->role->title == 'Admin')
+                                    <div class="btn-group">
+                                        <button type="button"
+                                            class="btn btn-{{ $engineer->user->role->title == 'Admin' ? 'warning' : 'outline-warning' }} btn-sm dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i
+                                                class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{ route('user.update', ['id' => $engineer->user->id]) }}"
+                                                    class="dropdown-item">
+                                                    <i
+                                                        class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                    {{ $engineer->user->role->title == 'Admin' ? 'Revoke Admin' : 'Make
+                                                    Admin' }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('engineer.edit', ['id' => $engineer->id]) }}"
+                                                    class="dropdown-item">
+                                                    <i class="las la-pen"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('engineerList.toggle', ['id' => $engineer->user->id]) }}"
+                                                    class="dropdown-item">
+                                                    <i class="las la-trash"></i> Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
 
-                                    <a href="{{route('user.update',['id'=>$engineer->user->id])}} "
-                                        class="btn btn-sm btn-warning " data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="delete admin">
-                                        <i class="fa fa-user-times"></i>
 
-                                    </a>
-                                    @else
-                                    <a href="{{route('user.update',['id'=>$engineer->user->id])}} "
-                                        class="btn btn-sm btn-outline-warning " data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="set admin">
-                                        <i class="fa fa-user-plus"></i>
-
-                                    </a>
-
-                                    @endif
-
-                                    <a href="{{route('engineerList.toggle',['id'=>$engineer->user->id])}}"
-                                        class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="delete">
-                                        <i class="las la-trash"></i>
-
-                                    </a>
 
                                 </td>
                             </tr>

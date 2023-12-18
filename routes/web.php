@@ -312,7 +312,7 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/admin/dashboard/pending-users', [DashboardController::class, 'pendingUsers'])->name('dashboard.pendingUsers');
     Route::post('admin/dashboard/reports/approve/{id}', [DashboardController::class, 'approveReports'])->name('dashboard.approveReports');
     Route::get('/task/edit/{id}', [DashboardController::class, 'editTask'])->name('dashboard.editTask');
-    Route::get('/update/user/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::get('/update/user/{id}', [UserController::class, 'setAdmin'])->name('user.update');
     Route::get('engineers-list/update/{id}', [EngineersController::class, 'toggleEngineer'])->name('engineerList.toggle');
     Route::get('/view/{main_task_id}/{file}', [FileController::class, 'view'])->name('view.file');
     Route::post('/convert-tasks/{id}', [DashboardController::class, 'convertTask'])->name('dashboard.convertTask');

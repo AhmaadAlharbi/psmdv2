@@ -25,7 +25,7 @@ class UserController extends Controller
         $user->update([
             'role_id' => $role
         ]);
-        session()->flash('success', 'تم التعديل بنجاح');
+        session()->flash('success', 'The modification was successful');
         return back();
     }
     public function activateUsers(Request $request)
