@@ -112,144 +112,124 @@
     </div>
     @endif
 
-    @foreach($tasks as $task)
-    <div class="col-12 col-sm-12 col-lg-6 col-xl-4 my-2">
-        <div class="card {{$task->status =='pending'  ? 'card-danger' : 'card-success'}} h-100 ">
-
-            <div class="card-body  ">
-                <ul class="list-group   text-center">
-
-                    <li class="list-group-item {{ ($task->status == 'pending') ? 'bg-danger': 'bg-success' }}">
-                        Task #
-                        {{$task->main_task->id}}
-                    </li>
-                    <li class="list-group-item ">{{$task->main_task->created_at}} <br>
-                        <span class="list-group-item bg-light rounded ">{{ $task->department->name}}</span>
-                    </li>
-                    <li class="list-group-item "> <strong>Station<br>
-                        </strong>
-                        <span style="font-size:22px; font-wieght:bold;">{{$task->main_task->station->SSNAME}}</span>
-                    </li>
-                    <li class="list-group-item"><strong>Main Alarm
-                            <br></strong>@isset($task->main_task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
-                    </li>
-                    <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
-
-                    <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
-                    <li class="list-group-item"><strong>Notes<br></strong>{{$task->main_task->notes}}
-                    </li>
-                    <li class="list-group-item">Action Take <br>
-
-                        @foreach ($task->main_task->section_tasks as $sectionTask)
-                        <div class="italic text-muted">
-                            @if($sectionTask->department_id != Auth::user()->department_id)
-                            {!! strip_tags($sectionTask->action_take) !!}
-                            @endif
-
+    <div class="container">
+        <div class="row">
+            @foreach($tasks as $task)
+            <div class="col-12 col-sm-12 col-lg-6 col-xl-4 my-2">
+                <div class="card {{$task->status =='pending'  ? 'card-danger' : 'card-success'}} h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Task #{{$task->main_task->id}}</h5>
+                        <p class="card-text">
+                            <strong>Created At:</strong> {{$task->main_task->created_at}}<br>
+                            <strong>Department:</strong> <span
+                                class="badge bg-light rounded">{{$task->department->name}}</span>
+                        </p>
+                        <p class="card-text">
+                            <strong>Station:</strong> <span
+                                style="font-size:22px; font-weight:bold;">{{$task->main_task->station->SSNAME}}</span>
+                        </p>
+                        <p class="card-text">
+                            <strong>Main Alarm:</strong>
+                            @isset($task->main_task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
+                        </p>
+                        <p class="card-text">
+                            <strong>Equip:</strong> {{$task->main_task->equip_number}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Nature of Fault:</strong> {{$task->main_task->problem}}
+                        </p>
+                        <p class="card-text">
+                            <strong>Notes:</strong> {{$task->main_task->notes}}
+                        </p>
+                        <h6 class="card-subtitle mb-2 text-muted">Action Take:</h6>
+                        @foreach($task->main_task->section_tasks as $sectionTask)
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <p><strong>Engineer:</strong> {{ $sectionTask->engineer->name }}</p>
+                                <p><strong>Department:</strong> {{ $sectionTask->department->name }}</p>
+                                <p><strong>Action Take:</strong> {!! strip_tags($sectionTask->action_take) !!}</p>
+                                <p><strong>Created at:</strong> {{ $sectionTask->created_at }}</p>
+                                <div class="d-flex">
+                                    @if($sectionTask->eng_id === Auth::user()->id)
+                                    <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
+                                        class="btn btn-sm btn-dark mx-2 mb-1">
+                                        <i class="fas fa-pencil-alt"></i> Update Report
+                                    </a>
+                                    @endif
+                                    @if($sectionTask->department_id == Auth::user()->department_id)
+                                    <form method="POST"
+                                        action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
+                                        @csrf
+                                        <button type="submit"
+                                            class="btn btn-sm btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
+                                            <i class="fa fa-check-circle"></i>
+                                            {{ $sectionTask->approved == '0' ? 'Approve Report' : 'Cancel Approval' }}
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                         @endforeach
-
-                        @isset($reports)
-                        @foreach($reports as $report)
-                        <!-- Start of the foreach loop, iterating through $reports -->
-                        @if(isset($report['main_tasks_id']) && $report['main_tasks_id'] === $task->main_tasks_id)
-                        <!-- Check if $report has 'main_tasks_id' property and it matches the current $task's 'main_tasks_id' -->
-                        {{-- {!! strip_tags($report['action_take']) !!} --}}
-
-                        <!-- Display the 'action_take' property of the matching $report -->
-                        @if ($report['department_id'] === Auth::user()->department_id &&
-                        Auth::user()->role_id ==
-                        "2" && Auth::user()->department_id !== 1)
-                        <form method="POST" action="{{route('dashboard.approveReports',$report['id'])}}">
-                            @csrf
-                            <button
-                                class="btn float-end mt-3 ms-2 d-none-print {{$report['approved'] == '0' ? 'btn-success' : 'btn-info'}}">
-                                <i class="fa fa-check-circle"></i> {{ $report['approved'] == '0' ? 'Approve Report'
-                                :
-                                'Cancel Approval' }}
-                            </button>
-                        </form>
-                        @endif
-                        @endif
-                        <!-- End of the if condition -->
-
-                        @endforeach
-                        @endisset
-                        <!-- End of the foreach loop -->
-                    </li>
-                    <!-- End of the list item -->
-
-                    @isset($task->eng_id)
-                    <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-                        <li class="list-group-item bg-light text-dark"><strong>Engineer <br></strong>
-                            {{$task->engineer->name}}
-                        </li>
-                    </a>
-                    @endisset
-                </ul>
-            </div>
-            <div class="card-footer">
-                {{-- <button class="btn {{ $task->status === 'pending' ? 'btn-danger' : 'btn-success' }}">More
-                    information</button> --}}
-
-                <div class="btn-group">
-                    <button data-bs-toggle="dropdown" class="btn btn-danger btn-block w-100">Actions <i
-                            class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
-
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item"
-                            href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
-                            <i class="fas fa-history"></i> History</a></li>
-                        @if(Auth::user()->role->title === 'Admin' )
-                        <a href="{{ route('dashboard.editTask', ['id' => $task->main_task->id]) }}"
-                            class="dropdown-item">Edit</a>
-                        @if(Auth::user()->department_id == $task->department_id)
-                        <form method="post" action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
-                            id="delete-form-{{ $task->main_task->id }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
-                                class="dropdown-item">Delete Task</button>
-                        </form>
-                        @endif
-                        @endif
-
-                        @if($task->isCompleted === '1')
-                        <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}"
-                            class="dropdown-item">
-                            <i class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
-                                data-bs-original-title="si-notebook" aria-label="si-notebook"></i>
-                            {{ Auth::user()->department->name }} Report
+                        @if($task->eng_id && $task->isCompleted == "0")
+                        <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
+                            <p class="card-text mt-3"><strong>Engineer:</strong> {{$task->engineer->name}}</p>
                         </a>
-
-                        @if($task->source_department !== 1 && $task->source_department)
-                        @php
-                        $reportRoute = $task->source_department !== Auth::user()->department_id ?
-                        'dashboard.reportDepartment' : 'dashboard.reportDepartment';
-                        $departmentId = $task->source_department !== Auth::user()->department_id ?
-                        $task->source_department : $task->destination_department;
-                        $departmentName = $task->source_department !== Auth::user()->department_id ?
-                        $task->department->name : $task->toDepartment->name;
-                        @endphp
-                        <a href="{{ route($reportRoute, ['main_task_id' => $task->main_tasks_id, 'department_id' => $departmentId]) }}"
-                            class="dropdown-item">Report {{ $departmentName }}</a>
                         @endif
-
-                        @if($task->eng_id === Auth::user()->id)
-                        <a href="{{ route('dashboard.requestToUpdateReport', $task->main_tasks_id) }}"
-                            class="dropdown-item">Request to update report</a>
-                        @endif
-                        @endif
-                    </div><!-- dropdown-menu -->
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group">
+                            <button data-bs-toggle="dropdown" class="btn {{$task->isCompleted == " 1" ? 'btn-success'
+                                : 'btn-danger' }} btn-block w-100">
+                                Actions <i class="icon ion-ios-arrow-down tx-11 mg-l-3"></i></button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"
+                                    href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                    <i class="fas fa-history"></i> History
+                                </a>
+                                @if(Auth::user()->role->title === 'Admin' )
+                                <a href="{{ route('dashboard.editTask', ['id' => $task->main_task->id]) }}"
+                                    class="dropdown-item">Edit</a>
+                                @if(Auth::user()->department_id == $task->department_id)
+                                <form method="post" action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
+                                    id="delete-form-{{ $task->main_task->id }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
+                                        class="dropdown-item">Delete Task</button>
+                                </form>
+                                @endif
+                                @endif
+                                @if($task->isCompleted === '1')
+                                <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}"
+                                    class="dropdown-item">
+                                    <i class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="si-notebook" aria-label="si-notebook"></i>
+                                    {{ Auth::user()->department->name }} Report
+                                </a>
+                                @if($task->source_department !== 1 && $task->source_department)
+                                @php
+                                $reportRoute = $task->source_department !== Auth::user()->department_id ?
+                                'dashboard.reportDepartment' : 'dashboard.reportDepartment';
+                                $departmentId = $task->source_department !== Auth::user()->department_id ?
+                                $task->source_department : $task->destination_department;
+                                $departmentName = $task->source_department !== Auth::user()->department_id ?
+                                $task->department->name : $task->toDepartment->name;
+                                @endphp
+                                <a href="{{ route($reportRoute, ['main_task_id' => $task->main_tasks_id, 'department_id' => $departmentId]) }}"
+                                    class="dropdown-item">Report {{ $departmentName }}</a>
+                                @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
+            @endforeach
         </div>
     </div>
-
-    @endforeach
     {{ $tasks->links() }}
+
 
 
 </div>

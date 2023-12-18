@@ -7,6 +7,17 @@
         font-size: 15px !important;
         font-style: italic !important;
     }
+
+    /* Add these styles to your stylesheet or in a <style> tag in your HTML */
+    .table-pending {
+        background-color: #e87676;
+        /* Light red for pending tasks */
+    }
+
+    .table-completed {
+        background-color: #61b361;
+        /* Light green for completed tasks */
+    }
 </style>
 @endsection
 
@@ -522,190 +533,178 @@
     <div class="card">
         <div class="card-header pb-0">
             <div class="d-flex justify-content-between">
-                <h4 class="card-title mg-b-0"> Local Tasks</h4>
+                <h4 class="card-title mg-b-0"> Pending Tasks</h4>
             </div>
         </div>
         <div class="card-body">
 
             <div class="table-responsive">
-                <table id="pending-tasks" class="border-top-0  table table-bordered text-nowrap border-bottom">
-                    <thead>
-                        <tr class="bg-warning-gradient">
-                            <th class="text-lg">ID</th>
-                            <th class="text-lg">STATION</th>
-                            <th class="text-lg">Main Alarm</th>
-                            <th class="text-lg">Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($pendingTasks as $task)
-                        <tr>
-                            <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
-                            <td class="text-lg">
-                                @if($task->main_task->station_id)
-                                {{$task->main_task->station->SSNAME}}
-                                @else
-                                -
-                                @endif
-                            </td>
-
-                            <td class="text-lg">
-                                @if(isset($task->main_task->main_alarm_id))
-                                {{$task->main_task->main_alarm->name}}
-                                @else
-                                -
-
-                            </td>
-                            @endif
-                            <td>
-                                <br>
-                                @if($task->eng_id)
-                                <Strong>Engineer</Strong>:
-                                <a href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-                                    {{$task->engineer->name}} - {{$task->engineer->department->name}}
-                                </a>
-                                @else
-                                -
-                                @endif
-                                <br>
-
-                                <strong>Status</strong> <span class="badge bg-danger me-1">{{$task->status}}</span>
-                                <br>
-
-                                <strong>Date:</strong>{{$task->created_at}}
-                                <br>
-                                <Strong>Viewed</Strong> :
-
-                                @if($task->isSeen)
-                                <i class="fas fa-check-circle text-success"></i>
-                                <!-- Font Awesome check-circle icon for "Yes" -->
-                                @else
-                                <i class="fas fa-times-circle text-danger"></i>
-                                <!-- Font Awesome times-circle icon for "No" -->
-                                @endif
-                                <br>
-                                <button type="button" class="btn btn-outline-danger btn-sm mb-1 dropdown-toggle"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fe fe-settings"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('dashboard.viewTask', ['id' => $task->id]) }}">
-                                            <i class="fas fa-eye"></i> View</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
-                                            <i class="fas fa-edit"></i> Edit</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
-                                            <i class="fas fa-history"></i> History</a></li>
-                                    <li>
-                                        <a class="dropdown-item" data-bs-toggle="modal"
-                                            data-bs-target="#moveTask-{{ $task->id }}">
-                                            <i class="fas fa-exchange-alt"></i> Move to Another Department
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <form method="post"
-                                            action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
-                                            id="delete-form-{{ $task->main_task->id }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
-                                                class="dropdown-item"> <i class="fas fa-trash "></i> Delete
-                                                Task</button>
-                                        </form>
-                                    </li>
-                                    <li>
-                                        <form id="resendTaskForm" method="post"
-                                            action="{{ route('resendTask', ['id' => $task->main_task->id]) }}">
-                                            @csrf
-                                            <button type="button" class="dropdown-item" onclick="confirmResend()">
-                                                <i class="fas fa-paper-plane"></i> Resend Task
-                                            </button>
-                                        </form>
-                                    </li>
-
-                                    <script>
-                                        function confirmResend() {
-                                            // Use SweetAlert for confirmation
-                                            Swal.fire({
-                                                title: 'Are you sure?',
-                                                text: 'You are about to resend the task.',
-                                                icon: 'warning',
-                                                showCancelButton: true,
-                                                confirmButtonColor: '#3085d6',
-                                                cancelButtonColor: '#d33',
-                                                confirmButtonText: 'Yes, resend it!'
-                                            }).then((result) => {
-                                                if (result.isConfirmed) {
-                                                    // If the user confirms, submit the form
-                                                    document.getElementById('resendTaskForm').submit();
-                                                }
-                                            });
-                                        }
-                                    </script>
-
-
-
-
-
-
-
-                                </ul>
-                            </td>
-                        </tr>
-                        <!-- Modal -->
-                        <div class="modal" id="moveTask-{{ $task->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="moveTaskLabel-{{ $task->id }}">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content modal-content-demo">
-                                    <div class="modal-header">
-                                        <h6 class="modal-title">Update this task</h6>
-                                        <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
-                                            <span aria-hidden="true">&times;</span>
+                <div class="container">
+                    <table id="pending-tasks" class="table table-bordered table-striped text-nowrap">
+                        <thead class="thead-danger">
+                            <tr class="table-pending">
+                                <th>ID</th>
+                                <th>STATION</th>
+                                <th>Main Alarm</th>
+                                <th>Details</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pendingTasks as $task)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    @if($task->main_task->station_id)
+                                    {{ $task->main_task->station->SSNAME }}
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(isset($task->main_task->main_alarm_id))
+                                    {{ $task->main_task->main_alarm->name }}
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+                                <td>
+                                    <br>
+                                    @if($task->eng_id)
+                                    <strong>Engineer:</strong>
+                                    <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
+                                        {{ $task->engineer->name }} - {{ $task->engineer->department->name }}
+                                    </a>
+                                    @else
+                                    -
+                                    @endif
+                                    <br>
+                                    <strong>Status:</strong>
+                                    <span class="badge bg-danger">{{ $task->status }}</span>
+                                    <br>
+                                    @foreach($task->main_task->section_tasks as $sectionTask)
+                                    @if($sectionTask->department_id == $task->department_id)
+                                    <div class="mt-3 pt-3 border text-muted">
+                                        <p class="px-2"> Engineer Note: {!! $sectionTask->action_take !!}
+                                        </p>
+                                    </div>
+                                    @endif
+                                    @endforeach
+                                    <br>
+                                    <strong>Date:</strong>{{ $task->created_at }}
+                                    <br>
+                                    <strong>Viewed:</strong>
+                                    @if($task->isSeen)
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    @else
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-outline-danger btn-sm dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fe fe-settings me-2"></i> Actions
                                         </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('dashboard.viewTask', ['id' => $task->id]) }}">
+                                                    <i class="fas fa-eye me-2"></i> View</a></li>
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                    <i class="fas fa-edit me-2"></i> Edit</a></li>
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                    <i class="fas fa-history me-2"></i> History</a></li>
+                                            <li>
+                                                <a class="btn btn-danger btn-gradient mt-3 ms-2 pd-sm-x-25 pd-x-15"
+                                                    data-bs-target="#moveTask-{{ $task->id }}" data-bs-toggle="modal"
+                                                    href="#">
+                                                    <i class="fas fa-exchange-alt me-2"></i> Move to Another Department
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form method="post"
+                                                    action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
+                                                    id="delete-form-{{ $task->main_task->id }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button"
+                                                        onclick="deleteRecord({{ $task->main_task->id }})"
+                                                        class="dropdown-item">
+                                                        <i class="fas fa-trash me-2"></i> Delete Task
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form id="resendTaskForm" method="post"
+                                                    action="{{ route('resendTask', ['id' => $task->main_task->id]) }}">
+                                                    @csrf
+                                                    <button type="button" class="dropdown-item"
+                                                        onclick="confirmResend()">
+                                                        <i class="fas fa-paper-plane me-2"></i> Resend Task
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div class="modal-body">
-                                        <form action="{{ route('dashboard.convertTask', $task->main_tasks_id) }}"
-                                            method="POST">
-                                            @csrf
-                                            <div class="form-group">
-                                                <label for="departmentSelect">Select Department</label>
-                                                <input type="hidden" name="main_task"
-                                                    value="{{ $task->main_tasks_id }}">
-                                                <select id="departmentSelect" name="departmentSelect"
-                                                    class="form-select">
-                                                    <option value="{{ Auth::user()->department_id }}">
-                                                        {{ Auth::user()->department->name }}
-                                                    </option>
-                                                    @foreach ($departments as $department)
-                                                    @if ($department->id !==
-                                                    Auth::user()->department_id)
-                                                    <option value="{{ $department->id }}">{{
-                                                        $department->name }}</option>
-                                                    @endif
-                                                    @endforeach
-                                                </select>
-                                            </div>
 
-                                            <div class="form-group">
-                                                <label for="notes">Notes</label>
-                                                <textarea id="notes" name="notes" class="form-control"></textarea>
-                                            </div>
+
+                                </td>
+                            </tr>
+                            <!-- Modal -->
+                            <div class="modal fade" id="moveTask-{{ $task->id }}" tabindex="-1" role="dialog"
+                                aria-labelledby="moveTaskLabel-{{ $task->id }}">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content modal-content-demo">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">Move this task</h6>
+                                            <button aria-label="Close" class="close" data-bs-dismiss="modal"
+                                                type="button">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('dashboard.convertTask', $task->main_tasks_id) }}"
+                                                method="POST">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="departmentSelect">Select Department</label>
+                                                    <input type="hidden" name="main_task"
+                                                        value="{{ $task->main_tasks_id }}">
+                                                    <select id="departmentSelect" name="departmentSelect"
+                                                        class="form-select">
+                                                        <option value="{{ Auth::user()->department_id }}">
+                                                            {{ Auth::user()->department->name }}
+                                                        </option>
+                                                        @foreach ($departments as $department)
+                                                        @if ($department->id !== Auth::user()->department_id)
+                                                        <option value="{{ $department->id }}">{{ $department->name }}
+                                                        </option>
+                                                        @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="notes">Notes</label>
+                                                    <textarea id="notes" name="notes" class="form-control"></textarea>
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn ripple btn-primary" type="submit">Save changes</button>
+                                            <button class="btn ripple btn-secondary" data-bs-dismiss="modal"
+                                                type="button">Close</button>
+                                        </div>
+                                        </form>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button class="btn ripple btn-primary" type="submit">Save
-                                            changes</button>
-                                        <button class="btn ripple btn-secondary" data-bs-dismiss="modal"
-                                            type="button">Close</button>
-                                    </div>
-                                    </form>
                                 </div>
                             </div>
-                        </div>
-                        @endforeach
-                    </tbody>
-                </table>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+
 
 
 
@@ -944,95 +943,97 @@
         </div>
         <div class="card-body ">
             <div class="table-responsive">
-                <table id="completed-tasks" class="border-top-0 table table-bordered text-nowrap border-bottom">
-                    <thead>
-                        <tr class="bg-success-gradient">
-                            <th>ID</th>
-                            <th>STATION</th>
-                            <th>Main alarm</th>
-                            <th>Engineer Details</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($completedTasks as $task)
-                        <tr>
-                            <th scope="row">{{ $loop->iteration }}</th>
-                            <td>{{$task->main_task->station->SSNAME}}</td>
-                            <td>
-                                @isset($task->main_alarm_id)
-                                {{$task->main_task->main_alarm->name}}
-                                @endisset
-                            </td>
-                            <td>
-                                <div class="details-container">
-                                    <div class="engineer-details">
-                                        <strong>Engineer:</strong>
-                                        <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
-                                            {{$task->engineer->name}} - {{$task->engineer->department->name}}
-                                        </a>
-                                    </div>
-                                    <div class="additional-details">
-                                        <strong>Action Take:</strong>
-                                        <div class="task-action-container">
-                                            {!! $task->action_take !!}
-                                        </div>
-                                        <br>
-
-                                        <strong>Status:</strong> <span
-                                            class="badge bg-success me-1">{{$task->status}}</span>
-                                        <br>
-                                        <strong>Date:</strong>{{$task->created_at}}
-                                    </div>
-                                </div>
-                                <div class="actions-dropdown mt-3">
-
-                                    <button type="button" class="btn btn-outline-success btn-sm mb-1 dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fe fe-settings"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item"
-                                                href="{{ route('dashboard.reportPage',['id'=>$task->id]) }}">
-                                                <i class="fas fa-eye"></i> View Report</a></li>
-                                        <li><a class="dropdown-item"
-                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
-                                                <i class="fas fa-edit"></i> Edit</a></li>
-                                        <li><a class="dropdown-item"
-                                                href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
-                                                <i class="fas fa-history"></i> History</a></li>
-                                        <li>
-                                            <a class="btn btn-danger-gradient float-end mt-3 ms-2 pd-sm-x-25 pd-x-15"
-                                                data-bs-target="#modaldemo{{$task->main_tasks_id}}"
-                                                data-bs-toggle="modal" href="#">
-                                                Update Department
+                <div class="container">
+                    <table id="completed-tasks" class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr class="table-completed">
+                                <th>ID</th>
+                                <th>STATION</th>
+                                <th>Main Alarm</th>
+                                <th>Engineer Details</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($completedTasks as $task)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $task->main_task->station->SSNAME }}</td>
+                                <td>
+                                    @isset($task->main_alarm_id)
+                                    {{ $task->main_task->main_alarm->name }}
+                                    @endisset
+                                </td>
+                                <td>
+                                    <div class="details-container">
+                                        <div class="engineer-details">
+                                            <strong>Engineer:</strong>
+                                            <a
+                                                href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
+                                                {{ $task->engineer->name }} - {{ $task->engineer->department->name }}
                                             </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-
-
-                            <div class="modal" id="modaldemo{{$task->main_tasks_id}}">
+                                        </div>
+                                        <div class="additional-details">
+                                            <strong>Action Take:</strong>
+                                            <div class="task-action-container">
+                                                {!! $task->action_take !!}
+                                            </div>
+                                            <br>
+                                            <strong>Status:</strong>
+                                            <span class="badge bg-success">{{ $task->status }}</span>
+                                            <br>
+                                            <strong>Date:</strong>{{ $task->created_at }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="actions-dropdown">
+                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fe fe-settings"></i> Actions
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('dashboard.reportPage',['id'=>$task->id]) }}">
+                                                    <i class="fas fa-eye"></i> View Report</a></li>
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                    <i class="fas fa-edit"></i> Edit</a></li>
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
+                                                    <i class="fas fa-history"></i> History</a></li>
+                                            <li>
+                                                <a class="btn btn-danger-gradient btn-sm"
+                                                    data-bs-target="#modaldemo{{$task->main_tasks_id}}"
+                                                    data-bs-toggle="modal" href="#">
+                                                    Update Department
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Modal -->
+                            <div class="modal fade" id="modaldemo{{$task->main_tasks_id}}" tabindex="-1" role="dialog"
+                                aria-labelledby="modaldemoLabel{{$task->main_tasks_id}}">
                                 <div class="modal-dialog" role="document">
-                                    <div class="modal-content modal-content-demo">
+                                    <div class="modal-content">
                                         <div class="modal-header">
-                                            <h6 class="modal-title">Update this task</h6>
-                                            <button aria-label="Close" class="close" data-bs-dismiss="modal"
-                                                type="button">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                            <h5 class="modal-title">Update this task</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <form action="{{ route('dashboard.convertTask', $task->main_tasks_id) }}"
                                                 method="POST">
                                                 @csrf
-                                                <div class="form-group">
-                                                    <label for="departmentSelect">Select Department</label>
+                                                <div class="mb-3">
+                                                    <label for="departmentSelect" class="form-label">Select
+                                                        Department</label>
                                                     <input type="hidden" name="main_task"
                                                         value="{{ $task->main_tasks_id }}">
-                                                    <select id="departmentSelect" name="departmentSelect"
-                                                        class="form-select">
+                                                    <select class="form-select" id="departmentSelect"
+                                                        name="departmentSelect">
                                                         <option value="{{ Auth::user()->department_id }}">
                                                             {{ Auth::user()->department->name }}
                                                         </option>
@@ -1044,26 +1045,26 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-
-                                                <div class="form-group">
-                                                    <label for="notes">Notes</label>
-                                                    <textarea id="notes" name="notes" class="form-control"></textarea>
+                                                <div class="mb-3">
+                                                    <label for="notes" class="form-label">Notes</label>
+                                                    <textarea class="form-control" id="notes" name="notes"
+                                                        rows="3"></textarea>
                                                 </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button class="btn ripple btn-primary" type="submit">Save changes</button>
-                                            <button class="btn ripple btn-secondary" data-bs-dismiss="modal"
-                                                type="button">Close</button>
-                                        </div>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
 
 
             </div>

@@ -94,6 +94,14 @@
                             {!! $section_task->action_take !!}
 
                             @endif
+                            @if($section_task->eng_id === Auth::user()->id)
+
+                            <a href="{{ route('dashboard.requestToUpdateReport', $section_task->id) }}"
+                                class="btn btn-outline-primary d-print-none">
+                                <i class="fas fa-pen"></i> Update Report
+                            </a>
+
+                            @endif
                         </div>
                     </div><!-- invoice-notes -->
                     <div class="invoice-notes mt-5 "
@@ -176,6 +184,7 @@
                                                                 </tr>
                                                                 @endif
                                                                 @endforeach
+
                                                             </tbody>
                                                         </table>
                                                         @endif
@@ -264,7 +273,6 @@
                         data-bs-target="#modaldemo1" data-bs-toggle="modal" href="">
                         Update Department
                     </a>
-
 
                     @if ($section_task->department_id ===
                     Auth::user()->department_id && Auth::user()->role_id ==

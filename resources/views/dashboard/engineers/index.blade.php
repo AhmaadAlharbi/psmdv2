@@ -200,6 +200,10 @@
                         <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
                             <li class="list-group-item text-dark bg-light"><strong>Engineer <br></strong>
                                 {{$task->engineer->name}}
+                                @if($task->eng_id === Auth::user()->id)
+                                <a href="{{ route('dashboard.requestToUpdateReport', $task->id) }}"
+                                    class="btn btn-primary mx-2">update report</a>
+                                @endif
                             </li>
                         </a>
 

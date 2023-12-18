@@ -1018,33 +1018,35 @@ class DashBoardController extends Controller
     }
     public function pendingReports()
     {
-        $tasks = SectionTask::where('department_id', Auth::user()->department_id)
-            ->where('isCompleted', "1")
-            ->where('approved', 0)
-            ->where('department_id', '!=', 1)
+        $sectionTasks = SectionTask::where('department_id', Auth::user()->department_id)
+            ->where('approved', false)
+            ->with('main_task')
+            ->get();
+        // Get the main task IDs from section tasks
+        $mainTaskIds = $sectionTasks->pluck('main_tasks_id')->unique();
+        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+            ->whereIn('main_tasks_id', $mainTaskIds)
+            ->with(['main_task' => function ($query) {
+                // Eager load the main_task and its section_tasks
+                $query->with(['section_tasks' => function ($query) {
+                    // Filter section_tasks where department_id is 2
+                    $query->where('department_id', 2);
+                }]);
+            }])
             ->paginate(6);
+        // return $tasks;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
         $reports = [];
-        foreach ($tasks as $task) {
-            if ($task->isCompleted == 1) {
-                $taskReports = SectionTask::where('main_tasks_id', $task->main_tasks_id)
-                    ->where('department_id', $task->department_id)
-                    ->get();
-
-                // Append the reports for this task to the $reports array
-                $reports = array_merge($reports, $taskReports->toArray());
-            }
-        }
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'reports'));
     }
-    public function requestToUpdateReport($main_task_id)
+    public function requestToUpdateReport($id)
     {
-        $section_task = SectionTask::where('main_tasks_id', $main_task_id)
-            ->where('department_id', Auth::user()->department_id)
-            ->where('isCompleted', "1")
-            ->first();
-
+        // $section_task = SectionTask::where('main_tasks_id', $main_task_id)
+        //     ->where('department_id', Auth::user()->department_id)
+        //     ->where('isCompleted', "1")
+        //     ->first();
+        $section_task = SectionTask::findOrFail($id);
         return view('dashboard.reportPageEdit', compact('section_task'));
     }
     public function pendingUsers()
@@ -1157,14 +1159,11 @@ class DashBoardController extends Controller
     public function viewTask($id)
     {
         $departmentId = Auth::user()->department_id;
-
         $stations = Station::all();
         $engineers = Engineer::where('department_id', $departmentId)->get();
-
         $tasks = department_task_assignment::where('id', $id)->paginate(6);
         $status = null; // You can set a default status here if needed.
         $reports = null; // You can set a default value for reports here if needed.
-
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
     }
 
@@ -1204,15 +1203,25 @@ class DashBoardController extends Controller
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
                     ->whereMonth('created_at', $currentMonth)->latest()->paginate(6);
             case 'mutual-tasks':
-                $tasks = TaskConversions::where('source_department', Auth::user()->department_id)
-                    ->orWhere('destination_department', Auth::user()->department_id)
+                // $tasks = TaskConversions::where('source_department', Auth::user()->department_id)
+                //     ->orWhere('destination_department', Auth::user()->department_id)
+                //     ->latest()
+                //     ->paginate(6);
+                $tasks = department_task_assignment::where('department_id', '!=', Auth::user()->department_id)
+                    ->whereHas('main_task.sharedDepartments', function ($query) {
+                        $query->where('departments.id', Auth::user()->department_id);
+                    })
+                    ->whereHas('main_task', function ($query) {
+                        $query->where('isCompleted', '0');
+                    })
+                    ->with('main_task') // Eager load the related MainTask records
                     ->latest()
                     ->paginate(6);
 
                 // Update the is_notified column for each task
-                $tasks->each(function ($task) {
-                    $task->update(['is_notified' => true]);
-                });
+                // $tasks->each(function ($task) {
+                //     $task->update(['is_notified' => true]);
+                // });
 
                 return $tasks;
 
