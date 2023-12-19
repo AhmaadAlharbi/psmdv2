@@ -158,12 +158,14 @@
             <div class="card-body">
                 @foreach($completedTasks as $task)
                 <div class="card mb-3">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-primary text-white">
                         Task #{{$task->id}}
                     </div>
                     <div class="card-body">
                         <p class="card-text mb-2">
-                            <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
+
+                            <span style="font-size:22px; font-weight:bold;"> Station:
+                                {{$task->main_task->station->SSNAME}}</span>
                         </p>
                         <p class="card-text mb-2">
                             <strong>Date:</strong> {{ \Carbon\Carbon::parse($task->created_at)->format('Y-m-d H:i') }}
@@ -185,13 +187,13 @@
                     </div>
                     <div class="card-footer">
                         @if($task->eng_id === Auth::user()->id)
-                        <a href="{{ route('dashboard.requestToUpdateReport', $task->id) }}" class="btn btn-dark">
+                        <a href="{{ route('dashboard.requestToUpdateReport', $task->id) }}" class="btn btn-primary">
                             <i class="fas fa-pencil-alt"></i> Update Report
                         </a>
 
                         @endif
                         <a href="{{route('dashboard.reportPage',['id'=>$task->id])}}"
-                            class="btn btn-outline-dark float-end">
+                            class="btn btn-outline-primary float-end">
                             <i class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
                                 data-bs-original-title="si-notebook" aria-label="si-notebook"></i>Report
                         </a>

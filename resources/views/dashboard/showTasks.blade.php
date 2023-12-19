@@ -142,40 +142,76 @@
                             <strong>Notes:</strong> {{$task->main_task->notes}}
                         </p>
                         <h6 class="card-subtitle mb-2 text-muted">Action Take:</h6>
-                        @foreach($task->main_task->section_tasks as $sectionTask)
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <p><strong>Engineer:</strong> {{ $sectionTask->engineer->name }}</p>
-                                <p><strong>Department:</strong> {{ $sectionTask->department->name }}</p>
-                                <p><strong>Action Take:</strong> {!! strip_tags($sectionTask->action_take) !!}</p>
-                                <p><strong>Created at:</strong> {{ $sectionTask->created_at }}</p>
-                                <div class="d-flex">
-                                    @if($sectionTask->eng_id === Auth::user()->id)
-                                    <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
-                                        class="btn btn-sm btn-dark mx-2 mb-1">
-                                        <i class="fas fa-pencil-alt"></i> Update Report
-                                    </a>
-                                    @endif
-                                    @if($sectionTask->department_id == Auth::user()->department_id)
-                                    <form method="POST"
-                                        action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
-                                        @csrf
-                                        <button type="submit"
-                                            class="btn btn-sm btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
-                                            <i class="fa fa-check-circle"></i>
-                                            {{ $sectionTask->approved == '0' ? 'Approve Report' : 'Cancel Approval' }}
-                                        </button>
-                                    </form>
-                                    @endif
+                        <div class="card-body">
+                            <div>
+                                <p class="card-sub-title"><strong>Click the buttons below to show and hide action take
+                                        for this task.</strong></p>
+                            </div>
+                            <div>
+                                <div>
+
+                                    <button data-toggle="collapse"
+                                        data-target="#collapseExample{{ $task->main_task->id }}" aria-expanded="false"
+                                        class="btn btn-secondary" aria-label="Toggle Action Takes"
+                                        id="toggleButton{{ $task->main_task->id }}">
+                                        <span class="d-md-none">Toggle</span> <span class="toggle-text">Show</span>
+                                        Action Takes
+                                    </button>
+                                    <div class="collapse mt-4" id="collapseExample{{ $task->main_task->id }}">
+                                        <div>
+                                            <h5>Action Take Details</h5>
+
+                                            @foreach($task->main_task->section_tasks as $sectionTask)
+                                            <div class="card mt-3">
+                                                <div class="card-body">
+                                                    <p><strong>Engineer:</strong> {{ $sectionTask->engineer->name }}</p>
+                                                    <p><strong>Department:</strong> {{ $sectionTask->department->name }}
+                                                    </p>
+                                                    <p><strong>Action Take:</strong> {!!
+                                                        strip_tags($sectionTask->action_take) !!}</p>
+                                                    <p><strong>Created at:</strong> {{ $sectionTask->created_at }}</p>
+                                                    <div class="d-flex">
+                                                        @if($sectionTask->eng_id === Auth::user()->id)
+                                                        <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
+                                                            class="btn btn-sm btn-dark mx-2 mb-1">
+                                                            <i class="fas fa-pencil-alt"></i> Update Report
+                                                        </a>
+                                                        @endif
+
+                                                        @if($sectionTask->department_id == Auth::user()->department_id)
+                                                        <form method="POST"
+                                                            action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
+                                                                <i class="fa fa-check-circle"></i>
+                                                                {{ $sectionTask->approved == '0' ? 'Approve Report' :
+                                                                'Cancel Approval' }}
+                                                            </button>
+                                                        </form>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endforeach
+
+
+
+
+                                            @if($task->eng_id && $task->isCompleted == "0")
+                                            <a class=""
+                                                href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
+                                                <p class="card-text mt-3"><strong>Engineer:</strong>
+                                                    {{$task->engineer->name}}</p>
+                                            </a>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
-                        @endforeach
-                        @if($task->eng_id && $task->isCompleted == "0")
-                        <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-                            <p class="card-text mt-3"><strong>Engineer:</strong> {{$task->engineer->name}}</p>
-                        </a>
-                        @endif
+
                     </div>
                     <div class="card-footer">
                         <div class="btn-group">
@@ -240,6 +276,27 @@
 @section('scripts')
 <!-- Internal Select2 js-->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggleButtons = document.querySelectorAll('[data-toggle="collapse"]');
+
+        toggleButtons.forEach(function (toggleButton) {
+            toggleButton.addEventListener('click', function () {
+                var targetId = this.getAttribute('data-target');
+                var toggleText = this.querySelector('.toggle-text');
+                var collapseElement = document.querySelector(targetId);
+
+                if (collapseElement.style.display === 'block') {
+                    collapseElement.style.display = 'none';
+                    toggleText.textContent = 'Show';
+                } else {
+                    collapseElement.style.display = 'block';
+                    toggleText.textContent = 'Hide';
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -270,6 +327,44 @@
             }
           });
         }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggleButtons = document.querySelectorAll('[data-bs-toggle="collapse"]');
+        
+        toggleButtons.forEach(function (toggleButton) {
+            toggleButton.addEventListener('click', function () {
+                var targetId = this.getAttribute('aria-controls');
+                var toggleText = this.querySelector('.toggle-text');
+                var collapseElement = new bootstrap.Collapse(document.getElementById(targetId));
+                
+                if (collapseElement._isShown) {
+                    toggleText.textContent = 'Show';
+                } else {
+                    toggleText.textContent = 'Hide';
+                }
+            });
+        });
+
+        var collapseElements = document.querySelectorAll('.collapse');
+
+        collapseElements.forEach(function (collapseElement) {
+            // Update button text on Bootstrap collapse events
+            collapseElement.addEventListener('hidden.bs.collapse', function () {
+                var buttonId = this.getAttribute('aria-labelledby');
+                var toggleButton = document.getElementById(buttonId);
+                var toggleText = toggleButton.querySelector('.toggle-text');
+                toggleText.textContent = 'Show';
+            });
+
+            collapseElement.addEventListener('shown.bs.collapse', function () {
+                var buttonId = this.getAttribute('aria-labelledby');
+                var toggleButton = document.getElementById(buttonId);
+                var toggleText = toggleButton.querySelector('.toggle-text');
+                toggleText.textContent = 'Hide';
+            });
+        });
+    });
 </script>
 
 

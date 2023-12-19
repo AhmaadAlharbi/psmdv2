@@ -155,8 +155,18 @@ class DashBoardController extends Controller
         })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
-        $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)
-            ->Orwhere('source_department', $departmentId)->count();
+        // $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)
+        //     ->Orwhere('source_department', $departmentId)->count();
+        $mutualTasksCount = MainTask::with(['sharedDepartments'])
+            ->where('isCompleted', "0")
+            ->whereHas('sharedDepartments', function ($query) use ($departmentId) {
+                $query->where('department_id', Auth::user()->department_id);
+            })
+            ->count();
+
+        // return $mainTasks;
+
+        //    return $mutualTasksCount = $mainTask->sharedDepartments;    
         $incomingTasks =  TaskConversions::where('status', 'pending')
             ->where('destination_department', $departmentId)
             ->get();
@@ -1020,28 +1030,38 @@ class DashBoardController extends Controller
     }
     public function pendingReports()
     {
+        // Retrieve section tasks for the user's department that are not approved
         $sectionTasks = SectionTask::where('department_id', Auth::user()->department_id)
             ->where('approved', false)
             ->with('main_task')
             ->get();
-        // Get the main task IDs from section tasks
+
+        // Get unique main task IDs from section tasks
         $mainTaskIds = $sectionTasks->pluck('main_tasks_id')->unique();
+
+        // Retrieve department task assignments for the user's department and the selected main tasks
         $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->whereIn('main_tasks_id', $mainTaskIds)
             ->with(['main_task' => function ($query) {
                 // Eager load the main_task and its section_tasks
                 $query->with(['section_tasks' => function ($query) {
-                    // Filter section_tasks where department_id is 2
-                    $query->where('department_id', 2);
+                    // Filter section_tasks where department_id matches the user's department
+                    $query->where('department_id', Auth::user()->department_id);
                 }]);
             }])
             ->paginate(6);
-        // return $tasks;
+
+        // Retrieve all stations
         $stations = Station::all();
+
+        // Retrieve engineers for the user's department
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        $reports = [];
-        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'reports'));
+
+        // Additional logic for retrieving or processing reports (not provided in the original code)
+
+        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
+
     public function requestToUpdateReport($id)
     {
         // $section_task = SectionTask::where('main_tasks_id', $main_task_id)
@@ -1087,8 +1107,6 @@ class DashBoardController extends Controller
                 $query->where('destination_department', Auth::user()->department_id);
             })
             ->first();
-
-
         if (Auth::user()->department_id === $report->department_id) {
             $report->update([
                 'approved' => !$approve_value
@@ -1115,7 +1133,11 @@ class DashBoardController extends Controller
                     'isCompleted' => "1"
                 ]);
             }
-            return back();
+            if ($report->approved) {
+                return back()->with('success', 'Approval successful!');
+            } else {
+                return back()->with('success', 'The report was not approved.');
+            }
         }
     }
     // public function showTasks($status)
@@ -1409,10 +1431,10 @@ class DashBoardController extends Controller
             ->where('department_id', Auth::user()->department_id)
             ->first();
         // Create a new department task and share the task with the destination department
-        $mainTask->departmentsAssienments()->create([
-            'department_id' => $selectedDepartment,
-            'status' => 'pending',
-        ]);
+        // $mainTask->departmentsAssienments()->create([
+        //     'department_id' => $selectedDepartment,
+        //     'status' => 'pending', 
+        // ]);
 
         if ($departmentTask) {
             $mainTask->sharedDepartments()->attach($departmentTask->department_id);
