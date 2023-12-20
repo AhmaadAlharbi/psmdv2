@@ -31,6 +31,13 @@ class DashBoardController extends Controller
 
     public function index()
     {
+        $department_id = Auth::user()->department_id;
+        // return $tasks =  MainTask::with(['sharedDepartments'])
+        //     ->whereHas('sharedDepartments', function ($query) use ($department_id) {
+        //         $query->where('department_id', $department_id);
+        //     })
+        //     ->with('section_tasks')
+        //     ->get();
         $departmentId = Auth::user()->department_id;
         $mainTasks = MainTask::whereHas('departmentsAssienments', function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
@@ -732,6 +739,7 @@ class DashBoardController extends Controller
 
             // Step 2: Retrieve the main task
             $mainTask = MainTask::findOrFail($id);
+            $mainTask->touch();
             $taskConverted = TaskConversions::where('main_tasks_id', $id)
                 ->where(function ($query) {
                     $query->where('source_department', Auth::user()->department_id)

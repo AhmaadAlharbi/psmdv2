@@ -143,6 +143,54 @@ class NotificationBar extends Component
     //         }
     //     }
     // }
+    // public function checkForIncomingTasks()
+    // {
+    //     $user = auth()->user();
+
+    //     // Check if the user is authenticated and has a department_id
+    //     if ($user && $user->department_id) {
+    //         $department_id = $user->department_id;
+    //         // Use a more explicit query to avoid potential issues
+    //         $task_converted = TaskConversions::where('destination_department', $department_id)
+    //             // ->where('is_notified', false)
+    //             ->get();
+
+    //         // Process each converted task and add to notifications
+    //         $tasks =  MainTask::with(['sharedDepartments'])
+    //             ->whereHas('sharedDepartments', function ($query) use ($department_id) {
+    //                 $query->where('department_id', Auth::user()->department_id);
+    //             })
+    //             ->get();
+    //         foreach ($tasks as $task) {
+    //             // Utilize optional() to handle potential null values more gracefully
+    //             $label = optional($task->station)->SSNAME ?? 'Unknown Station';
+
+    //             // Check if the task is new or has been updated
+    //             $notificationType = $task->is_notified ? 'updated' : 'new';
+
+    //             // Determine the appropriate message based on the notification type
+    //             $message = ($notificationType === 'new')
+    //                 ? "A new task is being converted from "
+    //                 : "A task has been updated and is being converted from ";
+
+    //             // Update the total notifications count and specific type count
+    //             $this->totalNotifications++;
+    //             $this->incomingTasksNotificationsCount++;
+
+    //             // // Mark the task as notified
+    //             // $task->update(['is_notified' => true]);
+
+    //             // Add the notification to the array
+    //             $this->incomingTasksConvertedNotifications[] = [
+    //                 'type' => 'converted',
+    //                 'icon' => 'la la-refresh', // Updated icon
+    //                 'label' => $label,
+    //                 'subtext' => $message,
+    //             ];
+    //         }
+    //         return $tasks;
+    //     }
+    // }
     public function checkForIncomingTasks()
     {
         $user = auth()->user();
@@ -151,36 +199,24 @@ class NotificationBar extends Component
         if ($user && $user->department_id) {
             $department_id = $user->department_id;
             // Use a more explicit query to avoid potential issues
-            $task_converted = TaskConversions::where('destination_department', $department_id)
-                // ->where('is_notified', false)
-                ->get();
-
-            // Process each converted task and add to notifications
-
+            // $taskConversions = TaskConversions::where('destination_department', $department_id)->get();
             $tasks =  MainTask::with(['sharedDepartments'])
                 ->whereHas('sharedDepartments', function ($query) use ($department_id) {
                     $query->where('department_id', Auth::user()->department_id);
                 })
                 ->get();
             foreach ($tasks as $task) {
+
+
+                // Process each converted task and add to notifications
                 // Utilize optional() to handle potential null values more gracefully
+
                 $label = optional($task->station)->SSNAME ?? 'Unknown Station';
-
-                // Check if the task is new or has been updated
-                $notificationType = $task->is_notified ? 'updated' : 'new';
-
                 // Determine the appropriate message based on the notification type
-                $message = ($notificationType === 'new')
-                    ? "A new task is being converted from "
-                    : "A task has been updated and is being converted from ";
-
+                $message = "Action is required for this station ";
                 // Update the total notifications count and specific type count
                 $this->totalNotifications++;
                 $this->incomingTasksNotificationsCount++;
-
-                // // Mark the task as notified
-                // $task->update(['is_notified' => true]);
-
                 // Add the notification to the array
                 $this->incomingTasksConvertedNotifications[] = [
                     'type' => 'converted',
@@ -189,9 +225,12 @@ class NotificationBar extends Component
                     'subtext' => $message,
                 ];
             }
+
+
             return $tasks;
         }
     }
+
 
     public function checkForOutgoingTasks()
     {

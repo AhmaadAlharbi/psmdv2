@@ -28,24 +28,37 @@
     </a>
     @endif
     @if ($incomingTasksNotificationsCount > 0)
-    <a href="{{ route('dashboard.showTasks', ['status' => 'mutual-tasks']) }}" class="d-flex p-3 border-bottom"
+
+    {{-- <a href="{{ route('dashboard.showTasks', ['status' => 'mutual-tasks']) }}" class="d-flex p-3 border-bottom"
         href="javascript:void(0);">
         <div class="notifyimg bg-success ht-40">
             <i class="la la-refresh text-white"></i>
         </div>
         <div class="ms-3">
             <h5 class="notification-label mb-1">Incoming Tasks</h5>
-            @foreach ($incomingTasksConvertedNotifications as $notification)
-            <div class="notification-subtext">
-                {{ $notification['subtext'] }} {{ $notification['label'] }}
-            </div>
-            @endforeach
+            <div class="notification-subtext">{{ $incomingTasksNotificationsCount }} new</div>
         </div>
         <div class="ms-auto">
             <i class="las la-angle-right text-end text-muted"></i>
         </div>
-    </a>
+    </a> --}}
+
+    <div class="notification-list">
+        @foreach ($incomingTasksConvertedNotifications as $notification)
+        <div class="notification-item">
+            <div class="d-flex align-items-center">
+                <i class="{{ $notification['icon'] }} text-primary me-3" style="font-size: 24px;"></i>
+                <div>
+                    <span class="fw-bold">{{ $notification['label'] }}</span>
+                    <p class="notification-subtext mb-0">{{ $notification['subtext'] }}</p>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
     @endif
+
 
 </div>
 
