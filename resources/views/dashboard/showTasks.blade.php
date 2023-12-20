@@ -104,7 +104,11 @@
                 </a>
                 <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'mutual-tasks' ? 'active' : '' }}"
                     href="{{ route('dashboard.showTasks', ['status' => 'mutual-tasks']) }}">
-                    <i class="bi bi-people"></i> Mutual Tasks
+                    <i class="bi bi-people"></i> Pending Mutual Tasks
+                </a>
+                <a class="nav-link {{ Route::is('dashboard.showTasks') && request()->status == 'all-mutual-tasks' ? 'active' : '' }}"
+                    href="{{ route('dashboard.showTasks', ['status' => 'all-mutual-tasks']) }}">
+                    <i class="bi bi-people"></i> All Mutual Tasks
                 </a>
             </nav>
 

@@ -35,13 +35,18 @@
         </div>
         <div class="ms-3">
             <h5 class="notification-label mb-1">Incoming Tasks</h5>
-            <div class="notification-subtext">{{ $incomingTasksNotificationsCount }} new</div>
+            @foreach ($incomingTasksConvertedNotifications as $notification)
+            <div class="notification-subtext">
+                {{ $notification['subtext'] }} {{ $notification['label'] }}
+            </div>
+            @endforeach
         </div>
         <div class="ms-auto">
             <i class="las la-angle-right text-end text-muted"></i>
         </div>
     </a>
     @endif
+
 </div>
 
 

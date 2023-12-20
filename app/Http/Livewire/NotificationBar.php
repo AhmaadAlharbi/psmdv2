@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use App\Models\MainTask;
 use App\Models\SectionTask;
 use App\Models\TaskConversions;
 use Illuminate\Support\Facades\Auth;
@@ -149,24 +150,29 @@ class NotificationBar extends Component
         // Check if the user is authenticated and has a department_id
         if ($user && $user->department_id) {
             $department_id = $user->department_id;
-
             // Use a more explicit query to avoid potential issues
             $task_converted = TaskConversions::where('destination_department', $department_id)
                 // ->where('is_notified', false)
                 ->get();
 
             // Process each converted task and add to notifications
-            foreach ($task_converted as $task) {
+
+            $tasks =  MainTask::with(['sharedDepartments'])
+                ->whereHas('sharedDepartments', function ($query) use ($department_id) {
+                    $query->where('department_id', Auth::user()->department_id);
+                })
+                ->get();
+            foreach ($tasks as $task) {
                 // Utilize optional() to handle potential null values more gracefully
-                $label = optional($task->main_task->station)->SSNAME ?? 'Unknown Station';
+                $label = optional($task->station)->SSNAME ?? 'Unknown Station';
 
                 // Check if the task is new or has been updated
                 $notificationType = $task->is_notified ? 'updated' : 'new';
 
                 // Determine the appropriate message based on the notification type
                 $message = ($notificationType === 'new')
-                    ? "A new task is being converted from {$task->department->name}"
-                    : "A task has been updated and is being converted from {$task->department->name}";
+                    ? "A new task is being converted from "
+                    : "A task has been updated and is being converted from ";
 
                 // Update the total notifications count and specific type count
                 $this->totalNotifications++;
@@ -183,6 +189,7 @@ class NotificationBar extends Component
                     'subtext' => $message,
                 ];
             }
+            return $tasks;
         }
     }
 
