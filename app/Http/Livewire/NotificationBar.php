@@ -152,7 +152,7 @@ class NotificationBar extends Component
 
             // Use a more explicit query to avoid potential issues
             $task_converted = TaskConversions::where('destination_department', $department_id)
-                ->where('is_notified', false)
+                // ->where('is_notified', false)
                 ->get();
 
             // Process each converted task and add to notifications

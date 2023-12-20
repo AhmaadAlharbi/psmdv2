@@ -1099,40 +1099,39 @@ class DashBoardController extends Controller
     }
     public function approveReports($id)
     {
+        // Retrieve the report being approved
         $report = SectionTask::findOrFail($id);
+
+        // Get the current approval status of the report
         $approve_value = $report->approved;
-        $mainTasks = MainTask::where('id', $report->main_tasks_id)->first();
-        $sharedTask = TaskConversions::where('main_tasks_id', $report->main_tasks_id)
-            ->where(function ($query) {
-                $query->where('destination_department', Auth::user()->department_id);
-            })
-            ->first();
+
+        // Retrieve the main task associated with the report
+        $mainTask = MainTask::where('id', $report->main_tasks_id)->first();
+
+        // Verify that the user's department matches the department of the report
         if (Auth::user()->department_id === $report->department_id) {
+            // Toggle the approval status of the report
             $report->update([
                 'approved' => !$approve_value
             ]);
-            if ($sharedTask) {
-                $sharedTaskReport =  SectionTask::where('department_id', $sharedTask->source_department)
-                    ->where('main_tasks_id', $report->main_tasks_id)
-                    ->where('isCompleted', "1")
-                    ->where('approved', "0")
-                    ->first();
-                if ($sharedTaskReport) {
-                    $sharedTaskReport->update([
-                        'approved' => "1"
-                    ]);
-                    $sharedTask->update([
-                        'tracked' => 1
-                    ]);
+
+            // Retrieve all department tasks associated with the main task
+            $departmentTasks = department_task_assignment::where('main_tasks_id', $mainTask->id)->get();
+
+            // Check if all department tasks are completed
+            $allTasksCompleted = true;
+            $isApprove = $report->approved ? 1 : 0;
+            foreach ($departmentTasks as $task) {
+                if (!$task->isCompleted) {
+                    $allTasksCompleted = false;
+                    break; // If any task is not completed, exit the loop
                 }
-                $sharedTask->update([
-                    'status' => 'completed',
-                ]);
-            } else {
-                $mainTasks->update([
-                    'isCompleted' => "1"
-                ]);
             }
+            // Update the main task's completion status based on department tasks and approval status
+            $mainTask->update([
+                'isCompleted' => $allTasksCompleted && $isApprove ? "1" : "0"
+            ]);
+            // Redirect with success message based on approval status
             if ($report->approved) {
                 return back()->with('success', 'Approval successful!');
             } else {
@@ -1140,6 +1139,8 @@ class DashBoardController extends Controller
             }
         }
     }
+
+
     // public function showTasks($status)
     // {
     //     $stations = Station::all();

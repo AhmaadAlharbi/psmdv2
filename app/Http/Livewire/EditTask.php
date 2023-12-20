@@ -76,7 +76,7 @@ class EditTask extends Component
     public function mount()
     {
         $this->stations = Station::all();
-        $this->main_alarms = MainAlarm::where('department_id', 2)->get();
+        $this->main_alarms = MainAlarm::where('department_id', Auth::user()->department_id)->get();
         $this->task = MainTask::find($this->task_id);
         $this->mainTasksConverted = $this->task->departmentsAssienments->where('department_id', 2);
         $isTaskedConverted = $this->task->conversions->filter(function ($conversion) {
@@ -505,7 +505,8 @@ class EditTask extends Component
             $userDepartmentTask->update([
                 'eng_id' => $this->user_id,
                 'status' => 'pending',
-                'isCompleted' => "0"
+                'isCompleted' => "0",
+                'isSeen' => "0"
             ]);
         } else {
             // Create a new department task assignment for the user's department
