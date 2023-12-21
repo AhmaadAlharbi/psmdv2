@@ -739,7 +739,7 @@ class DashBoardController extends Controller
 
             // Step 2: Retrieve the main task
             $mainTask = MainTask::findOrFail($id);
-            $mainTask->touch();
+
             $taskConverted = TaskConversions::where('main_tasks_id', $id)
                 ->where(function ($query) {
                     $query->where('source_department', Auth::user()->department_id)
@@ -1125,7 +1125,6 @@ class DashBoardController extends Controller
 
             // Retrieve all department tasks associated with the main task
             $departmentTasks = department_task_assignment::where('main_tasks_id', $mainTask->id)->get();
-
             // Check if all department tasks are completed
             $allTasksCompleted = true;
             $isApprove = $report->approved ? 1 : 0;
@@ -1137,7 +1136,10 @@ class DashBoardController extends Controller
             }
             // Update the main task's completion status based on department tasks and approval status
             $mainTask->update([
-                'isCompleted' => $allTasksCompleted && $isApprove ? "1" : "0"
+                'isCompleted' => $allTasksCompleted && $isApprove ? "1" : "0",
+                'updated_at' => now(),
+                'notified' => true,
+                'updated_by_department_id' => Auth::user()->department_id
             ]);
             // Redirect with success message based on approval status
             if ($report->approved) {

@@ -199,18 +199,18 @@ class NotificationBar extends Component
         if ($user && $user->department_id) {
             $department_id = $user->department_id;
             // Use a more explicit query to avoid potential issues
-            // $taskConversions = TaskConversions::where('destination_department', $department_id)->get();
             $tasks =  MainTask::with(['sharedDepartments'])
                 ->whereHas('sharedDepartments', function ($query) use ($department_id) {
                     $query->where('department_id', Auth::user()->department_id);
                 })
+                ->where('updated_by_department_id', '!=', Auth::user()->department_id)
+
+                ->where('notified', true) // Only get tasks that haven't been notified
                 ->get();
+
             foreach ($tasks as $task) {
-
-
                 // Process each converted task and add to notifications
                 // Utilize optional() to handle potential null values more gracefully
-
                 $label = optional($task->station)->SSNAME ?? 'Unknown Station';
                 // Determine the appropriate message based on the notification type
                 $message = "Action is required for this station ";
@@ -224,12 +224,15 @@ class NotificationBar extends Component
                     'label' => $label,
                     'subtext' => $message,
                 ];
-            }
 
+                // Mark the task as notified
+                // $task->update(['notified' => false]);
+            }
 
             return $tasks;
         }
     }
+
 
 
     public function checkForOutgoingTasks()

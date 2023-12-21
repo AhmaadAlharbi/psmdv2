@@ -549,7 +549,7 @@ class AddTask extends Component
         $this->uploadAttachments($main_task->id);
         // $this->sendNotifications($main_task, $this->engineerEmail);
         try {
-            // $this->sendNotifications($main_task, $this->engineerEmail);
+            $this->sendNotifications($main_task, $this->engineerEmail);
         } catch (\Exception $e) {
             // Log the error
             Log::error('Error sending notification email: ' . $e->getMessage());
