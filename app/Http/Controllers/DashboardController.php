@@ -1195,10 +1195,13 @@ class DashBoardController extends Controller
 
     public function viewTask($id)
     {
+
         $departmentId = Auth::user()->department_id;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', $departmentId)->get();
+        // $tasks = MainTask::where('id', $id)->paginate(6);
         $tasks = department_task_assignment::where('id', $id)->paginate(6);
+
         $status = null; // You can set a default status here if needed.
         $reports = null; // You can set a default value for reports here if needed.
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers', 'status', 'reports'));
@@ -1310,27 +1313,68 @@ class DashBoardController extends Controller
         $currentMonth = Carbon::now()->month;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        $station = Station::where('SSNAME', $request->station)->first();
-        $tasks = department_task_assignment::join('main_tasks', 'department_task_assignment.main_tasks_id', '=', 'main_tasks.id')
-            ->where('department_task_assignment.department_id', Auth::user()->department_id)
-            ->where('main_tasks.station_id', $station->id)
-            ->latest('department_task_assignment.created_at') // Specify the table for ordering
-            ->paginate(6);
 
+        // Check if a station is selected in the search form
+        if ($request->has('station')) {
+            // Store the selected station's name in the session
+            session()->put('selected_station', $request->station);
+        }
+
+        // Retrieve the selected station's name from the session
+        $selectedStationName = session()->get('selected_station');
+
+        // Find the corresponding station based on the stored name
+        $station = $selectedStationName
+            ? Station::where('SSNAME', $selectedStationName)->first()
+            : null;
+
+        // If the station is not found, you might want to handle this case appropriately
+
+        $tasksQuery = department_task_assignment::join('main_tasks', 'department_task_assignment.main_tasks_id', '=', 'main_tasks.id')
+            ->where('department_task_assignment.department_id', Auth::user()->department_id);
+
+        // If a station is selected, filter tasks by station
+        if ($station) {
+            $tasksQuery->where('main_tasks.station_id', $station->id);
+        }
+
+        $tasks = $tasksQuery->latest('department_task_assignment.created_at')->paginate(6);
 
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
+
     public function engineerTasks(Request $request)
     {
         $currentMonth = Carbon::now()->month;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        $engineer = User::where('name', $request->engineer)->first();;
-        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
-            ->where('eng_id', $engineer->id)
-            ->latest()->paginate(6);
+
+        // Check if an engineer is selected in the search form
+        if ($request->has('engineer')) {
+            // Store the selected engineer's name in the session
+            session()->put('selected_engineer', $request->engineer);
+        }
+
+        // Retrieve the selected engineer's name from the session
+        $selectedEngineerName = session()->get('selected_engineer');
+
+        // Find the corresponding user based on the stored name
+        $engineer = $selectedEngineerName
+            ? User::where('name', $selectedEngineerName)->first()
+            : null;
+
+        $tasksQuery = department_task_assignment::where('department_id', Auth::user()->department_id);
+
+        // If an engineer is selected, filter tasks by engineer
+        if ($engineer) {
+            $tasksQuery->where('eng_id', $engineer->id);
+        }
+
+        $tasks = $tasksQuery->latest()->paginate(6);
+
         return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
     }
+
     public function editTask($id)
     {
         $main_task = MainTask::findOrFail($id);
@@ -1454,6 +1498,8 @@ class DashBoardController extends Controller
             'isCompleted' => "0",
             'status' => 'pending',
             'notes' => $note,
+            'notified' => 1,
+            'updated_by_department_id' => Auth::user()->department_id
         ]);
 
         // Check if the task is already assigned to the selected department

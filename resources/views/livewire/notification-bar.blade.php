@@ -45,16 +45,22 @@
 
     <div class="notification-list">
         @foreach ($incomingTasksConvertedNotifications as $notification)
-        <div class="notification-item">
+        <div class="notification-item border-bottom mb-3 pb-3">
             <div class="d-flex align-items-center">
                 <i class="{{ $notification['icon'] }} text-primary me-3" style="font-size: 24px;"></i>
                 <div>
-                    <span class="fw-bold">{{ $notification['label'] }}</span>
-                    <p class="notification-subtext mb-0">{{ $notification['subtext'] }}</p>
+                    <a href="{{ route('dashboard.viewTask', ['id' => $notification['department_task_id'] ]) }}"
+                        wire:click="markAsRead({{ $notification['id'] }})" class="text-decoration-none">
+
+                        <span class="fw-bold">{{ $notification['label'] }}</span>
+                        <p class="notification-subtext mb-0">{{ $notification['subtext'] }}</p>
+                    </a>
+
                 </div>
             </div>
         </div>
         @endforeach
+
     </div>
 
     @endif

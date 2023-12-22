@@ -93,6 +93,7 @@
 
                             {!! $section_task->action_take !!}
 
+
                             @endif
                             @if($section_task->eng_id === Auth::user()->id)
 

@@ -165,38 +165,51 @@
                                         <div>
                                             <h5>Action Take Details</h5>
 
-                                            @foreach($task->main_task->section_tasks as $sectionTask)
-                                            <div class="card mt-3">
-                                                <div class="card-body">
-                                                    <p><strong>Engineer:</strong> {{ $sectionTask->engineer->name }}</p>
-                                                    <p><strong>Department:</strong> {{ $sectionTask->department->name }}
+                                            @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
+                                            @if($sectionTask->approved ||$sectionTask->department_id ==
+                                            Auth::user()->department_id )
+                                            <div class="card mt-3 ">
+                                                <div class="card-body border">
+                                                    <p
+                                                        class="p-2 {{$sectionTask->department_id == Auth::user()->department_id ? 'bg-info' : 'bg-dark'}}">
+                                                        Department:
+                                                        <strong>{{ $sectionTask->department->name}}</strong>
                                                     </p>
-                                                    <p><strong>Action Take:</strong> {!!
-                                                        strip_tags($sectionTask->action_take) !!}</p>
-                                                    <p><strong>Created at:</strong> {{ $sectionTask->created_at }}</p>
-                                                    <div class="d-flex">
-                                                        @if($sectionTask->eng_id === Auth::user()->id)
-                                                        <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
-                                                            class="btn btn-sm btn-dark mx-2 mb-1">
-                                                            <i class="fas fa-pencil-alt"></i> Update Report
-                                                        </a>
-                                                        @endif
+                                                    <div class="p-2">
+                                                        <p><strong>Engineer:</strong> {{
+                                                            $sectionTask->engineer->name }}</p>
+                                                        </p>
+                                                        <p><strong>Action Take:</strong> {!!
+                                                            strip_tags($sectionTask->action_take) !!}</p>
+                                                        <p><strong>Created at:</strong> {{ $sectionTask->created_at }}
+                                                        </p>
+                                                        <div class="d-flex">
+                                                            @if($sectionTask->eng_id === Auth::user()->id)
+                                                            <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
+                                                                class="btn btn-sm btn-dark mx-2 mb-1">
+                                                                <i class="fas fa-pencil-alt"></i> Update Report
+                                                            </a>
+                                                            @endif
 
-                                                        @if($sectionTask->department_id == Auth::user()->department_id)
-                                                        <form method="POST"
-                                                            action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="btn btn-sm btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
-                                                                <i class="fa fa-check-circle"></i>
-                                                                {{ $sectionTask->approved == '0' ? 'Approve Report' :
-                                                                'Cancel Approval' }}
-                                                            </button>
-                                                        </form>
-                                                        @endif
+                                                            @if($sectionTask->department_id ==
+                                                            Auth::user()->department_id)
+                                                            <form method="POST"
+                                                                action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
+                                                                @csrf
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
+                                                                    <i class="fa fa-check-circle"></i>
+                                                                    {{ $sectionTask->approved == '0' ? 'Approve Report'
+                                                                    :
+                                                                    'Cancel Approval' }}
+                                                                </button>
+                                                            </form>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            @endif
                                             @endforeach
 
 

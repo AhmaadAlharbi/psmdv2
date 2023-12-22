@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\department_task_assignment;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\MainTask;
@@ -204,30 +205,81 @@ class NotificationBar extends Component
                     $query->where('department_id', Auth::user()->department_id);
                 })
                 ->where('updated_by_department_id', '!=', Auth::user()->department_id)
-
                 ->where('notified', true) // Only get tasks that haven't been notified
                 ->get();
 
-            foreach ($tasks as $task) {
-                // Process each converted task and add to notifications
-                // Utilize optional() to handle potential null values more gracefully
-                $label = optional($task->station)->SSNAME ?? 'Unknown Station';
-                // Determine the appropriate message based on the notification type
-                $message = "Action is required for this station ";
-                // Update the total notifications count and specific type count
-                $this->totalNotifications++;
-                $this->incomingTasksNotificationsCount++;
-                // Add the notification to the array
-                $this->incomingTasksConvertedNotifications[] = [
-                    'type' => 'converted',
-                    'icon' => 'la la-refresh', // Updated icon
-                    'label' => $label,
-                    'subtext' => $message,
-                ];
+            // foreach ($tasks as $task) {
 
-                // Mark the task as notified
-                // $task->update(['notified' => false]);
+            //     // Process each converted task and add to notifications
+            //     // Utilize optional() to handle potential null values more gracefully
+            //     $label = optional($task->station)->SSNAME ?? 'Unknown Station';
+            //     // Determine the appropriate message based on the notification type
+            //     $message = "Action is required for this station ";
+            //     // Update the total notifications count and specific type count
+            //     $this->totalNotifications++;
+            //     $this->incomingTasksNotificationsCount++;
+            //     // Add the notification to the array
+
+            //     $this->incomingTasksConvertedNotifications[] = [
+            //         'id' => $task->departmentsAssienments->id,
+            //         'type' => 'converted',
+            //         'icon' => 'la la-refresh', // Updated icon
+            //         'label' => $label,
+            //         'subtext' => $message,
+            //     ];
+
+            //     // Mark the task as notified
+            //     // $task->update(['notified' => false]);
+            // }
+
+            foreach ($tasks as $task) {
+                foreach ($task->departmentsAssienments as $departmentAssignment) {
+                    // Check if the department_id is different from the current user's department_id
+                    if ($departmentAssignment->department_id != Auth::user()->department_id) {
+                        $label = optional($task->station)->SSNAME ?? 'Unknown Station';
+                        $message = "The task has been updated by the " . $departmentAssignment->department->name;
+
+                        $this->totalNotifications++;
+                        $this->incomingTasksNotificationsCount++;
+
+                        $this->incomingTasksConvertedNotifications[] = [
+                            'id' => $task->id, // to show it based on department task id
+                            'department_task_id' => $departmentAssignment->id, //
+                            'type' => 'converted',
+                            'icon' => 'la la-refresh',
+                            'label' => $label,
+                            'subtext' => $message,
+                        ];
+
+                        // Mark the task as notified
+                        // $task->update(['notified' => false]);
+                    }
+                }
             }
+            // foreach ($tasks as $task) {
+            //     // Retrieve the first related department_task_assignment
+            //     $departmentAssignment = $task->departmentsAssienments->first();
+
+            //     if ($departmentAssignment) {
+            //         $label = optional($task->station)->SSNAME ?? 'Unknown Station';
+            //         $message = "The task has been updated by the " . $departmentAssignment->department->name;
+
+
+            //         $this->totalNotifications++;
+            //         $this->incomingTasksNotificationsCount++;
+
+            //         $this->incomingTasksConvertedNotifications[] = [
+            //             'id' => $departmentAssignment->id, //to show it based on department task id
+            //             'type' => 'converted',
+            //             'icon' => 'la la-refresh',
+            //             'label' => $label,
+            //             'subtext' => $message,
+            //         ];
+
+            //         // Mark the task as notified
+            //         // $task->update(['notified' => false]);
+            //     }
+            // }
 
             return $tasks;
         }
@@ -235,55 +287,18 @@ class NotificationBar extends Component
 
 
 
-    public function checkForOutgoingTasks()
+
+    public function markAsRead($id)
     {
-        $user = auth()->user();
-        // Check if the user is authenticated and has a department_id
-        if ($user && $user->department_id) {
-            $department_id = $user->department_id;
+        // Find the department_task_assignment by ID
+        // $departmentTask = department_task_assignment::findOrFail($id);
 
-            // Use a more explicit query to avoid potential issues
-            $task_converted = TaskConversions::Where('source_department', $department_id)
-                ->get();
-            // Check if there are any converted tasks
-            if ($task_converted->isNotEmpty()) {
-                foreach ($task_converted as $task) {
-                    // Utilize optional() to handle potential null values more gracefully
-                    $label = optional($task->main_task->station)->SSNAME ?? 'Unknown Station';
-                    // Check if the task is being converted from or to the user's department
-                    $this->incomingTasksConvertedNotifications[] = [
-                        'type' => 'converted',
-                        'icon' => 'la la-refresh', // Updated icon
-                        'label' => $label,
-                        'subtext' => "A task is being converted from {$task->department->name}",
+        // Find the associated MainTask
+        $mainTask = MainTask::findOrFail($id);
 
+        // Check authorization (customize this based on your app's logic)
 
-                    ];
-                }
-            }
-        }
-    }
-
-    // In your NotificationBar Livewire component
-
-    public function markNotificationAsRead($notificationType, $id)
-    {
-        if ($notificationType === 'registration') {
-            $user = User::findOrFail($id);
-            $user->update(['is_notified' => true]);
-
-            // Remove the clicked user from the notifications array
-            $this->usersNotifications = array_filter($this->usersNotifications, function ($notification) use ($id) {
-                return $notification['id'] !== $id;
-            });
-        } elseif ($notificationType === 'report') {
-            $report = SectionTask::findOrFail($id);
-            $report->update(['is_notified' => true]);
-
-            // Remove the clicked report from the notifications array
-            $this->reportsNotifications = array_filter($this->reportsNotifications, function ($notification) use ($id) {
-                return $notification['id'] !== $id;
-            });
-        }
+        // Update the 'notified' attribute
+        $mainTask->update(['notified' => false]);
     }
 }
