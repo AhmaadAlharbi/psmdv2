@@ -157,9 +157,32 @@ class DashBoardController extends Controller
         })->where('isCompleted', '1')->count();
 
         // Get the latest completed section tasks in the user's department, including those that were previously in the user's department
-        $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
-            $query->where('department_id', $departmentId);
-        })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
+
+        if (Auth::user()->department_id == 1) {
+            $mainTasksWithDepartments = MainTask::with('departmentsAssienments', 'sharedDepartments', 'section_tasks')
+                ->whereHas('departmentsAssienments', function ($query) {
+                    $query->where('department_id', 1);
+                })
+                ->get();
+            $completedTasks = collect();
+
+            foreach ($mainTasksWithDepartments as $mainTask) {
+                // Get the related SectionTasks for each MainTask
+                $sectionTasks = $mainTask->section_tasks
+                    ->where('isCompleted', 1)
+                    ->where('approved', 1);
+
+                // Add the SectionTasks to the $completedTasks collection
+                $completedTasks = $completedTasks->merge($sectionTasks);
+            }
+        } else {
+            $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
+                $query->where('department_id', $departmentId);
+            })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
+        }
+
+
+
 
         // Get the number of main tasks that were previously in the user's department and are now in another department
         // $mutualTasksCount = TaskConversions::where('destination_department', $departmentId)
@@ -785,22 +808,55 @@ class DashBoardController extends Controller
             ->get()
             // Filter the collection to include only records with department_id equal to current user
             ->filter(function ($task) {
-                return $task->department_id == Auth::user()->department_id; // Adjust the condition as needed
+                return $task->department_id == Auth::user()->department_id;
             })
             // Retrieve the first matching record from the filtered collection
             ->first();
-        SectionTask::create([
-            'main_tasks_id' => $mainTask->id,
-            'department_id' => Auth::user()->department_id,
-            'eng_id' => Auth::user()->id,
-            'action_take' => $actionContent,
-            'main_alarm_id' => $mainTask->main_alarm_id,
-            'status' => $actionStatus,
-            'engineer-notes' => $request->notes,
-            'user_id' => Auth::user()->id,
-            'date' => now(),
-            'isCompleted' =>  $isCompleted
-        ]);
+        $departmentTasks = $mainTask->departmentsAssienments()->get();
+        foreach ($departmentTasks as $task) {
+            if ($task->department_id == Auth::user()->department_id) {
+                SectionTask::create([
+                    'main_tasks_id' => $mainTask->id,
+                    'department_id' => Auth::user()->department_id,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $actionContent,
+                    'main_alarm_id' => $mainTask->main_alarm_id,
+                    'status' => $actionStatus,
+                    'engineer-notes' => $request->notes,
+                    'user_id' => Auth::user()->id,
+                    'date' => now(),
+                    'isCompleted' => $isCompleted
+                ]);
+            }
+            if ($task->department_id == 1) {
+                SectionTask::create([
+                    'main_tasks_id' => $mainTask->id,
+                    'department_id' => 1,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $actionContent,
+                    'main_alarm_id' => $mainTask->main_alarm_id,
+                    'status' => $actionStatus,
+                    'engineer-notes' => $request->notes,
+                    'user_id' => Auth::user()->id,
+                    'date' => now(),
+                    'isCompleted' => $isCompleted
+                ]);
+            }
+        }
+
+
+        // SectionTask::create([
+        //     'main_tasks_id' => $mainTask->id,
+        //     'department_id' => Auth::user()->department_id,
+        //     'eng_id' => Auth::user()->id,
+        //     'action_take' => $actionContent,
+        //     'main_alarm_id' => $mainTask->main_alarm_id,
+        //     'status' => $actionStatus,
+        //     'engineer-notes' => $request->notes,
+        //     'user_id' => Auth::user()->id,
+        //     'date' => now(),
+        //     'isCompleted' =>  $isCompleted
+        // ]);
 
         // Step 3: Create a SectionTask for the current department
 
@@ -1129,6 +1185,9 @@ class DashBoardController extends Controller
             $allTasksCompleted = true;
             $isApprove = $report->approved ? 1 : 0;
             foreach ($departmentTasks as $task) {
+                if ($task->department_id == 1) {
+                    $task->update(['isCompleted' => "1"]);
+                }
                 if (!$task->isCompleted) {
                     $allTasksCompleted = false;
                     break; // If any task is not completed, exit the loop

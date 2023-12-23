@@ -672,7 +672,7 @@ class AddTask extends Component
                 $user = User::where('email', $engineerEmail)->first();
                 if ($user) {
                     // Assuming you have defined a notification class called TaskReport
-                    Notification::send($user, new TaskReport($mainTask, $this->photos));
+                    // Notification::send($user, new TaskReport($mainTask, $this->photos));
                 }
             }
         } catch (\Exception $e) {
@@ -695,6 +695,12 @@ class AddTask extends Component
         $destinationDepartment = $this->selectedDepartment;
         $mainTask = MainTask::latest()->first();
         $main_task_id = $mainTask->id; // Retrieve the ID of the created MainTask
+        $mainTask->update([
+            'updated_by_department_id' => Auth::user()->department_id,
+            'notified' => 1,
+        ]);
+        $mainTask->sharedDepartments()->attach($sourceDepartment);
+        $mainTask->sharedDepartments()->attach($destinationDepartment);
         $departmentTask = department_task_assignment::create([
             'department_id' => $sourceDepartment,
             'main_tasks_id' => $main_task_id,

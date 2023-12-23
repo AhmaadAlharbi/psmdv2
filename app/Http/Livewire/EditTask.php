@@ -497,6 +497,15 @@ class EditTask extends Component
         if ($sharedTasks) {
             $sharedTasks->delete();
         }
+        $departmentTask = $this->task->departmentsAssienments()
+            ->where('department_id', 1)
+            ->first();
+        if ($departmentTask) {
+            $departmentTask->update([
+                'eng_id' => $this->user_id
+            ]);
+        }
+
         // Update the existing department task assignment for the user's department
         $userDepartmentTask = department_task_assignment::where('main_tasks_id', $mainTaskId)
             ->where('department_id', $userDepartmentId)
