@@ -396,6 +396,7 @@
                     <thead>
                         <tr class="bg-secondary-gradient">
                             <th class="text-lg">ID</th>
+                            <th class="text-lg">Department</th>
                             <th class="text-lg">STATION</th>
                             <th class="text-lg d-none d-md-table-cell">Main Alarm</th>
                             <th class="text-lg d-none d-md-table-cell">DATE</th>
@@ -406,7 +407,15 @@
                         @foreach($unAssignedTasks as $task)
                         <tr>
                             <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
+                            <td>
+                                @foreach($task->main_task->sharedDepartments as $dep)
+                                @if($dep->id != Auth::user()->department_id)
+                                <p><strong> {{$dep->name}}</strong></p>
+                                @endif
+                                @endforeach
+                            </td>
                             <td class="text-lg">
+
                                 @if($task->main_task->station_id)
                                 {{$task->main_task->station->SSNAME}}
                                 @else
@@ -415,6 +424,7 @@
                             </td>
 
                             <td class="text-lg d-none d-md-table-cell">
+
                                 @if(isset($task->main_task->main_alarm_id))
                                 {{$task->main_task->main_alarm->name}}
                                 @else
@@ -561,8 +571,12 @@
                                 @endif
                             </td>
                             <td>
+                                @foreach($task->main_task->sharedDepartments as $dep)
+                                @if($dep->id != Auth::user()->department_id)
+                                <p><strong>Department : {{$dep->name}}</strong></p>
+                                @endif
+                                @endforeach
                                 <!-- Station -->
-
 
                                 <!-- Main Alarm -->
                                 @if(isset($task->main_task->main_alarm_id))
@@ -618,23 +632,18 @@
                                                 <i class="fas fa-eye me-2"></i> View
                                             </a>
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
-                                                <i class="fas fa-edit me-2"></i> Edit
-                                            </a>
-                                        </li>
+
                                         <li>
                                             <a class="dropdown-item"
                                                 href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
                                                 <i class="fas fa-history me-2"></i> History
                                             </a>
                                         </li>
+                                        @if(Auth::user()->department_id == $task->department_id)
                                         <li>
-                                            <a class="dropdown-item btn btn-danger btn-gradient mt-3 ms-2 pd-sm-x-25 pd-x-15"
-                                                data-bs-target="#moveTask-{{ $task->id }}" data-bs-toggle="modal"
-                                                href="#">
-                                                <i class="fas fa-exchange-alt me-2"></i> Move to Another Department
+                                            <a class="dropdown-item"
+                                                href="{{ route('dashboard.editTask', $task->main_tasks_id) }}">
+                                                <i class="fas fa-edit me-2"></i> Edit
                                             </a>
                                         </li>
                                         <li>
@@ -658,6 +667,15 @@
                                                 </button>
                                             </form>
                                         </li>
+                                        @endif
+                                        <li>
+                                            <a class="dropdown-item btn btn-danger btn-gradient mt-3 ms-2 pd-sm-x-25 pd-x-15"
+                                                data-bs-target="#moveTask-{{ $task->id }}" data-bs-toggle="modal"
+                                                href="#">
+                                                <i class="fas fa-exchange-alt me-2"></i> Move to Another Department
+                                            </a>
+                                        </li>
+
                                     </ul>
                                 </div>
 

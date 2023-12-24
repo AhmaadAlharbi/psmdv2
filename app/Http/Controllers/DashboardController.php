@@ -142,6 +142,19 @@ class DashBoardController extends Controller
             ->where('status', "!=", 'converted')
             ->whereNotNull('eng_id')
             ->where('isCompleted', "0")->latest()->get();
+        if (Auth::user()->department_id == 1) {
+            $pendingMainTasksWithDepartments = MainTask::with('departmentsAssienments', 'sharedDepartments')
+                ->whereHas('sharedDepartments', function ($query) {
+                    $query->where('department_id', 1);
+                })
+                ->whereHas('departmentsAssienments', function ($query) {
+                    $query->where('status', "!=", 'converted');
+                    $query->where('isCompleted', "0");
+                })
+                ->latest()
+                ->get();
+            $pendingTasks = $pendingMainTasksWithDepartments->pluck('departmentsAssienments')->flatten();
+        }
 
         $unAssignedTasks =  department_task_assignment::where(function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
@@ -160,7 +173,7 @@ class DashBoardController extends Controller
 
         if (Auth::user()->department_id == 1) {
             $mainTasksWithDepartments = MainTask::with('departmentsAssienments', 'sharedDepartments', 'section_tasks')
-                ->whereHas('departmentsAssienments', function ($query) {
+                ->whereHas('sharedDepartments', function ($query) {
                     $query->where('department_id', 1);
                 })
                 ->get();
@@ -171,7 +184,6 @@ class DashBoardController extends Controller
                 $sectionTasks = $mainTask->section_tasks
                     ->where('isCompleted', 1)
                     ->where('approved', 1);
-
                 // Add the SectionTasks to the $completedTasks collection
                 $completedTasks = $completedTasks->merge($sectionTasks);
             }

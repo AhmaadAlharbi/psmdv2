@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('main_task_id')->constrained();
             $table->foreignId('department_id')->constrained();
+            $table->boolean('tracked')->default(1);
             $table->timestamps();
         });
     }
@@ -28,6 +29,9 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('shared_tasks', function (Blueprint $table) {
+            $table->dropForeign(['main_task_id']);
+        });
         Schema::dropIfExists('shared_tasks');
     }
 };

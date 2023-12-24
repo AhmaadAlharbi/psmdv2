@@ -134,90 +134,110 @@
                                         action="{{ route('dashboard.submitEngineerReport', ['id' => $tasks->main_tasks_id]) }}"
                                         enctype="multipart/form-data" method="post" autocomplete="off">
                                         @csrf
-                                        <div class="form-label">Task status</div>
-                                        <div class="custom-controls-stacked mt-3">
-                                            {{-- <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status" value="task_progress" checked>
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-info">First
-                                                    draft
-                                                </span>
 
-                                                <small class="text-secondary mt-2">
-                                                    Note: If you do not provide a progress update within 24 hours from
-                                                    receiving the task, it will be marked as a late reply.
-                                                </small>
-                                            </label> --}}
-
-                                            <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status" value="completed" checked>
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-success">Completed</span>
-                                            </label>
-                                            <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status" value="Responsibility of another entity">
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-success">Responsibility
-                                                    of another entity</span>
-                                            </label>
-                                            <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status" value="Under warranty">
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-success">Under
-                                                    warranty</span>
-                                            </label>
-                                            <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status" value="Spare parts not available">
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-danger">Spare
-                                                    parts not available</span>
-                                            </label>
-                                            <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status" value="Awaiting repairs">
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-danger">Awaiting
-                                                    repairs</span>
-                                            </label>
-                                            <label class="custom-control form-radio custom-control-md">
-                                                <input type="radio" class="custom-control-input"
-                                                    name="action_take_status"
-                                                    value="Transferring the task to another engineer">
-                                                <span
-                                                    class="custom-control-label custom-control-label-md tx-17 text-danger">Transferring
-                                                    the task to another engineer.</span>
-                                            </label>
+                                        <div class="alert alert-info" role="alert">
+                                            <strong>Note:</strong> Icons indicate task status.
+                                            <br>
+                                            <i class="fas fa-check-circle text-success"></i> Completed: Task is
+                                            finished.
+                                            <br>
+                                            <i class="fas fa-hourglass-half text-warning"></i> Pending: Task is in
+                                            progress.
                                         </div>
-                                        <textarea class="content5" name="action_take"></textarea>
 
 
-                                        @error('action_take')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-
-                                        <div id="attachmentFile"
-                                            class="e d-flex flex-column align-items-start justify-content-start">
-                                            <div class="col-sm-12 col-md-12">
-                                                <input type="file" name="pic[]" class="dropify"
-                                                    accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" />
-                                            </div><br>
-                                            <div class="col-sm-12 col-md-12">
-                                                <input type="file" name="pic[]" class="dropify"
-                                                    accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" />
-                                            </div><br>
-                                            <div class="col-sm-12 col-md-12">
-                                                <input type="file" name="pic[]" class="dropify"
-                                                    accept=".pdf,.jpg, .png, image/jpeg, image/png" data-height="70" />
-                                            </div><br>
+                                        <div class="form-group">
+                                            <label for="taskStatus">Task Status</label>
+                                            <div class="custom-controls-stacked mt-3">
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="completed" name="action_take_status"
+                                                        value="completed" class="custom-control-input" checked>
+                                                    <label class="custom-control-label completed-label" for="completed">
+                                                        <i class="fas fa-check-circle text-success"></i> Completed
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="responsibility" name="action_take_status"
+                                                        value="Responsibility of another entity"
+                                                        class="custom-control-input">
+                                                    <label class="custom-control-label" for="responsibility">
+                                                        <i class="fas fa-check-circle text-success"></i></i>
+                                                        Responsibility of another entity
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="warranty" name="action_take_status"
+                                                        value="Under warranty" class="custom-control-input">
+                                                    <label class="custom-control-label" for="warranty">
+                                                        <i class="fas fa-check-circle text-success"></i> Under
+                                                        warranty
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="spareParts" name="action_take_status"
+                                                        value="Spare parts not available" class="custom-control-input">
+                                                    <label class="custom-control-label" for="spareParts">
+                                                        <i class="fas fa-hourglass-half text-warning"></i> Spare
+                                                        parts
+                                                        not available
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="awaitingRepairs" name="action_take_status"
+                                                        value="Awaiting repairs" class="custom-control-input">
+                                                    <label class="custom-control-label" for="awaitingRepairs">
+                                                        <i class="fas fa-hourglass-half text-warning"></i> Awaiting
+                                                        repairs
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="transferTask" name="action_take_status"
+                                                        value="Transferring the task to another engineer"
+                                                        class="custom-control-input">
+                                                    <label class="custom-control-label" for="transferTask">
+                                                        <i class="fas fa-hourglass-half text-warning"></i>
+                                                        Transferring
+                                                        the task to another engineer
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
+
+                                        <div class="form-group">
+                                            <label for="actionTake">Action Take</label>
+                                            <textarea class="form-control content5" name="action_take"></textarea>
+                                            @error('action_take')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="attachmentFile">Attachment Files</label>
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-4">
+                                                    <input type="file" name="pic[]" class="dropify"
+                                                        accept=".pdf,.jpg, .png, image/jpeg, image/png"
+                                                        data-height="70" />
+                                                </div>
+                                                <div class="col-sm-12 col-md-4">
+                                                    <input type="file" name="pic[]" class="dropify"
+                                                        accept=".pdf,.jpg, .png, image/jpeg, image/png"
+                                                        data-height="70" />
+                                                </div>
+                                                <div class="col-sm-12 col-md-4">
+                                                    <input type="file" name="pic[]" class="dropify"
+                                                        accept=".pdf,.jpg, .png, image/jpeg, image/png"
+                                                        data-height="70" />
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <button type="submit" class="btn btn-info">Submit Report</button>
+                                    </form>
                                 </div>
-                                </form>
+
+
+
 
 
                             </div>

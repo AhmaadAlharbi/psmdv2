@@ -28,4 +28,8 @@ class department_task_assignment extends Model
     {
         return $this->hasMany(TaskLog::class, 'task_id', 'id');
     }
+    public function sharedDepartments()
+    {
+        return $this->belongsToMany(Department::class, 'shared_tasks');
+    }
 }

@@ -702,7 +702,7 @@ class AddTask extends Component
         $mainTask->sharedDepartments()->attach($sourceDepartment);
         $mainTask->sharedDepartments()->attach($destinationDepartment);
         $departmentTask = department_task_assignment::create([
-            'department_id' => $sourceDepartment,
+            'department_id' => $destinationDepartment,
             'main_tasks_id' => $main_task_id,
             'status' => 'pending',
             'is_emergency' => $this->is_emergency
