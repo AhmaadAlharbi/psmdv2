@@ -8,6 +8,22 @@
         font-style: italic !important;
     }
 
+    .engineer-note {
+        border: 1px solid #3498db;
+        /* Border color: Blue */
+        border-radius: 0.25rem;
+        /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow */
+        padding: 10px;
+        /* Padding for content */
+        margin-top: 10px;
+        /* Spacing from other elements */
+        background-color: #ecf0f1;
+        /* Background color: Light Grey */
+        /* Custom background color */
+    }
+
     /* Add these styles to your stylesheet or in a <style> tag in your HTML */
     .table-pending {
         background-color: #e87676;
@@ -550,7 +566,6 @@
 
             <div class="table-responsive">
                 <table id="pending-tasks" class="table table-bordered table-striped text-nowrap">
-
                     <thead class="thead-danger">
                         <tr class="table-pending">
                             <th>ID</th>
@@ -608,8 +623,10 @@
                                 </div>
                                 @foreach($task->main_task->section_tasks as $sectionTask)
                                 @if($sectionTask->department_id == $task->department_id)
-                                <div class="mt-3 pt-3 border bg-warning">
-                                    <p class="px-2 "> Engineer Note<br> Eng.{{$sectionTask->engineer->name}} : {!!
+                                <div class="engineer-note">
+                                    <p class="px-2 mb-0">
+                                        <strong>Engineer Note</strong><br>
+                                        Eng.{{ $sectionTask->engineer->name }}: {!!
                                         strip_tags($sectionTask->action_take) !!}
                                     </p>
                                 </div>
@@ -669,9 +686,8 @@
                                         </li>
                                         @endif
                                         <li>
-                                            <a class="dropdown-item btn btn-danger btn-gradient mt-3 ms-2 pd-sm-x-25 pd-x-15"
-                                                data-bs-target="#moveTask-{{ $task->id }}" data-bs-toggle="modal"
-                                                href="#">
+                                            <a class="dropdown-item " data-bs-target="#moveTask-{{ $task->id }}"
+                                                data-bs-toggle="modal" href="#">
                                                 <i class="fas fa-exchange-alt me-2"></i> Move to Another Department
                                             </a>
                                         </li>
