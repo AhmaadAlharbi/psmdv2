@@ -9,7 +9,23 @@
     }
 
     .engineer-note {
-        border: 1px solid #3498db;
+        border: 1px solid #db3434;
+        /* Border color: Blue */
+        border-radius: 0.25rem;
+        /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow */
+        padding: 10px;
+        /* Padding for content */
+        margin-top: 10px;
+        /* Spacing from other elements */
+        background-color: #ecf0f1;
+        /* Background color: Light Grey */
+        /* Custom background color */
+    }
+
+    .action_take {
+        border: 1px solid #34db93;
         /* Border color: Blue */
         border-radius: 0.25rem;
         /* Rounded corners */

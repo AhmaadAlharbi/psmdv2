@@ -136,14 +136,15 @@
                                         @csrf
 
                                         <div class="alert alert-info" role="alert">
-                                            <strong>Note:</strong> Icons indicate task status.
+                                            <strong>Note:</strong> The icons serve as indicators for the task status.
                                             <br>
-                                            <i class="fas fa-check-circle text-success"></i> Completed: Task is
-                                            finished.
+                                            <i class="fas fa-check-circle text-success"></i> Completed: This icon
+                                            signifies that the task has been successfully finished.
                                             <br>
-                                            <i class="fas fa-hourglass-half text-warning"></i> Pending: Task is in
-                                            progress.
+                                            <i class="fas fa-hourglass-half text-warning"></i> Pending: This icon
+                                            represents a task that is currently in progress and awaits completion.
                                         </div>
+
 
 
                                         <div class="form-group">
@@ -192,14 +193,14 @@
                                                 </div>
                                                 <div class="custom-control custom-radio mb-2">
                                                     <input type="radio" id="transferTask" name="action_take_status"
-                                                        value="Transferring the task to another engineer"
+                                                        value="Transfer the task to another engineer"
                                                         class="custom-control-input">
                                                     <label class="custom-control-label" for="transferTask">
                                                         <i class="fas fa-hourglass-half text-warning"></i>
-                                                        Transferring
-                                                        the task to another engineer
+                                                        Transfer the task to another engineer
                                                     </label>
                                                 </div>
+
                                             </div>
                                         </div>
 

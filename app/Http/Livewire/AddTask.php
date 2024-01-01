@@ -547,7 +547,7 @@ class AddTask extends Component
         // Retrieve the main task ID from the created MainTask instance
         $main_task_id = $mainTask->id;
         $this->uploadAttachments($main_task->id);
-        // $this->sendNotifications($main_task, $this->engineerEmail);
+        $this->sendNotifications($main_task, $this->engineerEmail);
         try {
             $this->sendNotifications($main_task, $this->engineerEmail);
         } catch (\Exception $e) {
@@ -672,7 +672,7 @@ class AddTask extends Component
                 $user = User::where('email', $engineerEmail)->first();
                 if ($user) {
                     // Assuming you have defined a notification class called TaskReport
-                    // Notification::send($user, new TaskReport($mainTask, $this->photos));
+                    Notification::send($user, new TaskReport($mainTask, $this->photos));
                 }
             }
         } catch (\Exception $e) {

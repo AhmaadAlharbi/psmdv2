@@ -32,8 +32,8 @@
                             <p><strong>Department : {{$dep->name}}</strong></p>
                             @endif
                             @endforeach
-                            <!-- Station -->
-
+                            <!-- date -->
+                            <div><strong>Date : </strong>{{$task->created_at}}<br></div>
                             <!-- Main Alarm -->
                             @if(isset($task->main_task->main_alarm_id))
                             <div><strong>Main Alarm:</strong> {{ $task->main_task->main_alarm->name }}</div>

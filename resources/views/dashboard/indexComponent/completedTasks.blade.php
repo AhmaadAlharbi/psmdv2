@@ -23,8 +23,9 @@
                         <td>{{ $task->main_task->station->SSNAME }}</td>
                         <td>
                             @isset($task->main_alarm_id)
-                            {{ $task->main_task->main_alarm->name }}
+                            <strong>Main Alarm:</strong> {{ $task->main_task->main_alarm->name }} <br>
                             @endisset
+                            <strong>Alarm Date:</strong> {{ $task->main_task->created_at }}<br>
                             <div class="engineer-details">
                                 <strong>Engineer:</strong>
                                 <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
@@ -32,10 +33,12 @@
                                 </a>
                             </div>
                             <div class="additional-details">
-                                <strong>Action Take:</strong>
-                                <div class="task-action-container">
+
+                                <div class="action_take">
+                                    <strong>Action Take:</strong>
                                     {!! $task->action_take !!}
                                 </div>
+
                                 <br>
                                 <strong>Status:</strong>
                                 <span class="badge bg-success">{{ $task->status }}</span>
