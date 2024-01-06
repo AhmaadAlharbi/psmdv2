@@ -12,6 +12,7 @@
         }
     }
 </style>
+
 @endsection
 
 @section('content')
@@ -78,19 +79,28 @@
                             <tr>
                                 <td class="valign-middle" colspan="2">
                                     <div class="invoice-notes">
-                                        <label class="main-content-label tx-16">Nature of Fault <span
-                                                class="badge bg-danger me-1"></span></label>
-                                        <p class="tx-20 text-secondary">{{
-                                            $tasks->main_task->problem }} </p>
-                                        @if( $tasks->main_task->notes)
-                                        <label class="main-content-label tx-16">Notes <span
-                                                class="badge bg-danger me-1"></span></label>
-                                        <p class="tx-20 text-secondary">{{
-                                            $tasks->main_task->notes }} </p>
+                                        <div>
+                                            <label class="main-content-label tx-16">Work Type <span
+                                                    class="badge bg-danger me-1"></span></label>
+                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->work_type}}</p>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label class="main-content-label tx-16">Nature of Fault <span
+                                                    class="badge bg-danger me-1"></span></label>
+                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->problem}}</p>
+                                        </div>
+                                        @if($tasks->main_task->notes)
+                                        <div class="mt-3">
+                                            <label class="main-content-label tx-16">Notes <span
+                                                    class="badge bg-danger me-1"></span></label>
+                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->notes}}</p>
+                                        </div>
                                         @endif
+                                        <!-- You can add more sections if needed -->
                                     </div><!-- invoice-notes -->
                                 </td>
                             </tr>
+
 
                         </tbody>
                     </table>
@@ -216,19 +226,13 @@
                                             <label for="attachmentFile">Attachment Files</label>
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-4">
-                                                    <input type="file" name="pic[]" class="dropify"
-                                                        accept=".pdf,.jpg, .png, image/jpeg, image/png"
-                                                        data-height="70" />
+                                                    <input type="file" name="pic[]" class="dropify" data-height="70" />
                                                 </div>
                                                 <div class="col-sm-12 col-md-4">
-                                                    <input type="file" name="pic[]" class="dropify"
-                                                        accept=".pdf,.jpg, .png, image/jpeg, image/png"
-                                                        data-height="70" />
+                                                    <input type="file" name="pic[]" class="dropify" data-height="70" />
                                                 </div>
                                                 <div class="col-sm-12 col-md-4">
-                                                    <input type="file" name="pic[]" class="dropify"
-                                                        accept=".pdf,.jpg, .png, image/jpeg, image/png"
-                                                        data-height="70" />
+                                                    <input type="file" name="pic[]" class="dropify" data-height="70" />
                                                 </div>
                                             </div>
                                         </div>

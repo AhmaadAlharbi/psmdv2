@@ -77,6 +77,11 @@
                                 $section_task->main_task->station->pm }}</span></p>
                     </div>
                     <div class="invoice-notes border task-action-container">
+                        <div>
+                            <label class="main-content-label tx-16 mt-3">Work Type <span
+                                    class="badge bg-danger me-1"></span></label>
+                            <p class="tx-20  ">{{$section_task->main_task->work_type}}</p>
+                        </div>
                         <label class="main-content-label tx-16 mt-3">Nature of Fault <span
                                 class="badge bg-danger me-1"></span></label>
                         <p class="tx-20 text-secondary">{{

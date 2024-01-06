@@ -13,6 +13,8 @@
                         <th class="text-lg">ID</th>
                         <th class="text-lg">Department</th>
                         <th class="text-lg">STATION</th>
+                        <th class="text-lg">Departments Notes</th>
+                        <th class="text-lg">Engineer Notes</th>
                         <th class="text-lg d-none d-md-table-cell">Main Alarm</th>
                         <th class="text-lg d-none d-md-table-cell">DATE</th>
                         <th class="text-lg">OPERATION</th>
@@ -35,6 +37,22 @@
                             {{$task->main_task->station->SSNAME}}
                             @else
                             -
+                            @endif
+                        </td>
+                        <td>
+                            {{$task->main_task->notes}}
+                        </td>
+                        <td>
+                            @if(count($task->main_task->section_tasks) > 0)
+                            @foreach($task->main_task->section_tasks as $sectionTask)
+                            <div class="engineer-note">
+                                <p class="px-2 mb-0">
+                                    <strong> Eng.{{ $sectionTask->engineer->name }}:</strong><br>
+                                    {!!
+                                    strip_tags($sectionTask->action_take) !!}
+                                </p>
+                            </div>
+                            @endforeach
                             @endif
                         </td>
 

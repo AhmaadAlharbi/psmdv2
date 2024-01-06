@@ -347,7 +347,10 @@ class EditTask extends Component
             // Step 8: Handle Department Task Assignment
             $this->handleDepartmentTaskAssignment();
         }
-        // $this->sendNotifications($this->task, $this->engineerEmail);
+
+
+        $this->sendNotifications($this->task, $this->engineerEmail);
+        $this->uploadAttachments($this->task->id);
         session()->flash('success', 'Updated successfully.');
         return redirect("/dashboard/admin");
     }
@@ -415,6 +418,7 @@ class EditTask extends Component
     {
         $this->selectedEngineer = null;
         $this->engineerEmail = null;
+        $this->user_id = null;
         $this->getEngineer();
     }
     private function recordTaskTimeline()

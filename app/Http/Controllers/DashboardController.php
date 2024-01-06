@@ -945,10 +945,14 @@ class DashBoardController extends Controller
             'isCompleted' => $isCompleted,
         ];
 
+
         $departmentTaskUpdates = [
             'status' => $actionStatus,
             'isCompleted' => $isCompleted,
         ];
+        if ($actionStatus == 'Transfer the task to another engineer') {
+            $departmentTaskUpdates['eng_id'] = null;
+        }
         // if ($mainTask->main_alarm->id == 1) {
         //     $this->logTaskCompletion($departmentTask, $actionStatus);
         // }
@@ -1807,10 +1811,10 @@ class DashBoardController extends Controller
             ->get();
         return view('dashboard.importReport', compact('stations', 'main_alarms', 'engineers'));
     }
-    public function resendTask($taskId)
+    public function resendTask($id)
     {
         // Retrieve the task
-        $task = MainTask::findOrFail($taskId);
+        $task = MainTask::findOrFail($id);
 
         $engineerAssignment = $task->departmentsAssienments->first();
 
@@ -1821,13 +1825,18 @@ class DashBoardController extends Controller
             return null;
         }
         // Retrieve attachments for the task
-        $taskAttachments = TaskAttachment::where('main_tasks_id', $taskId)->get();
-        // Send the notification to the engineer's email
+        $attachmentFileNames = [];
+
+        $taskAttachments = TaskAttachment::where('main_tasks_id', $id)->get();
+
+        foreach ($taskAttachments as $attachment) {
+            $attachmentFileNames[] = $attachment->file;
+        }        // Send the notification to the engineer's email
         try {
             $user = User::where('id', $engineerId)->first();
             if ($user) {
                 // Assuming your TaskReport notification class accepts attachments
-                $user->notify(new TaskReport($task, $taskAttachments));
+                $user->notify(new TaskReport($task, $attachmentFileNames));
                 session()->flash('success', 'Email has been sent successfully.');
             } else {
                 session()->flash('error', 'Engineer not found. Please check the email address.');

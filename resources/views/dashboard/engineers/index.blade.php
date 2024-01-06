@@ -100,38 +100,45 @@
 <!-- row -->
 <div class="row">
     <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
-        <div class="card border">
-            <h5 class="card-header bg-danger text-white">Pending Tasks</h5>
+        <div class="card border h-100">
+            <h5 class="card-header bg-danger-gradient text-white">Pending Tasks</h5>
             <div class="card-body">
+
                 @forelse($pendingTasks as $task)
                 <div class="card mb-3">
                     <div class="card-header bg-danger text-white">
                         Task #{{$task->id}}
                     </div>
                     <div class="card-body">
-                        <p class="card-text">
-                            <strong>Created At:</strong> {{$task->created_at}}
-                        </p>
-                        <p class="card-text">
-                            <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
-                        </p>
-                        <p class="card-text">
-                            <strong>Main Alarm:</strong>
-                            @isset($task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
-                        </p>
-                        <p class="card-text">
-                            <strong>Equip:</strong> {{$task->main_task->equip_number}}
-                        </p>
-                        <p class="card-text">
-                            <strong>Nature of Fault:</strong> {{$task->main_task->problem}}
-                        </p>
-                        <p class="card-text">
-                            <strong>Notes:</strong> {{$task->main_task->notes}}
-                        </p>
-                        <p class="card-text">
-                            <strong>Engineer:</strong> <a
-                                href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">{{$task->engineer->name}}</a>
-                        </p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Created At:</strong> {{$task->created_at}}
+                            </li>
+                            <li class="list-group-item font-weight-bold tx fs-5">
+
+                                <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Main Alarm:</strong>
+                                @isset($task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Work Type:</strong> {{$task->main_task->work_type}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Equip:</strong> {{$task->main_task->equip_number}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Nature of Fault:</strong> {{$task->main_task->problem}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Notes:</strong> {{$task->main_task->notes}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Engineer:</strong> <a
+                                    href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">{{$task->engineer->name}}</a>
+                            </li>
+                        </ul>
                     </div>
                     <div class="card-footer">
                         <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
@@ -152,45 +159,45 @@
 
 
 
+
     <div class="col-xl-8 col-md-12 col-lg-6">
         <div class="card border">
-            <h5 class="card-header">Completed Tasks</h5>
+            <h5 class="card-header  bg-primary-gradient text-white">Completed Tasks</h5>
             <div class="card-body">
-                @foreach($completedTasks as $task)
+                @forelse($completedTasks as $task)
                 <div class="card mb-3">
                     <div class="card-header bg-primary text-white">
                         Task #{{$task->id}}
                     </div>
                     <div class="card-body">
-                        <p class="card-text mb-2">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item font-weight-bold tx fs-5">
+                                <span class="">Station:</span>
+                                {{$task->main_task->station->SSNAME}}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Date:</span>
+                                {{ \Carbon\Carbon::parse($task->created_at)->format('Y-m-d H:i') }}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Nature of Fault:</span>
+                                <p class="fs-5  fs-sm-4 text-muted">{{$task->main_task->problem}}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Action Take:</span>
+                                <p class="fs-5 fs-sm-4">{!! strip_tags($task->action_take) !!}</p>
 
-                            <span style="font-size:22px; font-weight:bold;"> Station:
-                                {{$task->main_task->station->SSNAME}}</span>
-                        </p>
-                        <p class="card-text mb-2">
-                            <strong>Date:</strong> {{ \Carbon\Carbon::parse($task->created_at)->format('Y-m-d H:i') }}
-                        </p>
-                        <div class="card-text mb-2">
-                            <strong>Nature of Fault:</strong>
-                            <p class="mb-0 fs-5 text-muted">{{$task->main_task->problem}}</p>
-                            <!-- Increased font size -->
-
-                        </div>
-                        <div class="card-text mb-2">
-                            <strong>Action Take:</strong>
-                            <p class="mb-0 fs-5">{!! strip_tags($task->action_take) !!}</p> <!-- Increased font size -->
-
-                        </div>
-                        <p class="card-text mb-2">
-                            <strong>Engineer:</strong> {{$task->engineer->name}}
-                        </p>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Engineer:</span> {{$task->engineer->name}}
+                            </li>
+                        </ul>
                     </div>
                     <div class="card-footer">
                         @if($task->eng_id === Auth::user()->id)
                         <a href="{{ route('dashboard.requestToUpdateReport', $task->id) }}" class="btn btn-primary">
                             <i class="fas fa-pencil-alt"></i> Update Report
                         </a>
-
                         @endif
                         <a href="{{route('dashboard.reportPage',['id'=>$task->id])}}"
                             class="btn btn-outline-primary float-end">
@@ -199,11 +206,16 @@
                         </a>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="alert alert-warning" role="alert">
+                    <strong>No completed tasks!</strong> There are no completed tasks to display.
+                </div>
+                @endforelse
             </div>
+            {{ $completedTasks->links() }}
         </div>
-        {{ $completedTasks->links() }}
     </div>
+
 
 
 

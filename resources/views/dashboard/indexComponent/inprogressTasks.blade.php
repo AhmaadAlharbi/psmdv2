@@ -1,7 +1,7 @@
 <div class="card">
     <div class="card-header pb-0">
         <div class="d-flex justify-content-between">
-            <h4 class="card-title mg-b-0">Pending Tasks</h4>
+            <h4 class="card-title mg-b-0"> Pending Tasks</h4>
         </div>
     </div>
     <div class="card-body">
@@ -11,71 +11,82 @@
                     <tr class="table-pending">
                         <th>ID</th>
                         <th>Station</th>
-                        <th>Work Type</th>
-                        <th>Details</th>
+                        <th>Department</th>
                         <th>Engineer</th>
-                        <th>Viewed</th>
+                        <th>Notes</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($pendingTasks as $task)
+                    @if(count($task->main_task->section_tasks) > 0)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
                             @if($task->main_task->station_id)
-                            {{ $task->main_task->station->SSNAME }}
+                            <div> {{ $task->main_task->station->SSNAME }}</div>
                             @else
-                            -
+                            <div>-</div>
                             @endif
                         </td>
-                        <td>{{ $task->main_task->work_type }}</td>
                         <td>
+                            @if(!$task->main_task->sharedDepartments || $task->main_task->sharedDepartments->isEmpty())
+                            <p><strong>{{ Auth::user()->department->name }}</strong></p>
+                            @else
                             @foreach($task->main_task->sharedDepartments as $dep)
                             @if($dep->id != Auth::user()->department_id)
                             <p><strong>Department: {{ $dep->name }}</strong></p>
                             @endif
                             @endforeach
-                            <div><strong>Date:</strong> {{ $task->created_at->format('M d, Y H:i A') }}</div>
+                            @endif
+                        </td>
+                        <td>
+
+                            <!-- date -->
+                            <div><strong>Date : </strong>{{$task->created_at}}<br></div>
+                            <!-- Main Alarm -->
                             @if(isset($task->main_task->main_alarm_id))
                             <div><strong>Main Alarm:</strong> {{ $task->main_task->main_alarm->name }}</div>
                             @else
                             <div><strong>Main Alarm:</strong> -</div>
                             @endif
-                            <div class="mt-2"><strong>Status:</strong> <span class="badge bg-danger">{{ $task->status
-                                    }}</span></div>
-                        </td>
-                        <td>
+
+                            <!-- Engineer -->
                             @if($task->eng_id)
-                            <div class="mt-2">
+                            <div class="mt-2"><strong>Engineer:</strong>
                                 <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
                                     {{ $task->engineer->name }} - {{ $task->engineer->department->name }}
-                                </a><br>
-                                @foreach($task->main_task->section_tasks as $sectionTask)
-                                @if($sectionTask->department_id == $task->department_id)
-                                <div class="engineer-note">
-                                    <p class="px-2 mb-0">
-                                        <strong>Engineer Note</strong><br>
-                                        Eng.{{ $sectionTask->engineer->name }}: {!!
-                                        strip_tags($sectionTask->action_take) !!}
-                                    </p>
-                                </div>
+                                </a>
+                                <br> <strong>Viewed:</strong>
+                                @if($task->isSeen)
+                                <i class="fas fa-check-circle text-success"></i>
+                                @else
+                                <i class="fas fa-times-circle text-danger"></i>
                                 @endif
-                                @endforeach
                             </div>
                             @else
                             <div><strong>Engineer:</strong> -</div>
                             @endif
-                        </td>
-                        <td>
-                            @if($task->isSeen)
-                            <i class="fas fa-check-circle text-success" data-bs-toggle="tooltip"
-                                title="Task Viewed"></i>
-                            @else
-                            <i class="fas fa-times-circle text-danger" data-bs-toggle="tooltip"
-                                title="Task Not Viewed"></i>
+
+                            <!-- Status -->
+                            <div class="mt-2"><strong>Status:</strong>
+                                <span class="badge bg-danger">{{ $task->status }}</span>
+                            </div>
+                            @foreach($task->main_task->section_tasks as $sectionTask)
+                            @if($sectionTask->department_id == $task->department_id)
+                            <div class="engineer-note">
+                                <p class="px-2 mb-0">
+                                    <strong>Engineer Note</strong><br>
+                                    Eng.{{ $sectionTask->engineer->name }}: {!!
+                                    strip_tags($sectionTask->action_take) !!}
+                                </p>
+                            </div>
                             @endif
+                            @endforeach
+
                         </td>
+
+
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn btn-danger btn-sm dropdown-toggle"
@@ -89,6 +100,7 @@
                                             <i class="fas fa-eye me-2"></i> View
                                         </a>
                                     </li>
+
                                     <li>
                                         <a class="dropdown-item"
                                             href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
@@ -114,22 +126,15 @@
                                             </button>
                                         </form>
                                     </li>
-                                    {{-- <li>
-                                        <form id="resendTaskForm{{ $task->main_task->id }}" method="post"
+                                    <li>
+                                        <form id="resendTaskForm" method="post"
                                             action="{{ route('resendTask', ['id' => $task->main_task->id]) }}">
                                             @csrf
-                                            <button type="button" class="dropdown-item"
-                                                onclick="confirmResend('{{ $task->main_task->id }}')">
+                                            <button type="button" class="dropdown-item" onclick="confirmResend()">
                                                 <i class="fas fa-paper-plane me-2"></i> Resend Task
                                             </button>
                                         </form>
-                                        <script>
-                                            function confirmResend(taskId) {
-                                                // You can add a confirmation dialog here if needed
-                                                document.getElementById('resendTaskForm' + taskId).submit();
-                                            }
-                                        </script>
-                                    </li> --}}
+                                    </li>
                                     @endif
                                     <li>
                                         <a class="dropdown-item " data-bs-target="#moveTask-{{ $task->id }}"
@@ -137,8 +142,12 @@
                                             <i class="fas fa-exchange-alt me-2"></i> Move to Another Department
                                         </a>
                                     </li>
+
                                 </ul>
                             </div>
+
+
+
                         </td>
                     </tr>
                     <!-- Modal -->
@@ -160,11 +169,13 @@
                                             <label for="departmentSelect">Select Department</label>
                                             <input type="hidden" name="main_task" value="{{ $task->main_tasks_id }}">
                                             <select id="departmentSelect" name="departmentSelect" class="form-select">
-                                                <option value="{{ Auth::user()->department_id }}">{{
-                                                    Auth::user()->department->name }}</option>
+                                                <option value="{{ Auth::user()->department_id }}">
+                                                    {{ Auth::user()->department->name }}
+                                                </option>
                                                 @foreach ($departments as $department)
                                                 @if ($department->id !== Auth::user()->department_id)
-                                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                                <option value="{{ $department->id }}">{{ $department->name }}
+                                                </option>
                                                 @endif
                                                 @endforeach
                                             </select>
@@ -183,34 +194,17 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                     @endforeach
                 </tbody>
             </table>
+
+
+
+
+
+
+
         </div>
     </div>
 </div>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Check if there's a SweetAlert message in the session
-        let successMessage = "{{ session('success') }}";
-        let errorMessage = "{{ session('error') }}";
-
-        if (successMessage) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: successMessage,
-            });
-        }
-
-        if (errorMessage) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: errorMessage,
-            });
-        }
-    });
-</script>
