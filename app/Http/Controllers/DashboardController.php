@@ -515,7 +515,10 @@ class DashBoardController extends Controller
         $pendingTasksCount = department_task_assignment::where('eng_id', Auth::user()->id)->where('isCompleted', '0')->count();
         $pendingTasks = department_task_assignment::where('eng_id', Auth::user()->id)->where('department_id', Auth::user()->department_id)->where('isCompleted', '0')->latest()->paginate(7, ['*'], 'page2');
         $completedTasksCount = SectionTask::where('eng_id', Auth::user()->id)->where('isCompleted', '1')->where('department_id', Auth::user()->department_id)->count();
-        $completedTasks = SectionTask::where('department_id', Auth::user()->department_id)->where('isCompleted', '1')->latest()->paginate(7, ['*'], 'page2');
+        $completedTasks = SectionTask::where('department_id', Auth::user()->department_id)
+            ->where('isCompleted', '1')
+            ->where('approved', "1")
+            ->latest()->paginate(7, ['*'], 'page2');
         $archiveCount = SectionTask::where('department_id', Auth::user()->department_id)->where('isCompleted', '1')->count();
 
         return view('dashboard.engineers.index', compact('pendingTasksCount', 'pendingTasks', 'completedTasksCount', 'completedTasks', 'archiveCount'));
@@ -801,7 +804,7 @@ class DashBoardController extends Controller
             $this->handleFileUploads($request, $mainTask);
 
             // Step 6: Redirect the user to the appropriate page
-            session()->flash('success', 'Your report has been saved successfully.');
+            session()->flash('success', 'Your report has been successfully saved. Please wait for approval as we review your report.');
 
             return redirect("/dashboard/user");
         } catch (\Exception $e) {
@@ -908,7 +911,7 @@ class DashBoardController extends Controller
         // Determine if the task is completed based on its status
         $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
         // 'approved' is set to 1
-        $approved = 1;
+        $approved = 0;
         // Data to create a new SectionTask
         $sectionTaskData = [
             'main_tasks_id' => $mainTask->id,
@@ -1111,6 +1114,13 @@ class DashBoardController extends Controller
     public function pendingReports()
     {
         // Retrieve section tasks for the user's department that are not approved
+        // $sectionTasks = SectionTask::where('department_id', Auth::user()->department_id)
+        //     ->where('approved', false)
+        //     ->with('main_task')
+        //     ->with('main_task.station') // Eager load the station relationship of the main_task
+
+        //     ->get();
+        // Retrieve section tasks for the user's department that are not approved
         $sectionTasks = SectionTask::where('department_id', Auth::user()->department_id)
             ->where('approved', false)
             ->with('main_task')
@@ -1120,7 +1130,7 @@ class DashBoardController extends Controller
         $mainTaskIds = $sectionTasks->pluck('main_tasks_id')->unique();
 
         // Retrieve department task assignments for the user's department and the selected main tasks
-        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+        $northTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
             ->whereIn('main_tasks_id', $mainTaskIds)
             ->with(['main_task' => function ($query) {
                 // Eager load the main_task and its section_tasks
@@ -1129,7 +1139,32 @@ class DashBoardController extends Controller
                     $query->where('department_id', Auth::user()->department_id);
                 }]);
             }])
-            ->paginate(6);
+            ->with('main_task', 'main_task.station') // Eager load the station relationship of the main_task
+            ->whereHas('main_task.station', function ($query) {
+                // Add conditions for the station relationship
+                $query->where(function ($subquery) {
+                    $subquery->whereIn('control', ['JAHRA CONTROL CENTER', 'Town Control Center']); // North area
+                });
+            })
+            ->get();
+
+        $southTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+            ->whereIn('main_tasks_id', $mainTaskIds)
+            ->with(['main_task' => function ($query) {
+                // Eager load the main_task and its section_tasks
+                $query->with(['section_tasks' => function ($query) {
+                    // Filter section_tasks where department_id matches the user's department
+                    $query->where('department_id', Auth::user()->department_id);
+                }]);
+            }])
+            ->with('main_task', 'main_task.station') // Eager load the station relationship of the main_task
+            ->whereHas('main_task.station', function ($query) {
+                // Add conditions for the station relationship
+                $query->where(function ($subquery) {
+                    $subquery->WhereIn('control', ['SHUAIBA CONTROL CENTER', 'JABRIYA CONTROL CENTER']); // South area
+                });
+            })
+            ->get();
 
         // Retrieve all stations
         $stations = Station::all();
@@ -1139,7 +1174,7 @@ class DashBoardController extends Controller
 
         // Additional logic for retrieving or processing reports (not provided in the original code)
 
-        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
+        return view('dashboard.pendingReports', compact('northTasks', 'southTasks', 'stations', 'engineers'));
     }
 
     public function requestToUpdateReport($id)

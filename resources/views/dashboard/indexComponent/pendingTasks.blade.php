@@ -6,7 +6,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table id="pending-tasks" class="table table-bordered table-striped text-nowrap">
+            <table id="file-datatable" class="table table-bordered table-striped text-nowrap">
                 <thead class="thead-danger">
                     <tr class="table-pending">
                         <th>ID</th>
@@ -14,7 +14,6 @@
                         <th>Work Type</th>
                         <th>Details</th>
                         <th>Engineer</th>
-                        <th>Viewed</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -50,6 +49,13 @@
                             <div class="mt-2">
                                 <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
                                     {{ $task->engineer->name }} - {{ $task->engineer->department->name }}
+                                    @if($task->isSeen)
+                                    <i class="fas fa-check-circle text-success" data-bs-toggle="tooltip"
+                                        title="Task Viewed"></i>
+                                    @else
+                                    <i class="fas fa-times-circle text-danger" data-bs-toggle="tooltip"
+                                        title="Task Not Viewed"></i>
+                                    @endif
                                 </a><br>
                                 @foreach($task->main_task->section_tasks as $sectionTask)
                                 @if($sectionTask->department_id == $task->department_id)
@@ -67,15 +73,7 @@
                             <div><strong>Engineer:</strong> -</div>
                             @endif
                         </td>
-                        <td>
-                            @if($task->isSeen)
-                            <i class="fas fa-check-circle text-success" data-bs-toggle="tooltip"
-                                title="Task Viewed"></i>
-                            @else
-                            <i class="fas fa-times-circle text-danger" data-bs-toggle="tooltip"
-                                title="Task Not Viewed"></i>
-                            @endif
-                        </td>
+
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn btn-danger btn-sm dropdown-toggle"

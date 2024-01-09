@@ -20,7 +20,7 @@
 
 <!-- row -->
 <div class="row">
-    @if(Auth::user()->role->title === 'Admin')
+    {{-- @if(Auth::user()->role->title === 'Admin') --}}
     <div class="card mg-b-20" id="tabs-style2">
         <div class="card-body">
             <div class="main-content-label mg-b-5">
@@ -114,7 +114,7 @@
 
         </div>
     </div>
-    @endif
+    {{-- @endif --}}
 
     <div class="container">
         <div class="row">
