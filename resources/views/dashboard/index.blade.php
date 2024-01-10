@@ -67,15 +67,15 @@
 
     </div>
     <div class="btn-group dropdown">
-        <button type="button" class="btn btn-primary">
+        {{-- <button type="button" class="btn btn-primary">
             <i class="fas fa-cog"></i> Control Panel - Filter by Control
-        </button>
+        </button> --}}
 
-        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="dropdownMenuDate"
+        {{-- <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="dropdownMenuDate"
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate" x-placement="bottom-end">
+        </button> --}}
+        {{-- <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate" x-placement="bottom-end">
             <a class="dropdown-item"
                 href="{{ route('dashboard.indexControl', ['control' => 'JAHRA CONTROL CENTER']) }}">Al Jahra Control</a>
             <a class="dropdown-item"
@@ -89,7 +89,43 @@
             <a class="dropdown-item"
                 href="{{ route('dashboard.indexControl', ['control' => 'NATIONAL CONTROL CENTER']) }}">National
                 Control</a>
+        </div> --}}
+        <div class="text-wrap">
+            <div class="example">
+                <nav class="breadcrumb-4">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('dashboard.index') }}">
+                                <i class="fas fa-home me-1"></i> Home
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('dashboard.indexArea', 1) }}">
+                                <i class="fas fa-arrow-alt-circle-up me-1"></i> North Area Tasks
+                            </a>
+                        </li>
+                        @if(Auth::user()->department_id != 2)
+                        <li class="breadcrumb-item active">
+                            <a href="{{ route('dashboard.indexArea', 3) }}">
+                                <i class="fas fa-arrows-alt me-1"></i> Central Area Tasks
+                            </a>
+                        </li>
+                        @endif
+                        <li class="breadcrumb-item active">
+                            <a href="{{ route('dashboard.indexArea', 2) }}">
+                                <i class="fas fa-arrow-alt-circle-down me-1"></i> South Area Tasks
+                            </a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
         </div>
+
+
+
+
+
+
     </div>
 
 </div>

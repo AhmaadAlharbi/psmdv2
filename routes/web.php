@@ -297,6 +297,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     // Add routes that require role_id = 2 here
     Route::get('/dashboard/admin', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+    Route::get('/dashboard/admin/area/{id}', [DashboardController::class, 'indexArea'])->name('dashboard.indexArea')->middleware('auth');
     Route::get('/dashboard/admin/stations', [StationController::class, 'index'])->name('stations.index');
     Route::get('/dashboard/admin/stations/{control}', [StationController::class, 'indexControl'])->name('station.indexControl');
     Route::get('/dashboard/stations/create', [StationController::class, 'create'])->name('stations.create');
