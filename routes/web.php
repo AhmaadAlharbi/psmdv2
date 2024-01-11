@@ -128,6 +128,7 @@ use App\Http\Controllers\StationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EngineersController;
 use App\Http\Controllers\MainAlarmController;
+use App\Http\Controllers\TaskNotesController;
 use App\Http\Controllers\FileActivityController;
 use App\Http\Controllers\FileRelaySettingController;
 use App\Http\Controllers\RelaySettingTasksController;
@@ -354,6 +355,9 @@ Route::middleware(['auth', 'confirmed'])->group(function () {
     Route::get('/archive/search', [DashboardController::class, 'searchArchive'])->name('dashboard.searchArchive');
     Route::get('/contact', [DashboardController::class, 'contactPage'])->name('contactPage');
     Route::post('/contact', [DashboardController::class, 'sendEmail'])->name('sendEmail');
+    Route::get('/task-notes/{department_task_id}/create', [TaskNotesController::class, 'create'])->name('taskNote.create');
+    Route::post('/task-notes/{department_task_id}', [TaskNotesController::class, 'store'])->name('taskNote.store');
+    Route::get('/task-notes/{department_task_id}/show', [TaskNotesController::class, 'show'])->name('taskNote.show');
 });
 Route::get('/file-activities', [FileActivityController::class, 'index']);
 Route::get('/file-relay-settings', [FileRelaySettingController::class, 'index'])->name('relaySetting.index');

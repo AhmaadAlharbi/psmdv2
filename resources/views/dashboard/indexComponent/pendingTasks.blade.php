@@ -89,6 +89,12 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item"
+                                            href="{{ route('taskNote.show', ['department_task_id' => $task->id]) }}">
+                                            <i class="fas fa-eye me-2"></i> View Notes
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
                                             href="{{ route('dashboard.timeline', ['id' => $task->main_tasks_id]) }}">
                                             <i class="fas fa-history me-2"></i> History
                                         </a>
