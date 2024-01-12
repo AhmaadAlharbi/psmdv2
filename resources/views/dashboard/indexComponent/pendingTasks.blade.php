@@ -90,7 +90,7 @@
                                     <li>
                                         <a class="dropdown-item"
                                             href="{{ route('taskNote.show', ['department_task_id' => $task->id]) }}">
-                                            <i class="fas fa-eye me-2"></i> View Notes
+                                            <i class="fas fa-file-alt me-2"></i> Task Notes
                                         </a>
                                     </li>
                                     <li>

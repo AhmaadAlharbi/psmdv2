@@ -426,6 +426,7 @@ class DashBoardController extends Controller
 
                 $completedTasks = $completedTasks->merge($tasksForAssignment);
             }
+            $completedTasks = $completedTasks->sortByDesc('created_at');
         }
 
 

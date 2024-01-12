@@ -38,40 +38,58 @@
             <p class="mb-2">It is Very Easy to Customize and it uses in your website apllication.</p>
         </div>
         <div class="card-body pt-0">
-            <form action="{{route('taskNote.store',$task->id)}}" method="post">
+            <form action="{{ route('taskNote.store', $task->id) }}" method="post">
                 @csrf
-                <div class="">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Station</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1"
-                            value="{{$task->main_task->station->SSNAME}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Main Alarm</label>
-                        @if ($task->main_task->main_alarm)
-                        <input type="text" class="form-control" id="exampleInputEmail1"
-                            value="{{$task->main_task->main_alarm->name}}">
-                        @endif
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Task Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-4">
+                                                <h6 class="text-muted">Station</h6>
+                                                <p class="card-text">{{ $task->main_task->station->SSNAME }}</p>
+                                            </div>
+                                            <div class="mb-4">
+                                                <h6 class="text-muted">Main Alarm</h6>
+                                                @if ($task->main_task->main_alarm)
+                                                <p class="card-text">{{ $task->main_task->main_alarm->name }}</p>
+                                                @endif
+                                            </div>
+                                            <div class="mb-4">
+                                                <h6 class="text-muted">Nature of Fault</h6>
+                                                <p class="card-text">{{ $task->main_task->problem }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-4">
+                                                <h6 class="text-muted">Engineer</h6>
+                                                <p class="card-text">{{ $task->engineer->name }}</p>
+                                            </div>
+                                            <div class="mb-4">
+                                                <h6 class="text-muted">Notes</h6>
+                                                <textarea name="notes" class="form-control" placeholder="Write notes"
+                                                    rows="3"></textarea>
+                                                <button type="submit" class="btn btn-primary mt-3 mb-0">Submit</button>
 
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Nature of fault</label>
-                        <textarea class="form-control">{{$task->main_task->problem}}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Engineer</label>
-                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Password"
-                            value="{{$task->engineer->name}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Notes</label>
-                        <textarea name="notes" class="form-control" placeholder="Textarea" rows="3"
-                            placeholder="Write notes"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
-                <button type="submit" class="btn btn-primary mt-3 mb-0">Submit</button>
+
             </form>
+
+
+
         </div>
     </div>
 
