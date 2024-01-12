@@ -199,7 +199,7 @@
 
 <!--Internal Time Counter -->
 <script src="{{asset('assets/plugins/counters/jquery.missofis-countdown.js')}}"></script>
-<script src="{{asset('assets/plugins/counters/counter.js')}}"></script>
+{{-- <script src="{{asset('assets/plugins/counters/counter.js')}}"></script> --}}
 
 <!--Internal  Chart.bundle js -->
 <script src="{{asset('assets/plugins/chart.js/Chart.bundle.min.js')}}"></script>

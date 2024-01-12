@@ -238,11 +238,29 @@ class DashBoardController extends Controller
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->count();
+        $pendingNorthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('approved', 0)
+            ->where('department_id', '!=', 1)
+            ->whereHas('main_task.departmentsAssienments', function ($query) {
+                $query->where('area_id', 1);
+            })
+            ->count();
+        $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('approved', 0)
+            ->where('department_id', '!=', 1)
+            ->whereHas('main_task.departmentsAssienments', function ($query) {
+                $query->where('area_id', 2);
+            })
+            ->count();
+
+
+
+
         $stationsCount = Station::all()->count();
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
 
-        return view('dashboard.index', compact('engineerData', 'unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        return view('dashboard.index', compact('pendingNorthReportsCount', 'pendingSouthReportsCount', 'engineerData', 'unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
     public function indexArea($id)
     {
@@ -478,8 +496,21 @@ class DashBoardController extends Controller
         $stationsCount = Station::all()->count();
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
-
-        return view('dashboard.index', compact('engineerData', 'unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
+        $pendingNorthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('approved', 0)
+            ->where('department_id', '!=', 1)
+            ->whereHas('main_task.departmentsAssienments', function ($query) {
+                $query->where('area_id', 1);
+            })
+            ->count();
+        $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('approved', 0)
+            ->where('department_id', '!=', 1)
+            ->whereHas('main_task.departmentsAssienments', function ($query) {
+                $query->where('area_id', 2);
+            })
+            ->count();
+        return view('dashboard.index', compact('pendingNorthReportsCount', 'pendingSouthReportsCount', 'engineerData', 'unAssignedTasks', 'departments', 'usersPendingCount', 'stationsCount', 'pendingReportsCount', 'outgoingTasks', 'incomingTasks', 'totalTasksAllTime', 'completedTasksAllTime', 'totalTasksInDay', 'completedTasksInDay', 'totalTasksInWeek', 'completedTasksInWeek', 'totalTasksInMonth', 'completedTasksInMonth', 'sectionTasksCount', 'pendingTasksCount', 'mutualTasksCount', 'pendingTasks', 'completedTasks', 'engineersCount', 'completedTasksCount'));
     }
 
     // return MainTask::with('station')->whereHas('station', function ($query) {
