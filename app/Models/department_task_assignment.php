@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class department_task_assignment extends Model
 {
@@ -31,5 +32,9 @@ class department_task_assignment extends Model
     public function sharedDepartments()
     {
         return $this->belongsToMany(Department::class, 'shared_tasks');
+    }
+    public function task_note()
+    {
+        return $this->hasMany(TaskNotes::class, 'department_task_assignment_id');
     }
 }

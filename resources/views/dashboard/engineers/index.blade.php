@@ -144,6 +144,14 @@
                         <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
                             <i class="fas fa-plus-circle"></i> Add Report
                         </a>
+                        @if($task->task_note()->where('department_task_assignment_id',
+                        $task->id)->exists())
+                        <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
+                            class="btn btn-dark btn-block">
+                            <i class="fas fa-clipboard-list"></i> View Task Notes to Complete the Task
+                        </a>
+
+                        @endif
                     </div>
                 </div>
                 @empty

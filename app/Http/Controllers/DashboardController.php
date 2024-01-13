@@ -781,7 +781,11 @@ class DashBoardController extends Controller
     public function userIndex()
     {
         $pendingTasksCount = department_task_assignment::where('eng_id', Auth::user()->id)->where('isCompleted', '0')->count();
-        $pendingTasks = department_task_assignment::where('eng_id', Auth::user()->id)->where('department_id', Auth::user()->department_id)->where('isCompleted', '0')->latest()->paginate(7, ['*'], 'page2');
+        $pendingTasks = department_task_assignment::where('eng_id', Auth::user()->id)
+            ->where('department_id', Auth::user()->department_id)
+            ->where('isCompleted', '0')
+            ->latest()
+            ->paginate(7, ['*'], 'page2');
         $completedTasksCount = SectionTask::where('eng_id', Auth::user()->id)->where('isCompleted', '1')->where('department_id', Auth::user()->department_id)->count();
         $completedTasks = SectionTask::where('department_id', Auth::user()->department_id)
             ->where('isCompleted', '1')

@@ -57,17 +57,20 @@
                                         title="Task Not Viewed"></i>
                                     @endif
                                 </a><br>
-                                @foreach($task->main_task->section_tasks as $sectionTask)
-                                @if($sectionTask->department_id == $task->department_id)
-                                <div class="engineer-note">
+
+                                <div>
                                     <p class="px-2 mb-0">
-                                        <strong>Engineer Note</strong><br>
-                                        Eng.{{ $sectionTask->engineer->name }}: {!!
-                                        strip_tags($sectionTask->action_take) !!}
+                                        @if($task->task_note()->where('department_task_assignment_id',
+                                        $task->id)->exists())
+                                        <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
+                                            class="btn btn-dark btn-block">
+                                            <i class="fas fa-clipboard-list"></i> View Task Notes
+                                        </a>
+                                        @endif
+
                                     </p>
                                 </div>
-                                @endif
-                                @endforeach
+
                             </div>
                             @else
                             <div><strong>Engineer:</strong> -</div>
@@ -89,7 +92,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item"
-                                            href="{{ route('taskNote.show', ['department_task_id' => $task->id]) }}">
+                                            href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}">
                                             <i class="fas fa-file-alt me-2"></i> Task Notes
                                         </a>
                                     </li>

@@ -58,13 +58,16 @@
                                         </div>
                                         <div class="mb-3">
                                             <h6 class="text-muted"><i class="fas fa-tools"></i> Action Take</h6>
-                                            <p class="card-text">{!! $report->action_take !!}</p>
-                                            @if($report->eng_id === Auth::user()->id)
+                                            <p class="card-text">{!! $report->action_take ?? 'No action taken yet' !!}
+                                            </p>
+
+                                            @if(optional($report)->eng_id === Auth::user()->id)
                                             <a href="{{ route('dashboard.requestToUpdateReport', $report->id) }}"
                                                 class="btn btn-success">
                                                 <i class="fas fa-pencil-alt"></i> Update Report
                                             </a>
                                             @endif
+
                                         </div>
                                     </div>
                                     <div class="col-md-6">

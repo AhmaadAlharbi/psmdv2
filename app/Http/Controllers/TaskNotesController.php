@@ -27,19 +27,25 @@ class TaskNotesController extends Controller
             'department_task_assignment_id' => $task->id,
             'notes' => $request->notes
         ]);
+        if (Auth::user()->id != $task->eng_id) {
+            $task->update([
+                'isCompleted' => "0",
+            ]);
+        }
+
         session()->flash('success', 'Note added successfully!');
         return back();
     }
     public function show($department_task_id)
     {
         $task = department_task_assignment::where('main_tasks_id', $department_task_id)->firstOrFail();
+        $tasksNotes = $task->task_note;
         if (!$task) {
             // Handle the case where the task is not found
             abort(404, 'Task not found');
         }
         $mainTask = $task->main_task;
         $report = $mainTask->section_tasks()->where('approved', 1)->where('isCompleted', "1")->first();
-        $tasksNotes = TaskNotes::where('department_task_assignment_id', $task->id)->latest()->get();
         return view('dashboard.taskNotes.show', compact('task', 'tasksNotes', 'report'));
     }
 }
