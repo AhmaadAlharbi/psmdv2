@@ -6,7 +6,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table id="north-file-datatable" class="table table-bordered table-striped text-nowrap">
+            <table id="pending-tasks-files" class="table table-bordered table-striped text-nowrap">
                 <thead class="thead-danger">
                     <tr class="table-pending">
                         <th>ID</th>
@@ -67,9 +67,10 @@
                                 <div class="mt-2">
                                     @if($task->task_note()->where('department_task_assignment_id', $task->id)->exists())
                                     <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
-                                        class="btn btn-dark btn-sm">
+                                        class="btn btn-dark btn-sm view-notes-button">
                                         <i class="fas fa-clipboard-list"></i> View Task Notes
                                     </a>
+
                                     @endif
                                 </div>
                             </div>

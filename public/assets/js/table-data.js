@@ -34,6 +34,50 @@
             .container()
             .appendTo("#file-datatable_wrapper .col-md-6:eq(0)"); //______Delete Data Table
 
+        var table = $("#pending-tasks-files").DataTable({
+            buttons: [
+                {
+                    extend: "copy",
+                    exportOptions: {
+                        columns: [0, 1, 4], // Specify the indices of the columns you want to include
+                    },
+                },
+                {
+                    extend: "excel",
+                    exportOptions: {
+                        columns: [0, 1, 4],
+                    },
+                },
+                {
+                    extend: "pdf",
+                    exportOptions: {
+                        columns: [0, 1, 4],
+                    },
+                    customize: function (doc) {
+                        // Iterate through each button and hide the one with specific text
+                        $(doc.content)
+                            .find(".btn-dark.btn-sm")
+                            .filter(':contains("View Task Notes")')
+                            .hide();
+                    },
+                },
+                {
+                    extend: "colvis",
+                    columns: [0, 1, 4], // Exclude the first column from column visibility toggle
+                },
+            ],
+            language: {
+                searchPlaceholder: "Search...",
+                scrollX: "100%",
+                sSearch: "",
+            },
+        });
+
+        table
+            .buttons()
+            .container()
+            .appendTo("#pending-tasks-files_wrapper .col-md-6:eq(0)");
+
         var table = $("#delete-datatable").DataTable({
             language: {
                 searchPlaceholder: "Search...",

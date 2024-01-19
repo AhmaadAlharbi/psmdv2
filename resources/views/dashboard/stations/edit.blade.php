@@ -88,8 +88,15 @@
                 </div>
                 <div class="form-group">
                     <label for="inputCommisioningDate">Control</label>
-                    <input type="text" class="form-control" id="inputCommisioningDate" name="control"
-                        value="{{ $station->control }}">
+
+                    <select name="control" class="form-select" id="controlSelect">
+                        <option value="{{ $station->control }}">{{ $station->control }}</option>
+                        <option value="JAHRA CONTROL CENTER">JAHRA CONTROL CENTER</option>
+                        <option value="SHUAIBA CONTROL CENTER">SHUAIBA CONTROL CENTER</option>
+                        <option value="TOWN CONTROL CENTER">TOWN CONTROL CENTER</option>
+                        <option value="NATIONAL CONTROL CENTER">NATIONAL CONTROL CENTER</option>
+                        <option value="JABRIYA CONTROL CENTER">JABRIYA CONTROL CENTER</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="inputCommisioningDate">Full Name</label>
@@ -118,6 +125,22 @@
 
 @section('scripts')
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the current value of the 'control' attribute
+        var currentControl = "{{ $station->control }}";
 
+        // Get the select element
+        var controlSelect = document.getElementById('controlSelect');
+
+        // Iterate through options and hide the one with the current value
+        for (var i = 0; i < controlSelect.options.length; i++) {
+            if (controlSelect.options[i].value === currentControl) {
+                controlSelect.options[i].style.display = 'none';
+                break; // Exit the loop once found
+            }
+        }
+    });
+</script>
 
 @endsection

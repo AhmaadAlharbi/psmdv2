@@ -91,7 +91,7 @@ class StationController extends Controller
             'Voltage_Level_KV' => $request->input('Voltage_Level_KV'),
             'Contract_No' => $request->input('Contract_No'),
             'COMMISIONING_DATE' => $request->input('COMMISIONING_DATE'),
-            // Add more fields as needed...
+            'control' => $request->input('control'),
         ]);
 
         // Flash a success message to the session
