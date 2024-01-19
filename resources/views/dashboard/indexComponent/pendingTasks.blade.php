@@ -6,7 +6,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table id="file-datatable" class="table table-bordered table-striped text-nowrap">
+            <table id="north-file-datatable" class="table table-bordered table-striped text-nowrap">
                 <thead class="thead-danger">
                     <tr class="table-pending">
                         <th>ID</th>
@@ -36,6 +36,11 @@
                             @endif
                             @endforeach
                             <div><strong>Date:</strong> {{ $task->created_at->format('M d, Y H:i A') }}</div>
+
+                            @if ($task->updated_at != $task->created_at)
+                            <div><strong>Updated at:</strong> {{ $task->updated_at->format('M d, Y H:i A') }}</div>
+                            @endif
+
                             @if(isset($task->main_task->main_alarm_id))
                             <div><strong>Main Alarm:</strong> {{ $task->main_task->main_alarm->name }}</div>
                             @else
@@ -47,8 +52,10 @@
                         <td>
                             @if($task->eng_id)
                             <div class="mt-2">
-                                <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
-                                    {{ $task->engineer->name }} - {{ $task->engineer->department->name }}
+                                <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}"
+                                    class="text-decoration-none">
+                                    <strong>{{ $task->engineer->name }}</strong> - {{ $task->engineer->department->name
+                                    }}
                                     @if($task->isSeen)
                                     <i class="fas fa-check-circle text-success" data-bs-toggle="tooltip"
                                         title="Task Viewed"></i>
@@ -56,26 +63,21 @@
                                     <i class="fas fa-times-circle text-danger" data-bs-toggle="tooltip"
                                         title="Task Not Viewed"></i>
                                     @endif
-                                </a><br>
-
-                                <div>
-                                    <p class="px-2 mb-0">
-                                        @if($task->task_note()->where('department_task_assignment_id',
-                                        $task->id)->exists())
-                                        <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
-                                            class="btn btn-dark btn-block">
-                                            <i class="fas fa-clipboard-list"></i> View Task Notes
-                                        </a>
-                                        @endif
-
-                                    </p>
+                                </a>
+                                <div class="mt-2">
+                                    @if($task->task_note()->where('department_task_assignment_id', $task->id)->exists())
+                                    <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
+                                        class="btn btn-dark btn-sm">
+                                        <i class="fas fa-clipboard-list"></i> View Task Notes
+                                    </a>
+                                    @endif
                                 </div>
-
                             </div>
                             @else
                             <div><strong>Engineer:</strong> -</div>
                             @endif
                         </td>
+
 
                         <td>
                             <div class="dropdown">
@@ -93,7 +95,7 @@
                                     <li>
                                         <a class="dropdown-item"
                                             href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}">
-                                            <i class="fas fa-file-alt me-2"></i> Task Notes
+                                            <i class="fas fa-file-alt me-2"></i> Add Task Note
                                         </a>
                                     </li>
                                     <li>

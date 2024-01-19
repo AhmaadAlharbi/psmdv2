@@ -141,16 +141,16 @@
                         </ul>
                     </div>
                     <div class="card-footer">
-                        <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
-                            <i class="fas fa-plus-circle"></i> Add Report
-                        </a>
+
                         @if($task->task_note()->where('department_task_assignment_id',
                         $task->id)->exists())
                         <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
                             class="btn btn-dark btn-block">
                             <i class="fas fa-clipboard-list"></i> View Task Notes to Complete the Task
                         </a>
-
+                        @else <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
+                            <i class="fas fa-plus-circle"></i> Add Report
+                        </a>
                         @endif
                     </div>
                 </div>
@@ -169,6 +169,84 @@
 
 
     <div class="col-xl-8 col-md-12 col-lg-6">
+        {{-- Awaiting Approval Reports --}}
+        <div class="card border">
+
+            <h5 class="card-header bg-secondary text-white">Reports Awaiting Approval</h5>
+            <div class="card-body">
+                @foreach($pendingReports as $task)
+                @if($task->main_task && $task->main_task->section_tasks->isNotEmpty())
+                <div class="card mb-3 opacity-75">
+                    <div class="card-header bg-secondary text-white">
+                        Task #{{$task->id}}
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item font-weight-bold tx fs-5">
+                                <span class="">Station:</span> {{$task->main_task->station->SSNAME}}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Date:</span>
+                                {{ \Carbon\Carbon::parse($task->created_at)->format('Y-m-d H:i') }}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Nature of Fault:</span>
+                                <p class="fs-5 fs-sm-4 text-muted">{{$task->main_task->problem}}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Action Taken:</span>
+                                <p class="fs-5 fs-sm-4">{!!
+                                    strip_tags($task->main_task->section_tasks->first()->action_take) !!}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Engineer:</span> {{$task->engineer->name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        @if($task->eng_id === Auth::user()->id)
+                        @php
+                        $latestAdminNote = $task->task_note->sortByDesc('created_at')->first(function ($note) {
+                        return $note->user_id != $note->eng_id;
+                        });
+                        @endphp
+
+                        @if($latestAdminNote)
+                        <div class="alert alert-info">
+
+                            <p class="text-danger fw-bold">*There are notes requiring your attention to complete your
+                                report
+                            </p>
+
+                            <strong>{{ $latestAdminNote->user->name }}:</strong> {{ $latestAdminNote->notes }}<br>
+                            <p class="text-muted">Created on: {{ $latestAdminNote->created_at->format('M d, Y \a\t
+                                H:i A') }}</p>
+
+                            </p>
+                        </div>
+                        <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
+                            class="btn btn-primary">
+                            <i class="fas fa-clipboard-list"></i> View Report Notes
+                        </a>
+                        @else
+                        <p class="text-danger fw-bold">*This report requires approval from the section head to be
+                            displayed.</p>
+                        @endif
+                        <a href="{{ route('dashboard.requestToUpdateReport',  $task->main_task->section_tasks->first()->id) }}"
+                            class="btn btn-secondary">
+                            <i class="fas fa-pencil-alt"></i> Update Report
+                        </a>
+                        @endif
+                    </div>
+                </div>
+                @endif
+                @endforeach
+            </div>
+
+        </div>
+
+
+        {{-- completed tasks for all engineers --}}
         <div class="card border">
             <h5 class="card-header  bg-primary-gradient text-white">Completed Tasks</h5>
             <div class="card-body">

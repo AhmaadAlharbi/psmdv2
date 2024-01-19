@@ -70,7 +70,7 @@
 
                                     <a class="dropdown-item"
                                         href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}">
-                                        <i class="fas fa-file-alt me-2"></i> Task Notes
+                                        <i class="fas fa-file-alt me-2"></i> Add Task Note
                                     </a>
 
 

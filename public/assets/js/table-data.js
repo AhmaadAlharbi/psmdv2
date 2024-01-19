@@ -67,6 +67,22 @@
                 lengthMenu: "_MENU_ items/page",
             },
         });
+        $("#north-tasks").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search ...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
+        $("#south-tasks").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search ...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+        });
         $("#stations-list").DataTable({
             responsive: true,
             language: {

@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('task_notes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('engineer_id');
+            $table->unsignedBigInteger('eng_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('department_id');
             $table->unsignedBigInteger('department_task_assignment_id');
             $table->text('notes');
-            $table->foreign('engineer_id')->references('id')->on('users');
+            $table->foreign('eng_id')->references('id')->on('users');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('department_task_assignment_id')->references('id')->on('department_task_assignment');

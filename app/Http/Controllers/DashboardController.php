@@ -10,6 +10,7 @@ use App\Models\TaskLog;
 use App\Models\Engineer;
 use App\Models\MainTask;
 use App\Models\MainAlarm;
+use App\Models\TaskNotes;
 use App\Models\Department;
 use App\Models\SectionTask;
 use App\Models\TaskTimeline;
@@ -141,7 +142,8 @@ class DashBoardController extends Controller
         })
             ->where('status', "!=", 'converted')
             ->whereNotNull('eng_id')
-            ->where('isCompleted', "0")->latest()->get();
+            ->where('isCompleted', "0")->latest('updated_at')  // Order by updated_at in descending order
+            ->latest()->get();
         if (Auth::user()->department_id == 1) {
             $pendingMainTasksWithDepartments = MainTask::with('departmentsAssienments', 'sharedDepartments')
                 ->whereHas('sharedDepartments', function ($query) {
@@ -378,7 +380,8 @@ class DashBoardController extends Controller
             ->where('area_id', $id)
             ->where('status', "!=", 'converted')
             ->whereNotNull('eng_id')
-            ->where('isCompleted', "0")->latest()->get();
+            ->where('isCompleted', "0")->latest('updated_at')  // Order by updated_at in descending order
+            ->latest()->get();
         if (Auth::user()->department_id == 1) {
             $pendingMainTasksWithDepartments = MainTask::with('departmentsAssienments', 'sharedDepartments')
                 ->whereHas('sharedDepartments', function ($query) {
@@ -489,21 +492,21 @@ class DashBoardController extends Controller
             ->selectRaw('eng_id, COUNT(*) as completed_tasks_this_week')
             ->get();
         $pendingReportsCount = SectionTask::where('department_id', Auth::user()->department_id)
-            ->where('isCompleted', "1")
+            ->where('isCompleted', "0")
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->count();
         $stationsCount = Station::all()->count();
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
-        $pendingNorthReportsCount = SectionTask::where('isCompleted', "1")
+        $pendingNorthReportsCount = SectionTask::where('isCompleted', "0")
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
                 $query->where('area_id', 1);
             })
             ->count();
-        $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
+        $pendingSouthReportsCount = SectionTask::where('isCompleted', "0")
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
@@ -791,9 +794,39 @@ class DashBoardController extends Controller
             ->where('isCompleted', '1')
             ->where('approved', "1")
             ->latest()->paginate(7, ['*'], 'page2');
+        // $pendingReport = SectionTask::where('department_id', Auth::user()->department_id)
+        //     ->where('isCompleted', '1')
+        //     ->where('approved', "0")
+        //     ->where('eng_id', Auth::user()->id)
+        //     ->latest()->get();
+        // return $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
+        //     ->with('main_task', 'main_task.section_tasks', 'task_note')
+        //     ->get();
+        $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
+            ->where(function ($query) {
+                $query->where('isCompleted', '1')
+                    ->orWhere('isCompleted', '0');
+            })
+            ->with([
+                'main_task' => function ($queryMainTask) {
+                    $queryMainTask->where('isCompleted', '1');
+                    // Optional: Add conditions for the section_tasks relationship within main_task
+                    $queryMainTask->with(['section_tasks' => function ($querySectionTasks) {
+                        // Add conditions for the section_tasks relationship here
+                        // For example: $querySectionTasks->where('some_column', '=', 'some_value');
+                        $querySectionTasks->where('department_id', Auth::user()->department_id)
+                            ->where('isCompleted', '1')
+                            ->where('approved', 0)
+                            ->where('eng_id', Auth::user()->id);
+                    }]);
+                },
+                'task_note',
+            ])
+            ->get();
+
         $archiveCount = SectionTask::where('department_id', Auth::user()->department_id)->where('isCompleted', '1')->count();
 
-        return view('dashboard.engineers.index', compact('pendingTasksCount', 'pendingTasks', 'completedTasksCount', 'completedTasks', 'archiveCount'));
+        return view('dashboard.engineers.index', compact('pendingReports', 'pendingTasksCount', 'pendingTasks', 'completedTasksCount', 'completedTasks', 'archiveCount'));
     }
     public function add_task()
     {
@@ -1179,29 +1212,52 @@ class DashBoardController extends Controller
      */
     private function handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask)
     {
-
+        $existingSubmission = SectionTask::where('main_tasks_id', $mainTask->id)
+            ->where('eng_id', Auth::user()->id)
+            ->exists();
         // Determine if the task is completed based on its status
         $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
         // 'approved' is set to 1
         $approved = 0;
         // Data to create a new SectionTask
-        $sectionTaskData = [
-            'main_tasks_id' => $mainTask->id,
-            'department_id' => Auth::user()->department_id,
-            'eng_id' => Auth::user()->id,
-            'action_take' => $request->action_take,
-            'main_alarm_id' => $mainTask->main_alarm_id,
-            'status' => $actionStatus,
-            'engineer-notes' => $request->notes ? $request->notes : $actionStatus,
-            'user_id' => Auth::user()->id,
-            'date' => now(),
-            'isCompleted' => $isCompleted,
-            'approved' => $approved,
-        ];
+        if ($isCompleted === '1') {
+            // 'approved' is set to 1
+            $approved = 0;
+            if (!$existingSubmission) {
+                // Data to create a new SectionTask
+                $sectionTaskData = [
+                    'main_tasks_id' => $mainTask->id,
+                    'department_id' => Auth::user()->department_id,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $request->action_take,
+                    'main_alarm_id' => $mainTask->main_alarm_id,
+                    'status' => $actionStatus,
+                    'engineer-notes' => $request->notes ? $request->notes : $actionStatus,
+                    'user_id' => Auth::user()->id,
+                    'date' => now(),
+                    'isCompleted' => $isCompleted,
+                    'approved' => $approved,
+                ];
 
-        // Create a new SectionTask record
-        SectionTask::create($sectionTaskData);
-
+                // Insert the data into the database
+                SectionTask::create($sectionTaskData);
+            } else {
+                // User has already submitted, you can handle this situation (e.g., show an error message)
+                // For example, you can redirect back with an error message
+                return redirect()->back()->with('error', 'You have already submitted for this task.');
+            }
+        } else {
+            TaskNotes::create([
+                'eng_id' => Auth::user()->id,
+                'user_id' => Auth::user()->id,
+                'department_id' => Auth::user()->department_id,
+                'department_task_assignment_id' => $departmentTask->id,
+                'notes' => $request->action_take
+            ]);
+            $departmentTask->update([
+                'updated_at' => now()
+            ]);
+        }
         // Create a task timeline entry to indicate the report has been added
         if ($isCompleted) {
             TaskTimeline::create([
@@ -1218,12 +1274,14 @@ class DashBoardController extends Controller
         $mainTaskUpdates = [
             'status' => $actionStatus,
             'isCompleted' => $isCompleted,
+
         ];
 
 
         $departmentTaskUpdates = [
             'status' => $actionStatus,
             'isCompleted' => $isCompleted,
+
         ];
         if ($actionStatus == 'Transfer the task to another engineer') {
             $departmentTaskUpdates['eng_id'] = null;
@@ -1395,6 +1453,7 @@ class DashBoardController extends Controller
         // Retrieve section tasks for the user's department that are not approved
         $sectionTasks = SectionTask::where('department_id', Auth::user()->department_id)
             ->where('approved', false)
+            ->where('isCompleted', '1')
             ->with('main_task')
             ->get();
 
@@ -1491,9 +1550,11 @@ class DashBoardController extends Controller
         // Verify that the user's department matches the department of the report
         if (Auth::user()->department_id === $report->department_id) {
             // Toggle the approval status of the report
+            // Toggle the approval status of the report
             $report->update([
-                'approved' => !$approve_value
+                'approved' => $approve_value == 0 ? 1 : 0,
             ]);
+
 
             // Retrieve all department tasks associated with the main task
             $departmentTasks = department_task_assignment::where('main_tasks_id', $mainTask->id)->get();
@@ -1501,6 +1562,7 @@ class DashBoardController extends Controller
             $allTasksCompleted = true;
             $isApprove = $report->approved ? 1 : 0;
             foreach ($departmentTasks as $task) {
+                $task->update(['isCompleted' => "1"]);
                 if ($task->department_id == 1) {
                     $task->update(['isCompleted' => "1"]);
                 }

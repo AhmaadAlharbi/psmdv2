@@ -187,6 +187,29 @@
                             </datalist>
                             <input type="hidden" wire:model="user_id">
                         </div>
+                        <div class="text-center">
+                            <div class="example">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb breadcrumb-style2 mb-0">
+                                        <li class="breadcrumb-item">
+                                            <a href="javascript:void(0);" wire:click="getEngineerArea(1)">
+                                                <i class="fas fa-arrow-circle-up me-2"></i> North Engineers
+                                            </a>
+                                        </li>
+                                        <li class="breadcrumb-item">
+                                            <a href="javascript:void(0);" wire:click="getEngineerArea(2)">
+                                                <i class="fas fa-arrow-circle-down me-2"></i> South Engineers
+                                            </a>
+                                        </li>
+                                        <li class="breadcrumb-item">
+                                            <a href="javascript:void(0);" wire:click="getEngineerArea(3)">
+                                                <i class="fas fa-arrow-circle-right me-2"></i> Middle Engineers
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-check mb-4">
                         <input wire:model="duty" wire:change="getEngineer" class="form-check-input" type="checkbox"

@@ -31,6 +31,14 @@ class TaskNotesController extends Controller
             $task->update([
                 'isCompleted' => "0",
             ]);
+
+            // $task->main_task->update([
+            //     'isCompleted' => "0",
+            // ]);
+            $task->main_task->section_tasks->first()->update([
+                'isCompleted' => '1',
+                'approved' => 0
+            ]);
         }
 
         session()->flash('success', 'Note added successfully!');
@@ -39,13 +47,15 @@ class TaskNotesController extends Controller
     public function show($department_task_id)
     {
         $task = department_task_assignment::where('main_tasks_id', $department_task_id)->firstOrFail();
-        $tasksNotes = $task->task_note;
+
         if (!$task) {
             // Handle the case where the task is not found
             abort(404, 'Task not found');
         }
+        // Retrieve task notes and order them by the latest date
+        $tasksNotes = $task->task_note()->latest()->get();
         $mainTask = $task->main_task;
-        $report = $mainTask->section_tasks()->where('approved', 1)->where('isCompleted', "1")->first();
+        $report = $mainTask->section_tasks()->where('isCompleted', "1")->where('eng_id', $task->eng_id)->first();
         return view('dashboard.taskNotes.show', compact('task', 'tasksNotes', 'report'));
     }
 }

@@ -67,6 +67,7 @@ class AddTask extends Component
     public $is_emergency = false;
     public $user_id;
     public $names = [];
+    public $ncc_area = null;
     protected $listeners = ['callEngineer' => 'getEngineer'];
 
     public function mount()
@@ -154,7 +155,7 @@ class AddTask extends Component
         } elseif ($controlCenter === 'SHUAIBA CONTROL CENTER' || $controlCenter === 'JABRIYA CONTROL CENTER') {
             $this->area = 2;
         } else {
-            $this->area = 3;
+            $this->area =   $this->ncc_area;
         }
     }
     // Set the Area for Department 5.
@@ -313,55 +314,58 @@ class AddTask extends Component
     {
         $userDepartmentId = Auth::user()->department_id;
         $area = $this->area;
+        $shiftId = $this->duty ? 2 : 1;
 
-        // Determine the shift based on the duty checkbox (day shift by default)
-        $shiftId = $this->duty ? 2 : 1; // Assuming 2 is the ID for night shift, and 1 for day shift
-
-        // Start building the query
         $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
             ->where('engineers.department_id', $userDepartmentId);
-        // Filter by user input if available
 
-        // Retrieve the engineers based on the conditions
-        $engineers = $query->orderBy('users.name', 'asc')
+        $engineers = $query->when($userDepartmentId === 2 || $userDepartmentId === 5, function ($query) use ($area) {
+            return $query->when($area !== 3 && $area !== 4, function ($query) use ($area) {
+                return $query->whereHas('areas', function ($subquery) use ($area) {
+                    $subquery->where('areas.id', $area);
+                });
+            });
+        })
+            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
+                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                    $subquery->where('shifts.id', $shiftId);
+                });
+            })
+            ->orderBy('users.name', 'asc')
             ->get();
 
         $this->engineers = $engineers;
-        // Extract names from the collection
-        $this->names = array_column($engineers->toArray(), 'name');
-
-
-
-        // $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
-        //     ->where('engineers.department_id', $userDepartmentId)
-        //     ->when($userDepartmentId === 2, function ($query) use ($area) {
-        //         // Filter by area if the user's department is Protection
-        //         return $query->when($area !== 3, function ($query) use ($area) {
-        //             return $query->whereHas('areas', function ($subquery) use ($area) {
-        //                 $subquery->where('areas.id', $area);
-        //             });
-        //         });
-        //     })
-        //     ->when($userDepartmentId === 5, function ($query) use ($area) {
-        //         // Filter by area if the user's department is Switchgears
-        //         return $query->when($area !== 4, function ($query) use ($area) {
-        //             return $query->whereHas('areas', function ($subquery) use ($area) {
-        //                 $subquery->where('areas.id', $area);
-        //             });
-        //         });
-        //     })
-        //     ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
-        //         // Filter by shift if the user's department is Batteries or Transformers
-        //         return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
-        //             $subquery->where('shifts.id', $shiftId);
-        //         });
-        //     });
-
-        // // Retrieve the engineers based on the conditions
-        // $engineers = $query->orderBy('users.name', 'asc')
-        //     ->get();
-        // $this->engineers = $engineers;
+        $this->names = $engineers->pluck('name')->toArray();
     }
+    public function getEngineerArea($area)
+    {
+        $this->clearEngineer();
+        $this->area = $area;
+        $userDepartmentId = Auth::user()->department_id;
+        $shiftId = $this->duty ? 2 : 1;
+
+        $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+            ->where('engineers.department_id', $userDepartmentId);
+
+        $engineers = $query->when($userDepartmentId === 2 || $userDepartmentId === 5, function ($query) use ($area) {
+            return $query->when($area !== 3 && $area !== 4, function ($query) use ($area) {
+                return $query->whereHas('areas', function ($subquery) use ($area) {
+                    $subquery->where('areas.id', $area);
+                });
+            });
+        })
+            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
+                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                    $subquery->where('shifts.id', $shiftId);
+                });
+            })
+            ->orderBy('users.name', 'asc')
+            ->get();
+
+        $this->engineers = $engineers;
+        $this->names = $engineers->pluck('name')->toArray();
+    }
+
     public function clearStation()
     {
         $this->selectedStation = null;
@@ -534,6 +538,7 @@ class AddTask extends Component
             'user_id' => Auth::user()->id,
             'is_emergency' => $this->is_emergency
         ]);
+
         $this->recordTaskTimeline($main_task->id, $selectedEngineer);
         // Step 1.1: Check if the selected department is different from the user's department
         // Step 1.1: Check if the selected department is different from the user's department
@@ -746,7 +751,8 @@ class AddTask extends Component
             'main_tasks_id' => $main_task_id,
             'eng_id' => $this->user_id,
             'status' => 'pending',
-            'is_emergency' => $this->is_emergency
+            'is_emergency' => $this->is_emergency,
+            'area_id' => $this->area
         ]);
 
         // Step 2: Record timeline event for department task assignment

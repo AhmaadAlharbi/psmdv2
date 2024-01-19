@@ -293,7 +293,7 @@
                             'Cancel Approval' }}
                         </button>
                     </form>
-                    <a href="{{ route('taskNote.create', ['department_task_id' => $task->main_tasks_id]) }}"
+                    <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
                         class="btn btn-outline-dark float-end mt-3 ms-2 pd-sm-x-25 pd-x-15">Task Notes</a>
 
                     @endif
@@ -352,6 +352,14 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+    // Check for success message in the response and display SweetAlert
+    @if(session('success'))
+        Swal.fire('Success!', '{{ session('success') }}', 'success');
+    @endif
+</script>
 <script>
     function printContent(elementId) {
     var content = document.getElementById(elementId);

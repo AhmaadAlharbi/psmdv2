@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Area;
 use App\Models\Station;
+use App\Models\MainTask;
 use App\Http\Livewire\Faq;
 use App\Http\Livewire\Blog;
 use App\Http\Livewire\Chat;
@@ -105,6 +107,7 @@ use App\Http\Livewire\MailCompose;
 use App\Http\Livewire\MediaObject;
 use App\Http\Livewire\ProductCart;
 use App\Http\Livewire\Rangeslider;
+use Illuminate\Support\Facades\DB;
 use App\Http\Livewire\ChartChartjs;
 use App\Http\Livewire\FormAdvanced;
 use App\Http\Livewire\FormElements;
@@ -338,6 +341,34 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/import-old-reports', [DashboardController::class, 'importOldReports'])->name('importOldReports');
     Route::post('/submit-old-reports', [DashboardController::class, 'submitOldReport'])->name('submitOldReport');
     Route::post('/tasks/{id}/resend', [DashboardController::class, 'resendTask'])->name('resendTask');
+});
+
+Route::get('/update_area_id_based_on_control', function () {
+    // Assuming departmentsAssienments is a relationship method in the MainTask model
+    $mainTasks = MainTask::with('departmentsAssienments')->get();
+
+    // Collect all department_task_assignments from the related departmentsAssienments relationship
+    foreach ($mainTasks as $task) {
+        $control = $task->station->control;
+        $area_id = null;
+        switch ($control) {
+            case 'JAHRA CONTROL CENTER':
+            case 'TOWN CONTROL CENTER':
+                $area_id = 1;
+                break;
+            case 'SHUAIBA CONTROL CENTER':
+            case 'JABRIYA CONTROL CENTER':
+                $area_id = 2;
+                break;
+            default:
+                $area_id = 3;
+        }
+        // Loop through each departmentsAssienments and update the area_id
+        foreach ($task->departmentsAssienments as $assignment) {
+            $assignment->update(['area_id' => $area_id]);
+        }
+    }
+    return 'Area IDs updated successfully';
 });
 
 Route::middleware(['auth', 'confirmed'])->group(function () {

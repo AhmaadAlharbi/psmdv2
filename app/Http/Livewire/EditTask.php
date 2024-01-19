@@ -67,6 +67,7 @@ class EditTask extends Component
     public $mainTasksConverted = '';
     public $user_id;
     public $names = [];
+    public $ncc_area = null;
 
     public function __construct($task_id)
     {
@@ -194,7 +195,7 @@ class EditTask extends Component
         } elseif ($controlCenter === 'SHUAIBA CONTROL CENTER' || $controlCenter === 'JABRIYA CONTROL CENTER') {
             $this->area = 2;
         } else {
-            $this->area = 3;
+            $this->area =   $this->ncc_area;
         }
     }
     // Set the Area for Department 5.
@@ -294,16 +295,54 @@ class EditTask extends Component
             $shiftId = 2; // Assuming 2 is the ID for the night shift
         }
 
-        // Start building the query
         $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
             ->where('engineers.department_id', $userDepartmentId);
 
-        // Retrieve the engineers based on the conditions
-        $engineers = $query->orderBy('users.name', 'asc')
+        $engineers = $query->when($userDepartmentId === 2 || $userDepartmentId === 5, function ($query) use ($area) {
+            return $query->when($area !== 3 && $area !== 4, function ($query) use ($area) {
+                return $query->whereHas('areas', function ($subquery) use ($area) {
+                    $subquery->where('areas.id', $area);
+                });
+            });
+        })
+            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
+                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                    $subquery->where('shifts.id', $shiftId);
+                });
+            })
+            ->orderBy('users.name', 'asc')
             ->get();
+
         $this->engineers = $engineers;
-        // Extract names from the collection
-        $this->names = array_column($engineers->toArray(), 'name');
+        $this->names = $engineers->pluck('name')->toArray();
+    }
+    public function getEngineerArea($area)
+    {
+        $this->clearEngineer();
+        $this->area = $area;
+        $userDepartmentId = Auth::user()->department_id;
+        $shiftId = $this->duty ? 2 : 1;
+
+        $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+            ->where('engineers.department_id', $userDepartmentId);
+
+        $engineers = $query->when($userDepartmentId === 2 || $userDepartmentId === 5, function ($query) use ($area) {
+            return $query->when($area !== 3 && $area !== 4, function ($query) use ($area) {
+                return $query->whereHas('areas', function ($subquery) use ($area) {
+                    $subquery->where('areas.id', $area);
+                });
+            });
+        })
+            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
+                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                    $subquery->where('shifts.id', $shiftId);
+                });
+            })
+            ->orderBy('users.name', 'asc')
+            ->get();
+
+        $this->engineers = $engineers;
+        $this->names = $engineers->pluck('name')->toArray();
     }
     public function getEmail()
     {
@@ -519,7 +558,9 @@ class EditTask extends Component
                 'eng_id' => $this->user_id,
                 'status' => 'pending',
                 'isCompleted' => "0",
-                'isSeen' => "0"
+                'isSeen' => "0",
+                'area_id' => $this->area
+
             ]);
         } else {
             // Create a new department task assignment for the user's department
@@ -528,7 +569,9 @@ class EditTask extends Component
                 'department_id' => $userDepartmentId,
                 'main_tasks_id' => $mainTaskId,
                 'eng_id' => $this->user_id,
-                'status' => 'pending'
+                'status' => 'pending',
+                'area_id' => $this->area
+
             ]);
         }
     }

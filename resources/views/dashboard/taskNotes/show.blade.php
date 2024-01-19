@@ -108,7 +108,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $note->user->name }}</td>
 
-                                    <td>{{ $note->notes }}</td>
+                                    <td>{!! $note->notes !!}</td>
                                     <td>{{ $note->created_at->format('M d, Y H:i A') }}</td>
                                 </tr>
                                 @endforeach
