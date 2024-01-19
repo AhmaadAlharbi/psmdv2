@@ -74,8 +74,14 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="text" class="form-control" id="control" name="control" placeholder="Control"
-                        value="{{ old('control') }}">
+                    <select name="control" class="form-select" id="controlSelect">
+                        <option value="">Select Control Center</option>
+                        <option value="JAHRA CONTROL CENTER">JAHRA CONTROL CENTER</option>
+                        <option value="SHUAIBA CONTROL CENTER">SHUAIBA CONTROL CENTER</option>
+                        <option value="TOWN CONTROL CENTER">TOWN CONTROL CENTER</option>
+                        <option value="NATIONAL CONTROL CENTER">NATIONAL CONTROL CENTER</option>
+                        <option value="JABRIYA CONTROL CENTER">JABRIYA CONTROL CENTER</option>
+                    </select>
                     @error('control')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
