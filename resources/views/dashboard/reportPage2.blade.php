@@ -293,9 +293,10 @@
                             'Cancel Approval' }}
                         </button>
                     </form>
+                    @if($task->approved)
                     <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
                         class="btn btn-outline-dark float-end mt-3 ms-2 pd-sm-x-25 pd-x-15">Task Notes</a>
-
+                    @endif
                     @endif
                     <button class="btn btn-dark float-end mt-3 ms-2 pd-sm-x-25 pd-x-15"
                         onclick="printContent('printable-content');">

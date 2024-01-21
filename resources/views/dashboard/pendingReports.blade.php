@@ -33,16 +33,12 @@
                     <hr class="my-2">
                 </div>
 
-                <table id="north-tasks" class="table border-top-0  table-bordered text-nowrap border-bottom"
-                    id="responsive-datatable">
+                <table id="north-tasks" class="table table-bordered text-nowrap">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Task ID</th>
-                            <th scope="col">Station</th>
-                            <th scope="col">Engineer</th>
                             <th scope="col">Created At</th>
-                            <th scope="col">Department</th>
                             <th scope="col">Report</th>
                         </tr>
                     </thead>
@@ -50,87 +46,86 @@
                         @foreach($northTasks as $task)
                         <tr>
                             <th>{{$loop->iteration}}</th>
-                            <th scope="row">{{$task->main_task->id}}</th>
-                            <td>{{$task->main_task->station->SSNAME}}</td>
-                            <td>{{$task->engineer->name}}</td>
-                            <td>{{$task->main_task->created_at}}</td>
-                            <td>{{$task->department->name}}</td>
+                            <td>{{$task->main_task->id}}</td>
+                            <td>{{ $task->main_task->created_at->format('d M, Y H:i A') }}</td>
                             <td>
-                                <a class="btn ripple btn-info btn-b" data-bs-target="#modaldemo{{$task->main_task->id}}"
-                                    data-bs-toggle="modal" href="#">Review</a>
-                                {{-- modal --}}
-                                <div class="modal fade" id="modaldemo{{$task->main_task->id}}" tabindex="-1"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Task ID: {{$task->main_task->id}}</h5>
-                                                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal"
-                                                    type="button"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
-                                                @if(!$sectionTask->approved && $sectionTask->department_id ==
-                                                Auth::user()->department_id)
-                                                <div class="card mt-3 border rounded shadow">
-                                                    <div class="card-body">
-                                                        <div class="bg-info text-white p-2 mb-3">
-                                                            Department: <strong>{{ $sectionTask->department->name
-                                                                }}</strong>
-                                                        </div>
-                                                        <p class="mb-3"><strong>Engineer:</strong> {{
-                                                            $sectionTask->engineer->name }}</p>
-                                                        <p class="mb-3"><strong>Status:</strong> {{ $sectionTask->status
-                                                            }}</p>
-                                                        <p class="mb-3"><strong>Action Take:</strong> {!!
-                                                            $sectionTask->action_take !!}</p>
-                                                        <p class="mb-3"><strong>Created at:</strong> {{
-                                                            $sectionTask->created_at }}</p>
-                                                        <div class="d-flex justify-content-end">
-                                                            @if($sectionTask->eng_id === Auth::user()->id)
-                                                            <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
-                                                                class="btn btn-warning me-2">
-                                                                <i class="fas fa-pencil-alt"></i> Update Report
-                                                            </a>
-                                                            @endif
+                                @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
+                                @if(!$sectionTask->approved && $sectionTask->department_id ==
+                                Auth::user()->department_id)
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="bg-info text-white p-2 mb-3">
+                                            Department: <strong>{{ $sectionTask->department->name }}</strong>
+                                        </div>
+                                        <p class="mb-3">
+                                            <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
+                                        </p>
+                                        <p class="mb-3"><strong>Engineer:</strong> {{ $sectionTask->engineer->name }}
+                                        </p>
+                                        <p class="mb-3"><strong>Status:</strong> {{ $sectionTask->status }}</p>
+                                        <p class="mb-3"><strong>Action Take:</strong>
+                                        <div class="overflow-auto whitespace-pre-line">{!! $sectionTask->action_take !!}
+                                        </div>
+                                        </p>
+                                        </p>
+                                        <div class="btn-group ms-2 mt-2 mb-2">
+                                            <div class="dropdown">
+                                                <button aria-expanded="false" aria-haspopup="true"
+                                                    class="btn ripple btn-dark" data-bs-toggle="dropdown"
+                                                    id="dropdownMenuButton" type="button">Actions <i
+                                                        class="fas fa-caret-down ms-1"></i></button>
 
-                                                            @if($sectionTask->department_id ==
-                                                            Auth::user()->department_id)
-                                                            <form method="POST"
-                                                                action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
-                                                                @csrf
-                                                                <button type="submit"
-                                                                    class="btn btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
-                                                                    <i class="fa fa-check-circle"></i>
-                                                                    {{ $sectionTask->approved == '0' ? 'Approve Report'
-                                                                    : 'Cancel Approval' }}
-                                                                </button>
-                                                            </form>
-                                                            @endif
-                                                            <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
-                                                                class="btn btn-dark ms-2">
-                                                                <i class="fas fa-sticky-note me-1"></i> Write Note to
-                                                                Engineer
-                                                            </a>
-
-                                                        </div>
-                                                    </div>
+                                                <div class="dropdown-menu tx-13">
+                                                    @if($sectionTask->eng_id === Auth::user()->id)
+                                                    <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
+                                                        class="dropdown-item">
+                                                        <i class="fas fa-pencil-alt"></i> Update Report
+                                                    </a>
+                                                    @endif
+                                                    @if($sectionTask->department_id == Auth::user()->department_id)
+                                                    <form method="POST"
+                                                        action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="dropdown-item {{ $sectionTask->approved == '0' ? 'btn-success' : 'btn-info' }}">
+                                                            <i class="fa fa-check-circle"></i>
+                                                            {{ $sectionTask->approved == '0' ? 'Approve Report' :
+                                                            'Cancel Approval' }}
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                    <form method="GET"
+                                                        action="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-sticky-note me-1"></i> Write Note to
+                                                            Engineer
+                                                        </button>
+                                                    </form>
+                                                    <form id="deleteForm{{$sectionTask->id}}"
+                                                        action="{{ route('deleteSectionTask', $sectionTask->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="dropdown-item delete-btn"
+                                                            data-section-task-id="{{ $sectionTask->id }}">
+                                                            <i class="fas fa-trash me-1"></i> Delete
+                                                        </button>
+                                                    </form>
                                                 </div>
-                                                @endif
-                                                @endforeach
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
+                                @endif
+                                @endforeach
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+
 
             </div>
         </div>
@@ -148,10 +143,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Task ID</th>
-                        <th scope="col">Station</th>
-                        <th scope="col">Engineer</th>
                         <th scope="col">Created At</th>
-                        <th scope="col">Department</th>
                         <th scope="col">Report</th>
                     </tr>
                 </thead>
@@ -159,79 +151,80 @@
                     @foreach($southTasks as $task)
                     <tr>
                         <th>{{$loop->iteration}}</th>
-                        <th scope="row">{{$task->main_task->id}}</th>
-                        <td>{{$task->main_task->station->SSNAME}}</td>
-                        <td>{{$task->engineer->name}}</td>
-                        <td>{{$task->main_task->created_at}}</td>
-                        <td>{{$task->department->name}}</td>
+                        <td>{{$task->main_task->id}}</td>
+                        <td>{{ $task->main_task->created_at->format('d M, Y H:i A') }}</td>
                         <td>
-                            <a class="btn ripple btn-info btn-b" data-bs-target="#modaldemo{{$task->main_task->id}}"
-                                data-bs-toggle="modal" href="#">Review</a>
-                            {{-- modal --}}
-                            <div class="modal fade" id="modaldemo{{$task->main_task->id}}" tabindex="-1"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header  text-white">
-                                            <h5 class="modal-title">Task ID: {{$task->main_task->id}}</h5>
-                                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal"
-                                                type="button"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
-                                            @if(!$sectionTask->approved && $sectionTask->department_id ==
-                                            Auth::user()->department_id)
-                                            <div class="card mt-3">
-                                                <div class="card-body border">
-                                                    <div class="bg-info text-white p-2 mb-3">
-                                                        Department: <strong>{{ $sectionTask->department->name
-                                                            }}</strong>
-                                                    </div>
-                                                    <p class="mb-3"><strong>Engineer:</strong> {{
-                                                        $sectionTask->engineer->name }}</p>
-                                                    <p class="mb-3 bg-light p-2"><strong>Status:</strong> {{
-                                                        $sectionTask->status }}</p>
-                                                    <p class="mb-3"><strong>Action Take:</strong> {!!
-                                                        $sectionTask->action_take !!}</p>
-                                                    <p class="mb-3"><strong>Created at:</strong> {{
-                                                        $sectionTask->created_at }}</p>
-                                                    <div class="d-flex">
-                                                        @if($sectionTask->eng_id === Auth::user()->id)
-                                                        <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
-                                                            class="btn btn-warning mx-2">
-                                                            <i class="fas fa-pencil-alt"></i> Update Report
-                                                        </a>
-                                                        @endif
+                            @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
+                            @if(!$sectionTask->approved && $sectionTask->department_id ==
+                            Auth::user()->department_id)
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="bg-info text-white p-2 mb-3">
+                                        Department: <strong>{{ $sectionTask->department->name }}</strong>
+                                    </div>
+                                    <p class="mb-3">
+                                        <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
+                                    </p>
+                                    <p class="mb-3"><strong>Engineer:</strong> {{ $sectionTask->engineer->name }}
+                                    </p>
+                                    <p class="mb-3"><strong>Status:</strong> {{ $sectionTask->status }}</p>
+                                    <p class="mb-3"><strong>Action Take:</strong>
+                                    <div class="overflow-auto whitespace-pre-line">{!! $sectionTask->action_take !!}
+                                    </div>
+                                    </p>
+                                    </p>
+                                    <div class="btn-group ms-2 mt-2 mb-2">
+                                        <div class="dropdown">
+                                            <button aria-expanded="false" aria-haspopup="true"
+                                                class="btn ripple btn-dark" data-bs-toggle="dropdown"
+                                                id="dropdownMenuButton" type="button">Actions <i
+                                                    class="fas fa-caret-down ms-1"></i></button>
 
-                                                        @if($sectionTask->department_id ==
-                                                        Auth::user()->department_id)
-                                                        <form method="POST"
-                                                            action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="btn btn-{{ $sectionTask->approved == '0' ? 'success' : 'info' }}">
-                                                                <i class="fa fa-check-circle"></i>
-                                                                {{ $sectionTask->approved == '0' ? 'Approve Report'
-                                                                : 'Cancel Approval' }}
-                                                            </button>
-                                                        </form>
-                                                        @endif
-                                                    </div>
-                                                </div>
+                                            <div class="dropdown-menu tx-13">
+                                                @if($sectionTask->eng_id === Auth::user()->id)
+                                                <a href="{{ route('dashboard.requestToUpdateReport', $sectionTask->id) }}"
+                                                    class="dropdown-item">
+                                                    <i class="fas fa-pencil-alt"></i> Update Report
+                                                </a>
+                                                @endif
+                                                @if($sectionTask->department_id == Auth::user()->department_id)
+                                                <form method="POST"
+                                                    action="{{ route('dashboard.approveReports', $sectionTask->id) }}">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="dropdown-item {{ $sectionTask->approved == '0' ? 'btn-success' : 'btn-info' }}">
+                                                        <i class="fa fa-check-circle"></i>
+                                                        {{ $sectionTask->approved == '0' ? 'Approve Report' :
+                                                        'Cancel Approval' }}
+                                                    </button>
+                                                </form>
+                                                @endif
+                                                <form method="GET"
+                                                    action="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="fas fa-sticky-note me-1"></i> Write Note to
+                                                        Engineer
+                                                    </button>
+                                                </form>
+                                                <form id="deleteForm{{$sectionTask->id}}"
+                                                    action="{{ route('deleteSectionTask', $sectionTask->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="dropdown-item delete-btn"
+                                                        data-section-task-id="{{ $sectionTask->id }}">
+                                                        <i class="fas fa-trash me-1"></i> Delete
+                                                    </button>
+                                                </form>
                                             </div>
-                                            @endif
-                                            @endforeach
                                         </div>
-                                        {{-- <div class="modal-footer">
-                                            <button class="btn btn-primary">Save Changes</button>
-                                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        </div> --}}
+
                                     </div>
                                 </div>
                             </div>
-
-
-
+                            @endif
+                            @endforeach
                         </td>
                     </tr>
                     @endforeach
@@ -248,7 +241,33 @@
 <!-- Internal Select2.min js -->
 <script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
 
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const sectionTaskId = this.getAttribute('data-section-task-id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(`deleteForm${sectionTaskId}`).submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
 <script>
     // Check for success message in the response and display SweetAlert
     @if(session('success'))

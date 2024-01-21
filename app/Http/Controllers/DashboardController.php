@@ -1580,9 +1580,9 @@ class DashBoardController extends Controller
             ]);
             // Redirect with success message based on approval status
             if ($report->approved) {
-                return back()->with('success', 'Approval successful!');
+                return redirect()->route('dashboard.pendingReports')->with('success', 'Approval successful!');
             } else {
-                return back()->with('success', 'The report was not approved.');
+                return redirect()->route('dashboard.pendingReports')->with('success', 'Approval successful!');
             }
         }
     }
@@ -2226,4 +2226,19 @@ class DashBoardController extends Controller
     //         'is_emergency' => $this->is_emergency
     //     ]);
     // }
+    public function deleteSectionTask($id)
+    {
+        // Find the SectionTask by ID
+        $sectionTask = SectionTask::find($id);
+
+        // Check if the SectionTask exists
+        if ($sectionTask) {
+            // Delete the SectionTask
+            $sectionTask->delete();
+
+            return redirect()->back()->with('success', 'Section Task deleted successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Section Task not found.');
+        }
+    }
 }

@@ -341,6 +341,7 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/import-old-reports', [DashboardController::class, 'importOldReports'])->name('importOldReports');
     Route::post('/submit-old-reports', [DashboardController::class, 'submitOldReport'])->name('submitOldReport');
     Route::post('/tasks/{id}/resend', [DashboardController::class, 'resendTask'])->name('resendTask');
+    Route::delete('/section_task/{id}', [DashboardController::class, 'deleteSectionTask'])->name('deleteSectionTask');
 });
 
 Route::get('/update_area_id_based_on_control', function () {

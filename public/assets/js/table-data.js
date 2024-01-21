@@ -35,6 +35,7 @@
             .appendTo("#file-datatable_wrapper .col-md-6:eq(0)"); //______Delete Data Table
 
         var table = $("#pending-tasks-files").DataTable({
+            responsive: true,
             buttons: [
                 {
                     extend: "copy",
