@@ -207,11 +207,13 @@
                                         <i class="fas fa-arrow-circle-down me-2"></i> South Engineers
                                     </a>
                                 </li>
+                                @if(Auth::user()->department_id != 2)
                                 <li class="breadcrumb-item">
                                     <a href="javascript:void(0);" wire:click="getEngineerArea(3)">
                                         <i class="fas fa-arrow-circle-right me-2"></i> Middle Engineers
                                     </a>
                                 </li>
+                                @endif
                             </ol>
                         </nav>
                     </div>

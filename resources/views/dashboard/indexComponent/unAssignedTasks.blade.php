@@ -11,9 +11,9 @@
                 <thead>
                     <tr class="bg-secondary-gradient">
                         <th class="text-lg">ID</th>
-                        <th class="text-lg">Department</th>
+                        {{-- <th class="text-lg">Department</th> --}}
                         <th class="text-lg">STATION</th>
-                        <th class="text-lg">Departments Notes</th>
+                        {{-- <th class="text-lg">Departments Notes</th> --}}
                         <th class="text-lg">Engineer Notes</th>
                         <th class="text-lg d-none d-md-table-cell">Main Alarm</th>
                         <th class="text-lg d-none d-md-table-cell">DATE</th>
@@ -24,13 +24,13 @@
                     @foreach($unAssignedTasks as $task)
                     <tr>
                         <th scope="row" class="text-lg">{{ $loop->iteration }}</th>
-                        <td>
+                        {{-- <td>
                             @foreach($task->main_task->sharedDepartments as $dep)
                             @if($dep->id != Auth::user()->department_id)
                             <p><strong> {{$dep->name}}</strong></p>
                             @endif
                             @endforeach
-                        </td>
+                        </td> --}}
                         <td class="text-lg">
 
                             @if($task->main_task->station_id)
@@ -39,20 +39,16 @@
                             -
                             @endif
                         </td>
-                        <td>
+                        {{-- <td>
                             {{$task->main_task->notes}}
-                        </td>
+                        </td> --}}
                         <td>
-                            @if(count($task->main_task->section_tasks) > 0)
-                            @foreach($task->main_task->section_tasks as $sectionTask)
-                            <div class="engineer-note">
-                                <p class="px-2 mb-0">
-                                    <strong> Eng.{{ $sectionTask->engineer->name }}:</strong><br>
-                                    {!!
-                                    strip_tags($sectionTask->action_take) !!}
-                                </p>
-                            </div>
-                            @endforeach
+                            @if($task->task_note()->where('department_task_assignment_id', $task->id)->exists())
+                            <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
+                                class="btn btn-dark btn-sm view-notes-button">
+                                <i class="fas fa-clipboard-list"></i> View Task Notes
+                            </a>
+
                             @endif
                         </td>
 

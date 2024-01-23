@@ -37,8 +37,6 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Task ID</th>
-                            <th scope="col">Created At</th>
                             <th scope="col">Report</th>
                         </tr>
                     </thead>
@@ -46,8 +44,6 @@
                         @foreach($northTasks as $task)
                         <tr>
                             <th>{{$loop->iteration}}</th>
-                            <td>{{$task->main_task->id}}</td>
-                            <td>{{ $task->main_task->created_at->format('d M, Y H:i A') }}</td>
                             <td>
                                 @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
                                 @if(!$sectionTask->approved && $sectionTask->department_id ==
@@ -57,6 +53,10 @@
                                         <div class="bg-info text-white p-2 mb-3">
                                             Department: <strong>{{ $sectionTask->department->name }}</strong>
                                         </div>
+                                        <p class="mb-3">
+                                            <strong> Created At : </strong>{{ $task->main_task->created_at->format('d M,
+                                            Y H:i A') }}
+                                        </p>
                                         <p class="mb-3">
                                             <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
                                         </p>
@@ -142,8 +142,6 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Task ID</th>
-                        <th scope="col">Created At</th>
                         <th scope="col">Report</th>
                     </tr>
                 </thead>
@@ -151,8 +149,6 @@
                     @foreach($southTasks as $task)
                     <tr>
                         <th>{{$loop->iteration}}</th>
-                        <td>{{$task->main_task->id}}</td>
-                        <td>{{ $task->main_task->created_at->format('d M, Y H:i A') }}</td>
                         <td>
                             @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
                             @if(!$sectionTask->approved && $sectionTask->department_id ==
@@ -162,6 +158,10 @@
                                     <div class="bg-info text-white p-2 mb-3">
                                         Department: <strong>{{ $sectionTask->department->name }}</strong>
                                     </div>
+                                    <p class="mb-3">
+                                        <strong> Created At : </strong>{{ $task->main_task->created_at->format('d M,
+                                        Y H:i A') }}
+                                    </p>
                                     <p class="mb-3">
                                         <strong>Station:</strong> {{$task->main_task->station->SSNAME}}
                                     </p>
@@ -231,6 +231,9 @@
                 </tbody>
             </table>
         </div>
+
+
+
     </div>
 </div>
 <!-- row closed -->

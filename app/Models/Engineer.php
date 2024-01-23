@@ -32,9 +32,4 @@ class Engineer extends Model
     {
         return $this->belongsToMany(Shift::class, 'engineer_shift');
     }
-
-    public function areas()
-    {
-        return $this->belongsToMany(Area::class, 'engineer_area');
-    }
 }

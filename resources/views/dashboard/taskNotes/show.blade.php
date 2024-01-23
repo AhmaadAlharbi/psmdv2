@@ -73,7 +73,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <h6 class="text-muted"><i class="fas fa-user"></i> Engineer</h6>
-                                            <p class="card-text">{{ $task->engineer->name }}</p>
+                                            <p class="card-text">{{ optional($task->engineer)->name }}</p>
                                         </div>
                                         <div class="mb-3">
                                             <h6 class="text-muted"><i class="fas fa-sticky-note"></i> Notes</h6>
