@@ -67,10 +67,11 @@ class StationController extends Controller
             'Voltage_Level_KV' => 'nullable|string|max:255',
             'Contract_No' => 'nullable|string|max:255',
             'COMMISIONING_DATE' => 'nullable|string|max:255',
-            'control' => 'nullable|string|max:255',
-            'FULLNAME' => 'nullable|string|max:255',
+            'control' => 'required|string|max:255', // Update: make 'control' required
+            'FULLNAME' => 'required|string|max:255', // Update: make 'FULLNAME' required
             'pm' => 'nullable|string|max:255',
         ]);
+
 
         Station::create($request->all());
         session()->flash('success', 'Data saved successfully');

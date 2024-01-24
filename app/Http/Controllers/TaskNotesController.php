@@ -35,10 +35,16 @@ class TaskNotesController extends Controller
             // $task->main_task->update([
             //     'isCompleted' => "0",
             // ]);
-            $task->main_task->section_tasks->first()->update([
-                'isCompleted' => '1',
-                'approved' => 0
-            ]);
+            if ($task->main_task && $task->main_task->section_tasks->isNotEmpty()) {
+                $sectionTask = $task->main_task->section_tasks->first();
+
+                if ($sectionTask) {
+                    $sectionTask->update([
+                        'isCompleted' => '1',
+                        'approved' => 0,
+                    ]);
+                }
+            }
         }
 
         session()->flash('success', 'Note added successfully!');
