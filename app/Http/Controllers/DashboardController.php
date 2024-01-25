@@ -1885,6 +1885,8 @@ class DashBoardController extends Controller
             // Check if task sent from the department that the user belongs to
             if ($user_department_id == Auth::user()->department_id) {
                 if ($departmentTask) {
+                    // Delete related task_notes records
+                    TaskNotes::where('department_task_assignment_id', $departmentTask->id)->delete();
                     $departmentTask->delete();
                 }
                 $task->forceDelete();
@@ -1892,6 +1894,8 @@ class DashBoardController extends Controller
             } else {
                 // If the task is not from the user's department, only delete the departmentTask
                 if ($departmentTask) {
+                    TaskNotes::where('department_task_assignment_id', $departmentTask->id)->delete();
+                    $departmentTask->delete();
                     $departmentTask->delete();
                 }
                 return redirect()->back()->with('success', 'Deleted successfully');
