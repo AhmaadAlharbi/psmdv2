@@ -335,7 +335,10 @@ class AddTask extends Component
             ->get();
 
         $this->engineers = $engineers;
-        $this->names = $engineers->pluck('name')->toArray();
+        $this->names = $engineers->map(function ($engineer) {
+            return $engineer->arabic_name ?: $engineer->name;
+        })->toArray();
+        // $this->names = $engineers->pluck('name')->toArray();
     }
     public function getEngineerArea($area)
     {
@@ -383,7 +386,10 @@ class AddTask extends Component
         $selectedUserId = $this->selectedEngineer;
         // dd($selectedUserId);
         // Retrieve the user's email
-        $user = User::where('name', $selectedUserId)->first();
+        $user = User::where('name', $selectedUserId)
+            ->orWhere('arabic_name', $selectedUserId)
+            ->first();
+
         if ($user) {
             $this->engineerEmail = $user->email;
             $this->user_id = $user->id;
