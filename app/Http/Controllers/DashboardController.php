@@ -499,14 +499,15 @@ class DashBoardController extends Controller
         $stationsCount = Station::all()->count();
         $usersPendingCount = User::where('approved', false)->where('department_id', $departmentId)->count();
         $departments = Department::all();
-        $pendingNorthReportsCount = SectionTask::where('isCompleted', "0")
+        $pendingNorthReportsCount = SectionTask::where('isCompleted', "1")
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
                 $query->where('area_id', 1);
             })
             ->count();
-        $pendingSouthReportsCount = SectionTask::where('isCompleted', "0")
+
+        $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
