@@ -22,6 +22,8 @@
 <div class="row mt-4" id="printable-content">
     <div class=" main-content-body-invoice">
         <div class="card card-invoice">
+            @if(now() >= \Carbon\Carbon::parse($tasks->due_date . ' ' . $tasks->due_time))
+
             <div class="card-body">
                 <div class="invoice-header">
                     <h1 class="invoice-title"> <img class="mew-logo rounded "
@@ -82,12 +84,14 @@
                                         <div>
                                             <label class="main-content-label tx-16">Work Type <span
                                                     class="badge bg-danger me-1"></span></label>
-                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->work_type}}</p>
+                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->work_type}}
+                                            </p>
                                         </div>
                                         <div class="mt-3">
                                             <label class="main-content-label tx-16">Nature of Fault <span
                                                     class="badge bg-danger me-1"></span></label>
-                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->problem}}</p>
+                                            <p class="tx-20 fw-bold text-secondary">{{$tasks->main_task->problem}}
+                                            </p>
                                         </div>
                                         @if($tasks->main_task->notes)
                                         <div class="mt-3">
@@ -146,7 +150,8 @@
                                         @csrf
 
                                         <div class="alert alert-info" role="alert">
-                                            <strong>Note:</strong> The icons serve as indicators for the task status.
+                                            <strong>Note:</strong> The icons serve as indicators for the task
+                                            status.
                                             <br>
                                             <i class="fas fa-check-circle text-success"></i> Completed: This icon
                                             signifies that the task has been successfully finished.
@@ -324,9 +329,24 @@
                     </tbody>
                 </table>
             </div>
+            @else
+            <!-- Display a message indicating that the due date and time have passed -->
+            <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+                <i class="fas fa-hourglass-half fa-5x mb-3"></i>
+                <p class="mb-1 fs-md-5 fs-5">
+                    <strong>Note:</strong> You are unable to complete this task until its scheduled due date and time,
+                    which is set for {{$tasks->due_date}} - {{$tasks->due_time}}.
+                </p>
+                <p id="countdown-message" class="fw-bold  fs-6 text-dark">
+                    <!-- Countdown message will be displayed here -->
+                </p>
+            </div>
+            @endif
         </div>
     </div>
 </div>
+
+
 
 <!-- row closed -->
 
@@ -394,4 +414,44 @@
 <script src="{{asset('assets/plugins/fancyuploder/jquery.iframe-transport.js')}}"></script>
 <script src="{{asset('assets/plugins/fancyuploder/jquery.fancy-fileupload.js')}}"></script>
 <script src="{{asset('assets/plugins/fancyuploder/fancy-uploader.js')}}"></script>
+
+<script>
+    // Get the due date and time
+var dueDateTime = new Date("{{$tasks->due_date}} {{$tasks->due_time}}").getTime();
+
+// Update the countdown every 1 second
+var countdown = setInterval(function() {
+    // Get the current date and time
+    var now = new Date().getTime();
+
+    // Calculate the time remaining
+    var timeRemaining = dueDateTime - now;
+
+    // Check if the due date and time have passed
+    if (timeRemaining < 0) {
+        // Display a message and clear the countdown
+        clearInterval(countdown);
+        document.getElementById("countdown-message").innerHTML = "The due date and time for this task has arrived. You can now complete the task. The page will refresh shortly...";
+        
+        // Refresh the page after displaying the message
+        setTimeout(function() {
+            location.reload();
+        }, 3000); // Adjust the delay time (in milliseconds) as needed
+    } else {
+        // Convert time remaining to days, hours, minutes, and seconds
+        var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        // Display the countdown message
+        var countdownMessage = "Time remaining until you can complete this task: ";
+        countdownMessage += days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+
+        document.getElementById("countdown-message").innerHTML = countdownMessage;
+    }
+}, 1000);
+
+</script>
+
 @endsection

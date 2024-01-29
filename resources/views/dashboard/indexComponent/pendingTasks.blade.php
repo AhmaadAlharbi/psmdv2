@@ -14,6 +14,7 @@
                         <th>Work Type</th>
                         <th>Details</th>
                         <th>Engineer</th>
+                        <th class="d-none">Eng Engineer</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -49,13 +50,13 @@
                             <div class="mt-2"><strong>Status:</strong> <span class="badge bg-danger">{{ $task->status
                                     }}</span></div>
                         </td>
-                        <td>
+                        <td class="d-none">
                             @if($task->eng_id)
                             <div class="mt-2">
                                 <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}"
                                     class="text-decoration-none">
-                                    <strong>{{ $task->engineer->name }}</strong> - {{ $task->engineer->department->name
-                                    }}
+                                    <span>{{ $task->engineer->name }}</span>
+
                                     @if($task->isSeen)
                                     <i class="fas fa-check-circle text-success" data-bs-toggle="tooltip"
                                         title="Task Viewed"></i>
@@ -73,11 +74,55 @@
 
                                     @endif
                                 </div>
+
                             </div>
                             @else
                             <div><strong>Engineer:</strong> -</div>
                             @endif
+                            @if(now() <= \Carbon\Carbon::parse($task->due_date . ' ' . $task->due_time))
+                                <p class="alert-warning p-1">Scheduled for Completion on Date {{$task->due_date}} -
+                                    {{$task->due_time}}</p>
+                                @endif
+
+
                         </td>
+                        {{--arabic name td --}}
+                        <td>
+                            @if($task->eng_id)
+                            <div class="mt-2">
+                                <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}"
+                                    class="text-decoration-none">
+                                    <span>{{ $task->engineer->arabic_name }}</span>
+
+                                    @if($task->isSeen)
+                                    <i class="fas fa-check-circle text-success" data-bs-toggle="tooltip"
+                                        title="Task Viewed"></i>
+                                    @else
+                                    <i class="fas fa-times-circle text-danger" data-bs-toggle="tooltip"
+                                        title="Task Not Viewed"></i>
+                                    @endif
+                                </a>
+                                <div class="mt-2">
+                                    @if($task->task_note()->where('department_task_assignment_id', $task->id)->exists())
+                                    <a href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}"
+                                        class="btn btn-dark btn-sm view-notes-button">
+                                        <i class="fas fa-clipboard-list"></i> View Task Notes
+                                    </a>
+
+                                    @endif
+                                </div>
+
+                            </div>
+                            @else
+                            <div><strong>Engineer:</strong> -</div>
+                            @endif
+                            @if(now() <= \Carbon\Carbon::parse($task->due_date . ' ' . $task->due_time))
+                                <p class="alert-warning p-1">Scheduled for Completion on Date {{$task->due_date}} -
+                                    {{$task->due_time ? \Carbon\Carbon::parse($task->due_time)->format('h:i A') : ''}}
+                                </p>
+                                @endif
+                        </td>
+
 
 
                         <td>

@@ -50,7 +50,7 @@ class DashBoardController extends Controller
                 if ($assignment->eng_id && $assignment->department_id == $departmentId) {
 
                     if ($assignment->eng_id) {
-                        $engineerName = $assignment->engineer->name;
+                        $engineerName = $assignment->engineer->arabic_name;
 
                         // If the engineerName is not yet in the array, initialize the counts
                         if (!isset($engineerData[$engineerName])) {
@@ -279,7 +279,7 @@ class DashBoardController extends Controller
                 if ($assignment->eng_id && $assignment->department_id == $departmentId) {
 
                     if ($assignment->eng_id) {
-                        $engineerName = $assignment->engineer->name;
+                        $engineerName = $assignment->engineer->arabic_name;
 
                         // If the engineerName is not yet in the array, initialize the counts
                         if (!isset($engineerData[$engineerName])) {
@@ -539,7 +539,7 @@ class DashBoardController extends Controller
                 if ($assignment->eng_id && $assignment->department_id == $departmentId) {
 
                     if ($assignment->eng_id) {
-                        $engineerName = $assignment->engineer->name;
+                        $engineerName = $assignment->engineer->arabic_name;
 
                         // If the engineerName is not yet in the array, initialize the counts
                         if (!isset($engineerData[$engineerName])) {

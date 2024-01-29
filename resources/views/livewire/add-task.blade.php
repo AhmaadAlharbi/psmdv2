@@ -192,6 +192,17 @@
                         </datalist>
                         <input type="hidden" wire:model="user_id">
                     </div>
+                    <div class="form-group">
+                        <label for="due_date">Due Date</label>
+                        <input wire:model="due_date" type="date" name="due_date" class="form-control"
+                            value="{{ now()->format('Y-m-d') }}">
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="due_time">Due Time</label>
+                        <input wire:model="due_time" type="time" name="due_time" class="form-control">
+                    </div>
                 </div>
                 <div class="text-center">
                     <div class="example">

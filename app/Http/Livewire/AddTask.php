@@ -68,6 +68,8 @@ class AddTask extends Component
     public $user_id;
     public $names = [];
     public $ncc_area = null;
+    public $due_date;
+    public $due_time;
     protected $listeners = ['callEngineer' => 'getEngineer'];
 
     public function mount()
@@ -331,7 +333,7 @@ class AddTask extends Component
                     $subquery->where('shifts.id', $shiftId);
                 });
             })
-            ->orderBy('users.name', 'asc')
+            ->orderBy('users.arabic_name', 'asc')
             ->get();
 
         $this->engineers = $engineers;
@@ -362,11 +364,11 @@ class AddTask extends Component
                     $subquery->where('shifts.id', $shiftId);
                 });
             })
-            ->orderBy('users.name', 'asc')
+            ->orderBy('users.arabic_name', 'asc')
             ->get();
 
         $this->engineers = $engineers;
-        $this->names = $engineers->pluck('name')->toArray();
+        $this->names = $engineers->pluck('arabic_name')->toArray();
     }
 
     public function clearStation()
@@ -758,7 +760,9 @@ class AddTask extends Component
             'eng_id' => $this->user_id,
             'status' => 'pending',
             'is_emergency' => $this->is_emergency,
-            'area_id' => $this->area
+            'area_id' => $this->area,
+            'due_date' => $this->due_date ?: now()->toDateString(),
+            'due_time' => $this->due_time ?: '00:00:00',
         ]);
 
         // Step 2: Record timeline event for department task assignment

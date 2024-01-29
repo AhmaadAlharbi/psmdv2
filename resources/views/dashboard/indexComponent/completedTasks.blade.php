@@ -49,7 +49,7 @@
                                 <div class="engineer-details">
                                     <strong>Engineer:</strong>
                                     <a href="{{ route('dashboard.engineerProfile',['eng_id'=>$task->eng_id]) }}">
-                                        {{ $task->engineer->name }} - {{ $task->engineer->department->name }}
+                                        {{ $task->engineer->arabic_name }} - {{ $task->engineer->department->name }}
                                     </a>
                                 </div>
                                 <strong>Action Take:</strong>
