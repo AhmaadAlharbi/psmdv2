@@ -20,9 +20,10 @@ use Livewire\WithFileUploads;
 use App\Models\TaskAttachment;
 use App\Models\TaskConversions;
 use App\Notifications\TaskReport;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\department_task_assignment;
 use Illuminate\Support\Facades\Notification;
@@ -78,6 +79,10 @@ class AddTask extends Component
         $this->departments = Department::where('name', '!=', Auth::user()->department->name)->get();
         $this->selectedDepartment = Auth::user()->department_id;
         $this->main_alarms = MainAlarm::where('department_id', $this->selectedDepartment)->get();
+        $this->due_date = Carbon::now()->format('Y-m-d');
+
+        // Set current time
+        $this->due_time = Carbon::now()->format('H:i');
         return view('livewire.add-task');
     }
     public function render(Request $request)
@@ -312,63 +317,107 @@ class AddTask extends Component
         'getEngineer' => 300, // milliseconds
     ];
 
+    // public function getEngineer()
+    // {
+    //     $userDepartmentId = Auth::user()->department_id;
+    //     $area = $this->area;
+    //     $shiftId = $this->duty ? 2 : 1;
+
+    //     $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+    //         ->where('engineers.department_id', $userDepartmentId)
+    //         ->when($area, function ($query) use ($area) {
+    //             $query->whereHas('areas', function ($subquery) use ($area) {
+    //                 $subquery->where('areas.id', $area);
+    //             });
+    //         });
+
+    //     if ($shiftId == 2) {
+    //         $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+    //             $subquery->where('shifts.id', $shiftId);
+    //         });
+    //     }
+
+    //     $engineers = $query->orderBy('users.arabic_name', 'asc')->get();
+
+    //     $this->engineers = $engineers;
+    //     $this->names = $engineers->map(function ($engineer) {
+    //         return $engineer->arabic_name ?: $engineer->name;
+    //     })->toArray();
+    // }
     public function getEngineer()
     {
         $userDepartmentId = Auth::user()->department_id;
+        $userRole = Auth::user()->role_id; //!! 2 for Admin , 6 for shift Leader
+        $userShiftGroup = Auth::user()->shift; //!!A , B , C OR D
         $area = $this->area;
         $shiftId = $this->duty ? 2 : 1;
 
         $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
-            ->where('engineers.department_id', $userDepartmentId);
-
-        $engineers = $query->when($userDepartmentId === 2 || $userDepartmentId === 5, function ($query) use ($area) {
-            return $query->when($area !== 3 && $area !== 4, function ($query) use ($area) {
-                return $query->whereHas('areas', function ($subquery) use ($area) {
+            ->where('engineers.department_id', $userDepartmentId)
+            ->when($area, function ($query) use ($area) {
+                $query->whereHas('areas', function ($subquery) use ($area) {
                     $subquery->where('areas.id', $area);
                 });
             });
-        })
-            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
-                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
-                    $subquery->where('shifts.id', $shiftId);
-                });
-            })
-            ->orderBy('users.arabic_name', 'asc')
-            ->get();
+
+        if ($shiftId == 2) {
+            $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                $subquery->where('shifts.id', $shiftId);
+            });
+        }
+
+        if ($userRole == 2) { //2 is admin
+            $engineers = $query->orderBy('users.arabic_name', 'asc')->get();
+        }
+        if ($userRole == 6) { //shift leader
+            //
+            $engineers = $query->where('users.shift', $userShiftGroup)->orderBy('users.arabic_name', 'asc')->get();
+        }
 
         $this->engineers = $engineers;
         $this->names = $engineers->map(function ($engineer) {
             return $engineer->arabic_name ?: $engineer->name;
         })->toArray();
-        // $this->names = $engineers->pluck('name')->toArray();
     }
+
+
+
     public function getEngineerArea($area)
     {
+        $userDepartmentId = Auth::user()->department_id;
+        $userRole = Auth::user()->role_id; //!! 2 for Admin , 6 for shift Leader
+        $userShiftGroup = Auth::user()->shift; //!!A , B , C OR D
         $this->clearEngineer();
         $this->area = $area;
         $userDepartmentId = Auth::user()->department_id;
         $shiftId = $this->duty ? 2 : 1;
 
         $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
-            ->where('engineers.department_id', $userDepartmentId);
-
-        $engineers = $query->when($userDepartmentId === 2 || $userDepartmentId === 5, function ($query) use ($area) {
-            return $query->when($area !== 3 && $area !== 4, function ($query) use ($area) {
-                return $query->whereHas('areas', function ($subquery) use ($area) {
+            ->where('engineers.department_id', $userDepartmentId)
+            ->when($area, function ($query) use ($area) {
+                $query->whereHas('areas', function ($subquery) use ($area) {
                     $subquery->where('areas.id', $area);
                 });
             });
-        })
-            ->when(in_array($userDepartmentId, [3, 4]), function ($query) use ($shiftId) {
-                return $query->whereHas('shifts', function ($subquery) use ($shiftId) {
-                    $subquery->where('shifts.id', $shiftId);
-                });
-            })
-            ->orderBy('users.arabic_name', 'asc')
-            ->get();
+
+        if ($shiftId == 2) {
+            $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                $subquery->where('shifts.id', $shiftId);
+            });
+        }
+
+        if ($userRole == 2) { //2 is admin
+            $engineers = $query->orderBy('users.arabic_name', 'asc')->get();
+        }
+        if ($userRole == 6) { //shift leader
+            //
+            $engineers = $query->where('users.shift', $userShiftGroup)->orderBy('users.arabic_name', 'asc')->get();
+        }
 
         $this->engineers = $engineers;
-        $this->names = $engineers->pluck('arabic_name')->toArray();
+        $this->names = $engineers->map(function ($engineer) {
+            return $engineer->arabic_name ?: $engineer->name;
+        })->toArray();
     }
 
     public function clearStation()

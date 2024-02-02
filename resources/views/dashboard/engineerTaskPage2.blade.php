@@ -22,7 +22,7 @@
 <div class="row mt-4" id="printable-content">
     <div class=" main-content-body-invoice">
         <div class="card card-invoice">
-            @if(now() >= \Carbon\Carbon::parse($tasks->due_date . ' ' . $tasks->due_time))
+
 
             <div class="card-body">
                 <div class="invoice-header">
@@ -108,6 +108,7 @@
 
                         </tbody>
                     </table>
+                    @if(now() >= \Carbon\Carbon::parse($tasks->due_date . ' ' . $tasks->due_time))
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
@@ -335,8 +336,12 @@
                 <i class="fas fa-hourglass-half fa-5x mb-3"></i>
                 <p class="mb-1 fs-md-5 fs-5">
                     <strong>Note:</strong> You are unable to complete this task until its scheduled due date and time,
-                    which is set for {{$tasks->due_date}} - {{$tasks->due_time}}.
+                    which is set for {{ \Carbon\Carbon::parse($tasks->due_date)->format('j / n / Y') }}
+                    at {{ \Carbon\Carbon::parse($tasks->due_time)->format('g:i A') }}.
                 </p>
+
+
+
                 <p id="countdown-message" class="fw-bold  fs-6 text-dark">
                     <!-- Countdown message will be displayed here -->
                 </p>

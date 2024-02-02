@@ -297,6 +297,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::get('/add-task', [DashboardController::class, 'add_task'])->name('dashboard.add_task');
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     // Add routes that require role_id = 2 here
@@ -310,7 +311,6 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::delete('/stations/{station}', [StationController::class, 'destroy'])->name('stations.destroy');
     Route::post('/dashboard/stations', [StationController::class, 'store'])->name('stations.store');
     Route::get('/dashboard/admin/{control}', [DashboardController::class, 'indexControl'])->name('dashboard.indexControl')->middleware('auth');
-    Route::get('/add-task', [DashboardController::class, 'add_task'])->name('dashboard.add_task');
     Route::get('/engineers-list', [EngineersController::class, 'engineersList'])->name('dashboard.engineersList');
     Route::get('engineer-profile/{eng_id}', [EngineersController::class, 'engineerProfile'])->name('dashboard.engineerProfile');
     Route::get('/admin/reports/pending-approval', [DashboardController::class, 'pendingReports'])->name('dashboard.pendingReports');

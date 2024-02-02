@@ -68,7 +68,8 @@ class EditTask extends Component
     public $user_id;
     public $names = [];
     public $ncc_area = null;
-
+    public $due_date;
+    public $due_time;
     public function __construct($task_id)
     {
         $this->task_id = $task_id;
@@ -118,6 +119,8 @@ class EditTask extends Component
         $this->departments = Department::where('name', '!=', Auth::user()->department->name)->get();
         $this->selectedDepartment = Auth::user()->department_id;
         $this->equip = Equip::where('station_id', $this->task->station->id)->where('voltage_level', $this->selectedVoltage)->get();
+        $this->due_date = \Carbon\Carbon::parse($this->departmentTask->due_date)->format('Y-m-d');
+        $this->due_time = \Carbon\Carbon::parse($this->departmentTask->due_time)->format('H:i');
     }
 
     public function render()
@@ -565,7 +568,9 @@ class EditTask extends Component
                 'status' => 'pending',
                 'isCompleted' => "0",
                 'isSeen' => "0",
-                'area_id' => $this->area
+                'area_id' => $this->area,
+                'due_date' => $this->due_date ?: now()->toDateString(),
+                'due_time' => $this->due_time ?: '00:00:00',
 
             ]);
         } else {
@@ -576,7 +581,9 @@ class EditTask extends Component
                 'main_tasks_id' => $mainTaskId,
                 'eng_id' => $this->user_id,
                 'status' => 'pending',
-                'area_id' => $this->area
+                'area_id' => $this->area,
+                'due_date' => $this->due_date ?: now()->toDateString(),
+                'due_time' => $this->due_time ?: '00:00:00',
 
             ]);
         }

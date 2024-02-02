@@ -186,6 +186,17 @@
                                 @endforeach
                             </datalist>
                             <input type="hidden" wire:model="user_id">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="due_date">Due Date</label>
+                            <input wire:model="due_date" type="date" name="due_date" class="form-control">
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="due_time">Due Time</label>
+                            <input wire:model="due_time" type="time" name="due_time" class="form-control">
                         </div>
                         <div class="text-center">
                             <div class="example">
@@ -201,11 +212,13 @@
                                                 <i class="fas fa-arrow-circle-down me-2"></i> South Engineers
                                             </a>
                                         </li>
+                                        @if(Auth::user()->department_id != 2)
                                         <li class="breadcrumb-item">
                                             <a href="javascript:void(0);" wire:click="getEngineerArea(3)">
                                                 <i class="fas fa-arrow-circle-right me-2"></i> Middle Engineers
                                             </a>
                                         </li>
+                                        @endif
                                     </ol>
                                 </nav>
                             </div>
