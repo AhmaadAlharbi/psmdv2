@@ -1098,10 +1098,10 @@ class DashBoardController extends Controller
 
             if ($taskConverted) {
                 // Step 3: Handle the converted task
-
+                return 'converted';
                 $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask);
             } else {
-
+                $this->logTaskCompletion($departmentTask, $actionStatus);
                 // Step 4: Handle the non-converted task
                 $this->handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask);
             }
@@ -1198,6 +1198,7 @@ class DashBoardController extends Controller
         // if ($isCompleted) {
         //     $this->logTaskCompletion($departmentTask, $actionStatus);
         // }
+
     }
 
 
@@ -1213,6 +1214,7 @@ class DashBoardController extends Controller
      */
     private function handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask)
     {
+
         $existingSubmission = SectionTask::where('main_tasks_id', $mainTask->id)
             ->where('eng_id', Auth::user()->id)
             ->exists();
@@ -1287,12 +1289,7 @@ class DashBoardController extends Controller
         if ($actionStatus == 'Transfer the task to another engineer') {
             $departmentTaskUpdates['eng_id'] = null;
         }
-        // if ($mainTask->main_alarm->id == 1) {
-        //     $this->logTaskCompletion($departmentTask, $actionStatus);
-        // }
-        // Create a task log entry to track the completion time
-
-
+        // $this->logTaskCompletion($departmentTask, $actionStatus);
         // Update the main task and department task with the prepared updates
         $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates, $actionContent);
     }
@@ -1347,28 +1344,36 @@ class DashBoardController extends Controller
     }
     // private function logTaskCompletion($mainTask, $actionStatus)
     // {
-
-
     //     $user = Auth::user();
     //     $assignedTime = Carbon::parse($mainTask->created_at);
     //     $completedTime = now();
     //     $timeTakenInMinutes = $assignedTime->diffInMinutes($completedTime);
     //     $taskType = $mainTask->is_emergency;
-    //     if ($taskType === TaskLog::TASK_TYPE_NORMAL) {
-    //         // Normal task
-    //         if ($actionStatus !== 'First Draft') {
-    //             // Check if it's late based on the time taken
-    //             $isLate = $timeTakenInMinutes > (24 * 60);
+    //     $isLate = false; // Initialize isLate variable
+    //     // $taskType === TaskLog::TASK_TYPE_NORMAL
+    //     // $taskType === TaskLog::TASK_TYPE_EMERGENCY
+    //     if ($actionStatus !== 'First Draft') {
+    //         $isLate = $timeTakenInMinutes > (24 * 60);
+    //         // Determine due time based on emergency type
+    //         switch ($mainTask->work_type) {
+    //             case 'Clearance':
+    //                 $dueTime = (48 * 60); // 48 hours in minutes
+    //                 break;
+    //                 // case 'Trouble shooting':
+    //                 //     $dueTime = (6 * 60); // 6 hours in minutes
+    //                 //     break;
+    //                 // case 'Outage':
+    //                 //     $dueTime = (6 * 60); // 6 hours in minutes
+    //                 //     break;
+    //             default:
+    //                 $dueTime = (6 * 60); // Default to 24 hours in minutes
+    //                 break;
     //         }
-    //     } elseif ($taskType === TaskLog::TASK_TYPE_EMERGENCY) {
-    //         // Emergency task
-    //         if ($actionStatus !== 'First Draft') {
-    //             // Check if it's late based on the time taken
-    //             $isLate = $timeTakenInMinutes > (2 * 60);
-    //         }
+    //         // Check if it's late based on the due time
+    //         $isLate = $timeTakenInMinutes > $dueTime;
     //     }
-    //     // Check if it's a normal task and if it's late
 
+    //     // Log task completion
     //     TaskLog::create([
     //         'task_id' => $mainTask->id,
     //         'user_id' => $user->id,
@@ -1377,9 +1382,51 @@ class DashBoardController extends Controller
     //         'completed_time' => $completedTime,
     //         'time_taken' => $timeTakenInMinutes,
     //         'is_late' => $isLate,
-
     //     ]);
     // }
+    private function logTaskCompletion($mainTask, $actionStatus)
+    {
+        $user = Auth::user();
+        $assignedTime = Carbon::parse($mainTask->created_at);
+        $completedTime = now();
+        $timeTakenInMinutes = $assignedTime->diffInMinutes($completedTime);
+        $isLate = false; // Initialize isLate variable
+
+        // Determine task type and due time
+        // Default due time for non 'First Draft' actions
+        $dueTime = (24 * 60); // Default to 24 hours in minutes
+
+        // Adjust due time based on the work type
+        switch ($mainTask->work_type) {
+            case 'Clearance':
+                $dueTime = (48 * 60); // 48 hours in minutes for clearance tasks
+                break;
+            default:
+                $dueTime = (6 * 60); // 6 hours in minutes for tasks other than clearance
+                break;
+        }
+        // Check if the task completion is late based on the due time
+        $isLate = $timeTakenInMinutes > $dueTime;
+
+
+        // Check if a task log entry already exists for the given main task
+        $existingTaskLog = TaskLog::where('task_id', $mainTask->id)->first();
+
+        // Create a new task log entry only if it doesn't already exist
+        if (!$existingTaskLog) {
+            // Log task completion
+            TaskLog::create([
+                'task_id' => $mainTask->id,
+                'user_id' => $user->id,
+                'task_type' => $mainTask->is_emergency, // Use task_type from $mainTask object
+                'assigned_time' => $assignedTime,
+                'completed_time' => $completedTime,
+                'time_taken' => $timeTakenInMinutes,
+                'is_late' => $isLate,
+            ]);
+        }
+    }
+
     public function reportDepartment($main_task_id, $department_id)
     {
         $section_task = SectionTask::where('main_tasks_id', $main_task_id)

@@ -298,6 +298,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/add-task', [DashboardController::class, 'add_task'])->name('dashboard.add_task');
+Route::get('/dashboard/tasks/sent-by/{id}', [DashboardController::class, 'tasksSentByUser'])->name('tasksSentByUser');
+Route::delete('/tasks/{id}/delete', [DashboardController::class, 'destroy'])->name('task.destroy');
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     // Add routes that require role_id = 2 here
@@ -324,7 +326,6 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/engineer/{id}/edit', [EngineersController::class, 'edit'])->name('engineer.edit');
     Route::put('/engineer/update/{id}', [EngineersController::class, 'update'])->name('engineer.update');
     Route::patch('/activate-users', [UserController::class, 'activateUsers'])->name('update.users');
-    Route::delete('/tasks/{id}/delete', [DashboardController::class, 'destroy'])->name('task.destroy');
     Route::delete('/section-tasks/{id}/delete', [DashboardController::class, 'destroySectionTasks'])->name('sectionTasks.destroy');
     Route::get('/users-list', [UserController::class, 'usersList'])->name('dashboard.usersList');
     Route::post('/dashboard/admin/add-engineer', [EngineersController::class, 'addEngineer'])->name('addEngineer');
@@ -337,7 +338,6 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/create-main-alarm', [MainAlarmController::class, 'store'])->name('main_alarm.store');
     Route::get('/dashboard/daily-reports', [DashboardController::class, 'dailyReports'])->name('dailyReports');
     Route::post('/daily-reports/search-tasks', [DashboardController::class, 'dailyReportSearchTasks'])->name('dailyReportSearchTasks');
-    Route::get('/dashboard/tasks/sent-by/{id}', [DashboardController::class, 'tasksSentByUser'])->name('tasksSentByUser');
     Route::get('/import-old-reports', [DashboardController::class, 'importOldReports'])->name('importOldReports');
     Route::post('/submit-old-reports', [DashboardController::class, 'submitOldReport'])->name('submitOldReport');
     Route::post('/tasks/{id}/resend', [DashboardController::class, 'resendTask'])->name('resendTask');

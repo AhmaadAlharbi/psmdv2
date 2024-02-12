@@ -49,7 +49,29 @@
                         </svg><span class="side-menu__label">Home</span></a>
 
                 </li>
+                <li class="slide">
+                    <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
+                        <i class="fas fa-bell side-menu__icon"></i> <!-- Placeholder alert tracking icon -->
+                        <span class="side-menu__label">Alert Tracking</span>
+                        <i class="angle fe fe-chevron-down"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="side-menu__label1"><a href="javascript:void(0);">Icons</a></li>
+                        <li><a class="slide-item" href="{{ route('dashboard.add_task') }}">Task Assignment</a></li>
+                        <li><a class="slide-item" href="{{ route('main_alarm.index') }}">Alarms List</a></li>
 
+                        <li><a class="slide-item"
+                                href="{{ route('dashboard.showTasks', ['status' => 'pending']) }}">Pending Tasks</a>
+                        </li>
+                        <li><a class="slide-item"
+                                href="{{ route('dashboard.showTasks', ['status' => 'completed']) }}">Completed Tasks</a>
+                        </li>
+                        <li><a class="slide-item" href="{{ route('dailyReports') }}">Daily Reports</a>
+                        <li><a class="slide-item" href="{{ route('tasksSentByUser', ['id' => Auth::user()->id]) }}">
+                                Tasks submitted by {{ Auth::user()->name }}</a></li>
+
+
+                </li>
 
                 {{-- <li class="side-item side-item-category">WEB APPS</li>
                 <li class="slide">

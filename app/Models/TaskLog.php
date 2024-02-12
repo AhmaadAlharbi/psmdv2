@@ -14,7 +14,7 @@ class TaskLog extends Model
     const TASK_TYPE_EMERGENCY = 1;
     public function assignment()
     {
-        return $this->belongsTo(DepartmentTaskAssignment::class, 'task_id', 'id');
+        return $this->belongsTo(department_task_assignment::class, 'task_id', 'id');
     }
 
     // Define the inverse relationship for the engineer

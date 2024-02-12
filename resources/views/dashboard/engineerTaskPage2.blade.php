@@ -151,15 +151,19 @@
                                         @csrf
 
                                         <div class="alert alert-info" role="alert">
-                                            <strong>Note:</strong> The icons serve as indicators for the task
-                                            status.
+                                            <strong>Note:</strong> The icons serve as indicators for the task status.
                                             <br>
                                             <i class="fas fa-check-circle text-success"></i> Completed: This icon
                                             signifies that the task has been successfully finished.
                                             <br>
-                                            <i class="fas fa-hourglass-half text-warning"></i> Pending: This icon
+                                            <i class="fas fa-hourglass-half text-danger"></i> Pending: This icon
                                             represents a task that is currently in progress and awaits completion.
+                                            <br>
+                                            <i class="fas fa-file-alt text-warning"></i> First Draft: This icon
+                                            indicates that the task is at its initial draft stage. Please submit
+                                            promptly to avoid any delays.
                                         </div>
+
 
 
 
@@ -167,8 +171,21 @@
                                             <label for="taskStatus">Task Status</label>
                                             <div class="custom-controls-stacked mt-3">
                                                 <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="firstDraft" name="action_take_status"
+                                                        value="First Draft" class="custom-control-input">
+                                                    <label class="custom-control-label completed-label"
+                                                        for="firstDraft">
+                                                        <i class="fas fa-file-alt text-warning"></i> First Draft
+                                                    </label>
+                                                    <!-- Note under First Draft option with increased font size and contrasting color -->
+                                                    <small class="text-danger ml-3" style="font-size: 1.1em;">If your
+                                                        report requires extra time, choose this option and promptly
+                                                        submit it in the 'Action Take' field to prevent delays. Once
+                                                        your report is ready, you can return to complete it.</small>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
                                                     <input type="radio" id="completed" name="action_take_status"
-                                                        value="completed" class="custom-control-input" checked>
+                                                        value="completed" class="custom-control-input">
                                                     <label class="custom-control-label completed-label" for="completed">
                                                         <i class="fas fa-check-circle text-success"></i> Completed
                                                     </label>
@@ -194,7 +211,7 @@
                                                     <input type="radio" id="spareParts" name="action_take_status"
                                                         value="Spare parts not available" class="custom-control-input">
                                                     <label class="custom-control-label" for="spareParts">
-                                                        <i class="fas fa-hourglass-half text-warning"></i> Spare
+                                                        <i class="fas fa-hourglass-half text-danger"></i> Spare
                                                         parts
                                                         not available
                                                     </label>
@@ -203,7 +220,7 @@
                                                     <input type="radio" id="awaitingRepairs" name="action_take_status"
                                                         value="Awaiting repairs" class="custom-control-input">
                                                     <label class="custom-control-label" for="awaitingRepairs">
-                                                        <i class="fas fa-hourglass-half text-warning"></i> Awaiting
+                                                        <i class="fas fa-hourglass-half text-danger"></i> Awaiting
                                                         repairs
                                                     </label>
                                                 </div>
@@ -212,7 +229,7 @@
                                                         value="Transfer the task to another engineer"
                                                         class="custom-control-input">
                                                     <label class="custom-control-label" for="transferTask">
-                                                        <i class="fas fa-hourglass-half text-warning"></i>
+                                                        <i class="fas fa-hourglass-half text-danger"></i>
                                                         Transfer the task to another engineer
                                                     </label>
                                                 </div>
