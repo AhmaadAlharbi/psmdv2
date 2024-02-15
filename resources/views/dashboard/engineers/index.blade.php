@@ -149,10 +149,19 @@
                             <i class="fas fa-clipboard-list"></i> View Task Notes to Complete the Task
                         </a>
                         @endif
+                        @if(now() <= $task->due_date && $task->due_time)
+                            <div class="alert alert-warning scheduled-completion">
+                                <i class="fas fa-clock mr-2"></i>
+                                Scheduled for Completion on Date {{ $task->due_date }} - {{
+                                \Carbon\Carbon::parse($task->due_time)->format('h:i A') }}
+                            </div>
+                            @endif
+                            <a href="/engineer-task-page/{{$task->main_tasks_id}}"
+                                class="btn btn-danger btn-block {{$task->due_time ? '' : 'disabled'}}">
+                                <i class="fas fa-plus-circle"></i> Add Report
+                            </a>
 
-                        <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
-                            <i class="fas fa-plus-circle"></i> Add Report
-                        </a>
+
                     </div>
                 </div>
                 @empty

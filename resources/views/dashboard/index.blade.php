@@ -50,6 +50,38 @@
         background-color: #61b361;
         /* Light green for completed tasks */
     }
+
+    .my-pulse {
+        animation: pulse 2s infinite ease-in-out;
+    }
+
+    .scheduled-completion {
+        background-color: #ffe4b5;
+        /* Lighter shade of orange */
+        border: 1px solid #ffdab9;
+        /* Border color slightly darker than background */
+        color: #8b4513;
+        /* Brown text color */
+        border-radius: .25rem;
+        /* Rounded border */
+        padding: .75rem 1.25rem;
+        /* Padding */
+        animation: pulse 1.5s linear infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
 </style>
 @endsection
 

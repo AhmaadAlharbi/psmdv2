@@ -108,7 +108,6 @@
                                         class="btn btn-dark btn-sm view-notes-button">
                                         <i class="fas fa-clipboard-list"></i> View Task Notes
                                     </a>
-
                                     @endif
                                 </div>
 
@@ -116,11 +115,16 @@
                             @else
                             <div><strong>Engineer:</strong> -</div>
                             @endif
-                            @if(now() <= \Carbon\Carbon::parse($task->due_date . ' ' . $task->due_time))
-                                <p class="alert-warning p-1">Scheduled for Completion on Date {{$task->due_date}} -
-                                    {{$task->due_time ? \Carbon\Carbon::parse($task->due_time)->format('h:i A') : ''}}
+                            @if(now() <= $task->due_date && $task->due_time)
+                                <p class="scheduled-completion">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    Scheduled for Completion on Date {{ $task->due_date }} - {{
+                                    \Carbon\Carbon::parse($task->due_time)->format('h:i A') }}
                                 </p>
                                 @endif
+
+
+
                         </td>
 
 
