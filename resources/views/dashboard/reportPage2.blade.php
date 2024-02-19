@@ -75,17 +75,31 @@
                                 $section_task->main_task->station->COMMISIONING_DATE }}</span></p>
                         <p class="invoice-info-row"><span>Previous Maintenance</span> <span> {{
                                 $section_task->main_task->station->pm }}</span></p>
+
                     </div>
                     <div class="invoice-notes border task-action-container">
                         <div>
                             <label class="main-content-label tx-16 mt-3">Work Type <span
                                     class="badge bg-danger me-1"></span></label>
                             <p class="tx-20  ">{{$section_task->main_task->work_type}}</p>
+
                         </div>
                         <label class="main-content-label tx-16 mt-3">Nature of Fault <span
                                 class="badge bg-danger me-1"></span></label>
+
                         <p class="tx-20 text-secondary">{{
                             $section_task->main_task->problem }} </p>
+                        <p class="card-text my-3 text-muted font-italic">Occurred on
+                            <span class="badge d-print-none bg-danger">
+                                {{ \Carbon\Carbon::parse($section_task->main_task->created_at)->format('Y-m-d H:i a') }}
+                            </span>
+                            <span class="d-none d-print-inline">
+                                <small> {{ \Carbon\Carbon::parse($section_task->main_task->created_at)->format('Y-m-d
+                                    H:i a') }}
+                                </small>
+                            </span>
+                        </p>
+
                     </div>
 
                     <div class="invoice-notes border">
@@ -93,12 +107,22 @@
                         </label>
 
 
+
                         <div class="task-action-container">
                             @if (isset($section_task->action_take))
 
                             {!! $section_task->action_take !!}
 
-
+                            <p class="card-text my-3 text-muted font-italic">Completed on
+                                <span class="badge d-print-none bg-success">
+                                    {{ \Carbon\Carbon::parse($section_task->created_at)->format('Y-m-d H:i a') }}
+                                </span>
+                                <span class="d-none d-print-inline">
+                                    <small> {{ \Carbon\Carbon::parse($section_task->created_at)->format('Y-m-d
+                                        H:i a') }}
+                                    </small>
+                                </span>
+                            </p>
                             @endif
                             @if($section_task->eng_id === Auth::user()->id)
 
