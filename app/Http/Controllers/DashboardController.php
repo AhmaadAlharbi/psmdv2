@@ -835,6 +835,13 @@ class DashBoardController extends Controller
     }
     public function engineerTaskPage($id)
     {
+        $sectionTask = SectionTask::where('main_tasks_id', $id)
+            ->where('eng_id', Auth::user()->id)
+            ->where('isCompleted', "1")
+            ->first();
+        if ($sectionTask) {
+            return redirect()->route('dashboard.requestToUpdateReport', ['main_task_id' => $sectionTask->id]);
+        }
         $tasks = department_task_assignment::where('main_tasks_id', $id)
             ->where('department_id', Auth::user()->department_id)
             ->first();
