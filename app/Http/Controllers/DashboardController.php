@@ -1408,8 +1408,12 @@ class DashBoardController extends Controller
             case 'Clearance':
                 $dueTime = (48 * 60); // 48 hours in minutes for clearance tasks
                 break;
-            default:
+            case 'outage':
+            case 'Inspection':
                 $dueTime = (6 * 60); // 6 hours in minutes for tasks other than clearance
+                break;
+            default:
+                $dueTime = 0; // no late to mark an engineer
                 break;
         }
         // Check if the task completion is late based on the due time

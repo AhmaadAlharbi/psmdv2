@@ -170,72 +170,85 @@
                                         <div class="form-group">
                                             <label for="taskStatus">Task Status</label>
                                             <div class="custom-controls-stacked mt-3">
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="firstDraft" name="action_take_status"
-                                                        value="First Draft" class="custom-control-input">
-                                                    <label class="custom-control-label completed-label"
-                                                        for="firstDraft">
-                                                        <i class="fas fa-file-alt text-warning"></i> First Draft
-                                                    </label>
-                                                    <!-- Note under First Draft option with increased font size and contrasting color -->
-                                                    <small class="text-danger ml-3" style="font-size: 1.1em;">If your
-                                                        report requires extra time, choose this option and promptly
-                                                        submit it in the 'Action Take' field to prevent delays. Once
-                                                        your report is ready, you can return to complete it.</small>
-                                                </div>
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="completed" name="action_take_status"
-                                                        value="completed" class="custom-control-input">
-                                                    <label class="custom-control-label completed-label" for="completed">
-                                                        <i class="fas fa-check-circle text-success"></i> Completed
-                                                    </label>
-                                                </div>
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="responsibility" name="action_take_status"
-                                                        value="Responsibility of another entity"
-                                                        class="custom-control-input">
-                                                    <label class="custom-control-label" for="responsibility">
-                                                        <i class="fas fa-check-circle text-success"></i></i>
-                                                        Responsibility of another entity
-                                                    </label>
-                                                </div>
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="warranty" name="action_take_status"
-                                                        value="Under warranty" class="custom-control-input">
-                                                    <label class="custom-control-label" for="warranty">
-                                                        <i class="fas fa-check-circle text-success"></i> Under
-                                                        warranty
-                                                    </label>
-                                                </div>
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="spareParts" name="action_take_status"
-                                                        value="Spare parts not available" class="custom-control-input">
-                                                    <label class="custom-control-label" for="spareParts">
-                                                        <i class="fas fa-hourglass-half text-danger"></i> Spare
-                                                        parts
-                                                        not available
-                                                    </label>
-                                                </div>
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="awaitingRepairs" name="action_take_status"
-                                                        value="Awaiting repairs" class="custom-control-input">
-                                                    <label class="custom-control-label" for="awaitingRepairs">
-                                                        <i class="fas fa-hourglass-half text-danger"></i> Awaiting
-                                                        repairs
-                                                    </label>
-                                                </div>
-                                                <div class="custom-control custom-radio mb-2">
-                                                    <input type="radio" id="transferTask" name="action_take_status"
-                                                        value="Transfer the task to another engineer"
-                                                        class="custom-control-input">
-                                                    <label class="custom-control-label" for="transferTask">
-                                                        <i class="fas fa-hourglass-half text-danger"></i>
-                                                        Transfer the task to another engineer
-                                                    </label>
+                                                <div class="alert alert-danger mb-3" role="alert">
+                                                    <strong>Completion Deadlines</strong>
+                                                    <br><br>
+                                                    Please ensure that the following tasks are completed within the
+                                                    specified timeframes:<br>
+                                                    - <strong>Clearance:</strong> Tasks in this category must be
+                                                    completed within 48 hours.<br>
+                                                    - <strong>Outage and Inspection:</strong> Tasks in these categories
+                                                    should be finished within 6 hours.
+                                                    <br><br>
+                                                    Promptly submit the first draft to preempt any potential delays.
                                                 </div>
 
+
+                                                <div class="custom-group">
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="firstDraft" name="action_take_status"
+                                                            value="First Draft" class="custom-control-input">
+                                                        <label class="custom-control-label" for="firstDraft"><i
+                                                                class="fas fa-file-alt text-warning"></i> First
+                                                            Draft</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="completed" name="action_take_status"
+                                                            value="Completed" class="custom-control-input">
+                                                        <label class="custom-control-label" for="completed"><i
+                                                                class="fas fa-check-circle text-success"></i>
+                                                            Completed</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="custom-group">
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="responsibility"
+                                                            name="action_take_status"
+                                                            value="Responsibility of another entity"
+                                                            class="custom-control-input">
+                                                        <label class="custom-control-label" for="responsibility"><i
+                                                                class="fas fa-check-circle text-success"></i>
+                                                            Responsibility of another entity</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="warranty" name="action_take_status"
+                                                            value="Under warranty" class="custom-control-input">
+                                                        <label class="custom-control-label" for="warranty"><i
+                                                                class="fas fa-check-circle text-success"></i> Under
+                                                            warranty</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="custom-group">
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="spareParts" name="action_take_status"
+                                                            value="Spare parts not available"
+                                                            class="custom-control-input">
+                                                        <label class="custom-control-label" for="spareParts"><i
+                                                                class="fas fa-hourglass-half text-danger"></i> Spare
+                                                            parts not available</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="awaitingRepairs"
+                                                            name="action_take_status" value="Awaiting repairs"
+                                                            class="custom-control-input">
+                                                        <label class="custom-control-label" for="awaitingRepairs"><i
+                                                                class="fas fa-hourglass-half text-danger"></i> Awaiting
+                                                            repairs</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" id="transferTask" name="action_take_status"
+                                                            value="Transfer the task to another engineer"
+                                                            class="custom-control-input">
+                                                        <label class="custom-control-label" for="transferTask"><i
+                                                                class="fas fa-hourglass-half text-danger"></i> Transfer
+                                                            the task to another engineer</label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+
 
                                         <div class="form-group">
                                             <label for="actionTake">Action Take</label>
