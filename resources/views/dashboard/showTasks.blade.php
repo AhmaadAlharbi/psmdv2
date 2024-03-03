@@ -243,6 +243,7 @@
                                 @if(Auth::user()->role->title === 'Admin' )
                                 <a href="{{ route('dashboard.editTask', ['id' => $task->main_task->id]) }}"
                                     class="dropdown-item">Edit</a>
+                                @endif
                                 @if(Auth::user()->department_id == $task->department_id)
                                 <form method="post" action="{{ route('task.destroy', ['id' => $task->main_task->id]) }}"
                                     id="delete-form-{{ $task->main_task->id }}">
@@ -251,15 +252,16 @@
                                     <button type="button" onclick="deleteRecord({{ $task->main_task->id }})"
                                         class="dropdown-item">Delete Task</button>
                                 </form>
-                                @endif
+
                                 @endif
                                 @if($task->isCompleted === '1')
-                                <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->main_tasks_id, 'department_id' => $task->department_id]) }}"
+                                <a href="{{ route('dashboard.reportPage', ['id' => $task->main_task->section_tasks->first()->id]) }}"
                                     class="dropdown-item">
                                     <i class="si si-notebook px-2" data-bs-toggle="tooltip" title=""
                                         data-bs-original-title="si-notebook" aria-label="si-notebook"></i>
                                     {{ Auth::user()->department->name }} Report
                                 </a>
+                                @endif
                                 @if($task->source_department !== 1 && $task->source_department)
                                 @php
                                 $reportRoute = $task->source_department !== Auth::user()->department_id ?
@@ -271,7 +273,7 @@
                                 @endphp
                                 <a href="{{ route($reportRoute, ['main_task_id' => $task->main_tasks_id, 'department_id' => $departmentId]) }}"
                                     class="dropdown-item">Report {{ $departmentName }}</a>
-                                @endif
+
                                 @endif
                             </div>
                         </div>

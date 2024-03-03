@@ -192,7 +192,12 @@ class DashBoardController extends Controller
         } else {
             $completedTasks = SectionTask::where(function ($query) use ($departmentId) {
                 $query->where('department_id', $departmentId);
-            })->where('isCompleted', '1')->where('approved', 1)->latest()->get();
+            })
+                ->where('isCompleted', '1')
+                ->where('approved', 1)
+                ->latest()
+                ->take(30)
+                ->get();
         }
 
 

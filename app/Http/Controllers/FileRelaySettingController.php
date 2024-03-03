@@ -7,6 +7,7 @@ use App\Models\FileActivity;
 use Illuminate\Http\Request;
 use App\Models\RelayTaskFile;
 use App\Models\FileRelaySetting;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class FileRelaySettingController extends Controller
@@ -51,6 +52,7 @@ class FileRelaySettingController extends Controller
                 // Store file information in the database
                 $settingFile = FileRelaySetting::create([
                     'station_id' => $stationId,
+                    'department_id' => Auth::user()->department_id,
                     'filename' => $file->getClientOriginalName(),
                     'user_id' => auth()->user()->id,
                     'path' => $path,
