@@ -176,6 +176,7 @@
         {{-- Awaiting Approval Reports --}}
 
         {{-- Awaiting Approval Reports --}}
+        {{-- Awaiting Approval Reports --}}
         <div class="card border">
 
             <h5 class="card-header bg-secondary text-white">Reports Awaiting Approval</h5>

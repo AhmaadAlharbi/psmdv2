@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Carbon\Carbon;
 use App\Models\Role;
 use App\Models\User;
@@ -808,7 +809,7 @@ class DashBoardController extends Controller
         // return $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
         //     ->with('main_task', 'main_task.section_tasks', 'task_note')
         //     ->get();
-        $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
+         $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
             ->where(function ($query) {
                 $query->where('isCompleted', '1')
                     ->orWhere('isCompleted', '0');
@@ -1126,6 +1127,8 @@ class DashBoardController extends Controller
             return redirect("/dashboard/user");
         } catch (\Exception $e) {
             // Step 7: Handle any exceptions or errors
+            \Log::error('Error creating SectionTask: ' . $e->getMessage());
+
             return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
@@ -1211,18 +1214,6 @@ class DashBoardController extends Controller
         // }
 
     }
-
-
-    /**
-     * Handle a non-converted task, including creating a SectionTask, updating the main task,
-     * and updating the department task.
-     *
-     * @param MainTask $mainTask The main task being handled
-     * @param string $actionStatus The status of the action
-     * @param string $actionContent The content of the action
-     * @param Illuminate\Http\Request $request The HTTP request
-     * @param DepartmentTask $departmentTask The department task related to the main task
-     */
     private function handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask)
     {
         try {
@@ -1230,6 +1221,7 @@ class DashBoardController extends Controller
             $existingSubmission = SectionTask::where('main_tasks_id', $mainTask->id)
                 ->where('eng_id', Auth::user()->id)
                 ->exists();
+
             // Determine if the task is completed based on its status
             $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']);
 
@@ -1238,31 +1230,36 @@ class DashBoardController extends Controller
 
             // Initialize the 'approved' flag to 0
             $approved = 0;
-            // If the task is completed, process it
-            if ($isCompleted) {
 
-                // Check if the user has already submitted the task
-                if (!$existingSubmission) {
-                    // Prepare data for creating a new SectionTask
-                    $sectionTaskData = [
-                        'main_tasks_id' => $mainTask->id,
-                        'department_id' => Auth::user()->department_id,
-                        'eng_id' => Auth::user()->id,
-                        'action_take' => $request->action_take,
-                        'main_alarm_id' => $mainTask->main_alarm_id,
-                        'status' => $actionStatus,
-                        'engineer_notes' => $request->notes ? $request->notes : $actionStatus,
-                        'user_id' => Auth::user()->id,
-                        // 'date' => now(),
-                        'isCompleted' => $isCompletedString,
-                        'approved' => $approved,
-                    ];
+            // If the task is completed and not already submitted, process it
+            if ($isCompleted && !$existingSubmission) {
+                // Prepare data for creating a new SectionTask
+                $sectionTaskData = [
+                    'main_tasks_id' => $mainTask->id,
+                    'department_id' => Auth::user()->department_id,
+                    'eng_id' => Auth::user()->id,
+                    'action_take' => $request->action_take,
+                    'main_alarm_id' => $mainTask->main_alarm_id,
+                    'status' => $actionStatus,
+                    'engineer-notes' => $request->notes ? $request->notes : $actionStatus,
+                    'user_id' => Auth::user()->id,
+                    'date' => now(),
+                    'isCompleted' => $isCompletedString,
+                    'approved' => $approved,
+                ];
+                // Insert the data into the SectionTask table
+                SectionTask::create($sectionTaskData);
 
-                    // Insert the data into the SectionTask table
-                    SectionTask::create($sectionTaskData);
-                }
+                // Create a task timeline entry to indicate the report has been added
+                TaskTimeline::create([
+                    'main_tasks_id' => $mainTask->id,
+                    'department_id' => Auth::user()->department_id,
+                    'status' => 'Report Added',
+                    'action' => 'The Report has been added',
+                    'user_id' => Auth::user()->id,
+                ]);
             } else {
-                // If the task is not completed, create a new TaskNote and update the department task
+                // If the task is not completed or already submitted, create a new TaskNote and update the department task
                 TaskNotes::create([
                     'eng_id' => Auth::user()->id,
                     'user_id' => Auth::user()->id,
@@ -1277,26 +1274,15 @@ class DashBoardController extends Controller
                 ]);
             }
 
-            // If the task is completed, create a new entry in the TaskTimeline table
-            if ($isCompleted) {
-                TaskTimeline::create([
-                    'main_tasks_id' => $mainTask->id,
-                    'department_id' => Auth::user()->department_id,
-                    'status' => 'Report Added',
-                    'action' => 'The Report has been added',
-                    'user_id' => Auth::user()->id,
-                ]);
-            }
-
             // Prepare updates for the main task and department task
             $mainTaskUpdates = [
                 'status' => $actionStatus,
-                'isCompleted' => $isCompleted,
+                'isCompleted' => $isCompletedString,
             ];
 
             $departmentTaskUpdates = [
                 'status' => $actionStatus,
-                'isCompleted' => $isCompleted,
+                'isCompleted' => $isCompletedString,
             ];
 
             // If the action status is 'Transfer the task to another engineer', set the engineer ID to null
@@ -1307,13 +1293,15 @@ class DashBoardController extends Controller
             // Update the main task and department task with the prepared updates
             $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates, $actionContent);
 
-            // Return a success message or redirect the user to the appropriate page
+            // Return a success message
             return redirect("/dashboard/user")->with('success', 'Your report has been successfully saved. Please wait for approval as we review your report.');
         } catch (\Exception $e) {
-            // If an error occurs during the execution, catch it and return an error message
-            return back()->with('error', 'An error occurred while processing your request: ' . $e->getMessage());
+            // Return an error message if an exception occurs
+
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
 
 
     /**
