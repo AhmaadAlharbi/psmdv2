@@ -1113,7 +1113,7 @@ class DashBoardController extends Controller
                 // Step 3: Handle the converted task
                 $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask);
             } else {
-                // $this->logTaskCompletion($departmentTask, $actionStatus);
+                $this->logTaskCompletion($departmentTask, $actionStatus);
                 // Step 4: Handle the non-converted task
                 $this->handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask);
             }

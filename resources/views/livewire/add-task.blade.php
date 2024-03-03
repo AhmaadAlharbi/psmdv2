@@ -191,6 +191,35 @@
                             @endforeach
                         </datalist>
                         <input type="hidden" wire:model="user_id">
+
+                    </div>
+                    <div class="text-center">
+                        <div class="example">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb breadcrumb-style2 mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="javascript:void(0);" wire:click="getEngineerArea(1)">
+                                            <i class="fas fa-arrow-circle-up me-2"></i> North Engineers
+                                        </a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="javascript:void(0);" wire:click="getEngineerArea(2)">
+                                            <i class="fas fa-arrow-circle-down me-2"></i> South Engineers
+                                        </a>
+                                    </li>
+                                    @if(Auth::user()->department_id != 2)
+                                    <li class="breadcrumb-item">
+                                        <a href="javascript:void(0);" wire:click="getEngineerArea(3)">
+                                            <i class="fas fa-arrow-circle-right me-2"></i> Middle Engineers
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ol>
+                            </nav>
+                            <p class="text-muted mt-3">Note: If the list of engineers does not appear, please click on
+                                the buttons above.</p>
+
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="due_date">Due Date</label>
@@ -204,31 +233,7 @@
                         <input wire:model="due_time" type="time" name="due_time" class="form-control">
                     </div>
                 </div>
-                <div class="text-center">
-                    <div class="example">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb breadcrumb-style2 mb-0">
-                                <li class="breadcrumb-item">
-                                    <a href="javascript:void(0);" wire:click="getEngineerArea(1)">
-                                        <i class="fas fa-arrow-circle-up me-2"></i> North Engineers
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item">
-                                    <a href="javascript:void(0);" wire:click="getEngineerArea(2)">
-                                        <i class="fas fa-arrow-circle-down me-2"></i> South Engineers
-                                    </a>
-                                </li>
-                                @if(Auth::user()->department_id != 2)
-                                <li class="breadcrumb-item">
-                                    <a href="javascript:void(0);" wire:click="getEngineerArea(3)">
-                                        <i class="fas fa-arrow-circle-right me-2"></i> Middle Engineers
-                                    </a>
-                                </li>
-                                @endif
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
+
 
 
 

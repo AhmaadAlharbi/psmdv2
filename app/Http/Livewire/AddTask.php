@@ -313,9 +313,7 @@ class AddTask extends Component
     //         $this->engineers = $engineers;
     //     }
     // }
-    protected $debounce = [
-        'getEngineer' => 300, // milliseconds
-    ];
+
 
     // public function getEngineer()
     // {
@@ -346,38 +344,42 @@ class AddTask extends Component
     // }
     public function getEngineer()
     {
-        $userDepartmentId = Auth::user()->department_id;
-        $userRole = Auth::user()->role_id; //!! 2 for Admin , 6 for shift Leader
-        $userShiftGroup = Auth::user()->shift; //!!A , B , C OR D
-        $area = $this->area;
-        $shiftId = $this->duty ? 2 : 1;
+        if ($this->area == 1 || $this->area == 2) {
 
-        $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
-            ->where('engineers.department_id', $userDepartmentId)
-            ->when($area, function ($query) use ($area) {
-                $query->whereHas('areas', function ($subquery) use ($area) {
-                    $subquery->where('areas.id', $area);
+
+            $userDepartmentId = Auth::user()->department_id;
+            $userRole = Auth::user()->role_id; //!! 2 for Admin , 6 for shift Leader
+            $userShiftGroup = Auth::user()->shift; //!!A , B , C OR D
+            $area = $this->area;
+            $shiftId = $this->duty ? 2 : 1;
+
+            $query = Engineer::join('users', 'users.id', '=', 'engineers.user_id')
+                ->where('engineers.department_id', $userDepartmentId)
+                ->when($area, function ($query) use ($area) {
+                    $query->whereHas('areas', function ($subquery) use ($area) {
+                        $subquery->where('areas.id', $area);
+                    });
                 });
-            });
 
-        if ($shiftId == 2) {
-            $query->whereHas('shifts', function ($subquery) use ($shiftId) {
-                $subquery->where('shifts.id', $shiftId);
-            });
-        }
+            if ($shiftId == 2) {
+                $query->whereHas('shifts', function ($subquery) use ($shiftId) {
+                    $subquery->where('shifts.id', $shiftId);
+                });
+            }
 
-        if ($userRole == 2) { //2 is admin
-            $engineers = $query->orderBy('users.arabic_name', 'asc')->get();
-        }
-        if ($userRole == 6) { //shift leader
-            //
-            $engineers = $query->where('users.shift', $userShiftGroup)->orderBy('users.arabic_name', 'asc')->get();
-        }
+            if ($userRole == 2) { //2 is admin
+                $engineers = $query->orderBy('users.arabic_name', 'asc')->get();
+            }
+            if ($userRole == 6) { //shift leader
+                //
+                $engineers = $query->where('users.shift', $userShiftGroup)->orderBy('users.arabic_name', 'asc')->get();
+            }
 
-        $this->engineers = $engineers;
-        $this->names = $engineers->map(function ($engineer) {
-            return $engineer->arabic_name ?: $engineer->name;
-        })->toArray();
+            $this->engineers = $engineers;
+            $this->names = $engineers->map(function ($engineer) {
+                return $engineer->arabic_name ?: $engineer->name;
+            })->toArray();
+        }
     }
 
 
