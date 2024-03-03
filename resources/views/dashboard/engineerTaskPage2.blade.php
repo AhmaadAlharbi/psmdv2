@@ -108,8 +108,16 @@
 
                         </tbody>
                     </table>
-                    @if(now() >= \Carbon\Carbon::parse($tasks->due_date . ' ' . $tasks->due_time))
-                    <div class="row">
+                    @php
+                    $currentTime = \Carbon\Carbon::now();
+                    $taskDateTime = null;
+                    if ($tasks->due_date !== null && $tasks->due_time !== null) {
+                    $taskDateTime = \Carbon\Carbon::parse($tasks->due_date . ' ' . $tasks->due_time);
+                    }
+                    @endphp
+
+
+                    @if($taskDateTime <= $currentTime) <div class="row">
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header border-bottom-0">
@@ -151,7 +159,8 @@
                                         @csrf
 
                                         <div class="alert alert-info" role="alert">
-                                            <strong>Note:</strong> The icons serve as indicators for the task status.
+                                            <strong>Note:</strong> The icons serve as indicators for the task
+                                            status.
                                             <br>
                                             <i class="fas fa-check-circle text-success"></i> Completed: This icon
                                             signifies that the task has been successfully finished.
@@ -177,7 +186,8 @@
                                                     specified timeframes:<br>
                                                     - <strong>Clearance:</strong> Tasks in this category must be
                                                     completed within 48 hours.<br>
-                                                    - <strong>Outage and Inspection:</strong> Tasks in these categories
+                                                    - <strong>Outage and Inspection:</strong> Tasks in these
+                                                    categories
                                                     should be finished within 6 hours.
                                                     <br><br>
                                                     Promptly submit the first draft to preempt any potential delays.
@@ -192,9 +202,11 @@
                                                                 class="fas fa-file-alt text-warning"></i> First
                                                             Draft</label>
                                                     </div>
+                                                </div>
+                                                <div class="custom-group">
                                                     <div class="custom-control custom-radio mb-2">
                                                         <input type="radio" id="completed" name="action_take_status"
-                                                            value="Completed" class="custom-control-input">
+                                                            value="completed" class="custom-control-input">
                                                         <label class="custom-control-label" for="completed"><i
                                                                 class="fas fa-check-circle text-success"></i>
                                                             Completed</label>
@@ -234,7 +246,8 @@
                                                             name="action_take_status" value="Awaiting repairs"
                                                             class="custom-control-input">
                                                         <label class="custom-control-label" for="awaitingRepairs"><i
-                                                                class="fas fa-hourglass-half text-danger"></i> Awaiting
+                                                                class="fas fa-hourglass-half text-danger"></i>
+                                                            Awaiting
                                                             repairs</label>
                                                     </div>
                                                     <div class="custom-control custom-radio mb-2">
@@ -242,7 +255,8 @@
                                                             value="Transfer the task to another engineer"
                                                             class="custom-control-input">
                                                         <label class="custom-control-label" for="transferTask"><i
-                                                                class="fas fa-hourglass-half text-danger"></i> Transfer
+                                                                class="fas fa-hourglass-half text-danger"></i>
+                                                            Transfer
                                                             the task to another engineer</label>
                                                     </div>
                                                 </div>
@@ -283,102 +297,101 @@
 
                             </div>
                         </div>
-                    </div>
-                    <div class="invoice-notes mt-5 "
-                        style="display: flex;flex-direction:column;  align-items:flex-end;">
-                        <label class="main-content-label tx-16 mt-2">Engineer
-                        </label>
-                        <p class="tx-20 text-dark">
-                            {{
-                            $tasks->engineer->name }} <br>
-
-                        </p>
-                        <p class="tx-20 text-dark font-italic">
-                            {{
-                            $tasks->engineer->email }} <br>
-
-                        </p>
-                    </div><!-- invoice-notes -->
                 </div>
+                <div class="invoice-notes mt-5 " style="display: flex;flex-direction:column;  align-items:flex-end;">
+                    <label class="main-content-label tx-16 mt-2">Engineer
+                    </label>
+                    <p class="tx-20 text-dark">
+                        {{
+                        $tasks->engineer->name }} <br>
 
+                    </p>
+                    <p class="tx-20 text-dark font-italic">
+                        {{
+                        $tasks->engineer->email }} <br>
+
+                    </p>
+                </div><!-- invoice-notes -->
             </div>
-            {{-- attachments table --}}
-            <div class=" d-flex flex-column align-items-start justify-content-start d-print-none">
-                <table class="table table-striped mg-b-0 text-md-nowrap">
-                    <thead>
-                        <tr>
-                            <th scope="col">م</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">File</th>
-                            <th scope="col"> Sent by</th>
-                            <th scope="col">View</th>
-                            <th scope="col">Download</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $i = 0; ?>
-                        @foreach($files as $file )
-                        <tr>
-                            <td>{{ ++$i }}</td>
-                            <td>{{ $file->department->name }}</td>
-                            <td>{{ $file->file }}</td>
-                            <td>
 
-                                {{ $file->user->name }}
-
-                            </td>
-                            <td>
-
-
-                                <a class="btn btn-info"
-                                    href="{{ route('view.file', ['main_task_id' => $file->main_tasks_id, 'file' => $file->file]) }}"
-                                    target="_blank">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-
-
-
-                            </td>
-                            <td>
-                                <a class="btn btn-outline-primary"
-                                    href="{{ asset('storage/attachments/' . $file->main_tasks_id . '/' . $file->file) }}"
-                                    download="{{ $file->file }}">
-                                    <i class="fas fa-download"></i> Download
-                                </a>
-
-                            </td>
-                            <td>
-                                <a class="btn btn-danger"
-                                    href="{{ route('delete.file', ['main_task_id' => $file->main_tasks_id, 'file' => $file->file,'id'=>$file->id]) }}"
-                                    onclick="return confirm('Are you sure you want to delete this file?');">
-                                    <i class="fas fa-trash"></i> Delete
-                                </a>
-                            </td>
-
-                            @endforeach
-
-                    </tbody>
-                </table>
-            </div>
-            @else
-            <!-- Display a message indicating that the due date and time have passed -->
-            <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
-                <i class="fas fa-hourglass-half fa-5x mb-3"></i>
-                <p class="mb-1 fs-md-5 fs-5">
-                    <strong>Note:</strong> You are unable to complete this task until its scheduled due date and time,
-                    which is set for {{ \Carbon\Carbon::parse($tasks->due_date)->format('j / n / Y') }}
-                    at {{ \Carbon\Carbon::parse($tasks->due_time)->format('g:i A') }}.
-                </p>
-
-
-
-                <p id="countdown-message" class="fw-bold  fs-6 text-dark">
-                    <!-- Countdown message will be displayed here -->
-                </p>
-            </div>
-            @endif
         </div>
+        {{-- attachments table --}}
+        <div class=" d-flex flex-column align-items-start justify-content-start d-print-none">
+            <table class="table table-striped mg-b-0 text-md-nowrap">
+                <thead>
+                    <tr>
+                        <th scope="col">م</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">File</th>
+                        <th scope="col"> Sent by</th>
+                        <th scope="col">View</th>
+                        <th scope="col">Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 0; ?>
+                    @foreach($files as $file )
+                    <tr>
+                        <td>{{ ++$i }}</td>
+                        <td>{{ $file->department->name }}</td>
+                        <td>{{ $file->file }}</td>
+                        <td>
+
+                            {{ $file->user->name }}
+
+                        </td>
+                        <td>
+
+
+                            <a class="btn btn-info"
+                                href="{{ route('view.file', ['main_task_id' => $file->main_tasks_id, 'file' => $file->file]) }}"
+                                target="_blank">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+
+
+
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-primary"
+                                href="{{ asset('storage/attachments/' . $file->main_tasks_id . '/' . $file->file) }}"
+                                download="{{ $file->file }}">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+
+                        </td>
+                        <td>
+                            <a class="btn btn-danger"
+                                href="{{ route('delete.file', ['main_task_id' => $file->main_tasks_id, 'file' => $file->file,'id'=>$file->id]) }}"
+                                onclick="return confirm('Are you sure you want to delete this file?');">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+
+                        @endforeach
+
+                </tbody>
+            </table>
+        </div>
+        @else
+        <!-- Display a message indicating that the due date and time have passed -->
+        <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+            <i class="fas fa-hourglass-half fa-5x mb-3"></i>
+            <p class="mb-1 fs-md-5 fs-5">
+                <strong>Note:</strong> You are unable to complete this task until its scheduled due date and time,
+                which is set for {{ \Carbon\Carbon::parse($tasks->due_date)->format('j / n / Y') }}
+                at {{ \Carbon\Carbon::parse($tasks->due_time)->format('g:i A') }}.
+            </p>
+
+
+
+            <p id="countdown-message" class="fw-bold  fs-6 text-dark">
+                <!-- Countdown message will be displayed here -->
+            </p>
+        </div>
+        @endif
     </div>
+</div>
 </div>
 
 

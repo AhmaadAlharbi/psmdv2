@@ -156,8 +156,7 @@
                                 \Carbon\Carbon::parse($task->due_time)->format('h:i A') }}
                             </div>
                             @endif
-                            <a href="/engineer-task-page/{{$task->main_tasks_id}}"
-                                class="btn btn-danger btn-block {{$task->due_time ? '' : 'disabled'}}">
+                            <a href="/engineer-task-page/{{$task->main_tasks_id}}" class="btn btn-danger btn-block">
                                 <i class="fas fa-plus-circle"></i> Add Report
                             </a>
 
@@ -173,12 +172,9 @@
             {{ $pendingTasks->links() }}
         </div>
     </div>
-
-
-
-
-
     <div class="col-xl-8 col-md-12 col-lg-6">
+        {{-- Awaiting Approval Reports --}}
+
         {{-- Awaiting Approval Reports --}}
         <div class="card border">
 

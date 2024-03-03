@@ -1110,10 +1110,9 @@ class DashBoardController extends Controller
 
             if ($taskConverted) {
                 // Step 3: Handle the converted task
-                return 'converted';
                 $this->handleConvertedTask($mainTask, $taskConverted, $actionStatus, $actionContent, $request, $departmentTask);
             } else {
-                $this->logTaskCompletion($departmentTask, $actionStatus);
+                // $this->logTaskCompletion($departmentTask, $actionStatus);
                 // Step 4: Handle the non-converted task
                 $this->handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask);
             }
@@ -1226,85 +1225,96 @@ class DashBoardController extends Controller
      */
     private function handleNonConvertedTask($mainTask, $actionStatus, $actionContent, $request, $departmentTask)
     {
+        try {
+            // Check if the task has already been submitted by the current user
+            $existingSubmission = SectionTask::where('main_tasks_id', $mainTask->id)
+                ->where('eng_id', Auth::user()->id)
+                ->exists();
+            // Determine if the task is completed based on its status
+            $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']);
 
-        $existingSubmission = SectionTask::where('main_tasks_id', $mainTask->id)
-            ->where('eng_id', Auth::user()->id)
-            ->exists();
-        // Determine if the task is completed based on its status
-        $isCompleted = in_array($actionStatus, ['completed', 'Responsibility of another entity', 'Under warranty']) ? '1' : '0';
-        // 'approved' is set to 1
-        $approved = 0;
-        // Data to create a new SectionTask
-        if ($isCompleted === '1') {
-            // 'approved' is set to 1
+            // Set the value of 'isCompleted' to 1 if it's completed, 0 otherwise
+            $isCompletedString = $isCompleted ? '1' : '0';
+
+            // Initialize the 'approved' flag to 0
             $approved = 0;
-            if (!$existingSubmission) {
-                // Data to create a new SectionTask
-                $sectionTaskData = [
+            // If the task is completed, process it
+            if ($isCompleted) {
+
+                // Check if the user has already submitted the task
+                if (!$existingSubmission) {
+                    // Prepare data for creating a new SectionTask
+                    $sectionTaskData = [
+                        'main_tasks_id' => $mainTask->id,
+                        'department_id' => Auth::user()->department_id,
+                        'eng_id' => Auth::user()->id,
+                        'action_take' => $request->action_take,
+                        'main_alarm_id' => $mainTask->main_alarm_id,
+                        'status' => $actionStatus,
+                        'engineer_notes' => $request->notes ? $request->notes : $actionStatus,
+                        'user_id' => Auth::user()->id,
+                        // 'date' => now(),
+                        'isCompleted' => $isCompletedString,
+                        'approved' => $approved,
+                    ];
+
+                    // Insert the data into the SectionTask table
+                    SectionTask::create($sectionTaskData);
+                }
+            } else {
+                // If the task is not completed, create a new TaskNote and update the department task
+                TaskNotes::create([
+                    'eng_id' => Auth::user()->id,
+                    'user_id' => Auth::user()->id,
+                    'department_id' => Auth::user()->department_id,
+                    'department_task_assignment_id' => $departmentTask->id,
+                    'notes' => $request->action_take
+                ]);
+
+                // Update the 'updated_at' timestamp of the department task
+                $departmentTask->update([
+                    'updated_at' => now()
+                ]);
+            }
+
+            // If the task is completed, create a new entry in the TaskTimeline table
+            if ($isCompleted) {
+                TaskTimeline::create([
                     'main_tasks_id' => $mainTask->id,
                     'department_id' => Auth::user()->department_id,
-                    'eng_id' => Auth::user()->id,
-                    'action_take' => $request->action_take,
-                    'main_alarm_id' => $mainTask->main_alarm_id,
-                    'status' => $actionStatus,
-                    'engineer-notes' => $request->notes ? $request->notes : $actionStatus,
+                    'status' => 'Report Added',
+                    'action' => 'The Report has been added',
                     'user_id' => Auth::user()->id,
-                    'date' => now(),
-                    'isCompleted' => $isCompleted,
-                    'approved' => $approved,
-                ];
-
-                // Insert the data into the database
-                SectionTask::create($sectionTaskData);
-            } else {
-                // User has already submitted, you can handle this situation (e.g., show an error message)
-                // For example, you can redirect back with an error message
-                return redirect()->back()->with('error', 'You have already submitted for this task.');
+                ]);
             }
-        } else {
-            TaskNotes::create([
-                'eng_id' => Auth::user()->id,
-                'user_id' => Auth::user()->id,
-                'department_id' => Auth::user()->department_id,
-                'department_task_assignment_id' => $departmentTask->id,
-                'notes' => $request->action_take
-            ]);
-            $departmentTask->update([
-                'updated_at' => now()
-            ]);
+
+            // Prepare updates for the main task and department task
+            $mainTaskUpdates = [
+                'status' => $actionStatus,
+                'isCompleted' => $isCompleted,
+            ];
+
+            $departmentTaskUpdates = [
+                'status' => $actionStatus,
+                'isCompleted' => $isCompleted,
+            ];
+
+            // If the action status is 'Transfer the task to another engineer', set the engineer ID to null
+            if ($actionStatus == 'Transfer the task to another engineer') {
+                $departmentTaskUpdates['eng_id'] = null;
+            }
+
+            // Update the main task and department task with the prepared updates
+            $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates, $actionContent);
+
+            // Return a success message or redirect the user to the appropriate page
+            return redirect("/dashboard/user")->with('success', 'Your report has been successfully saved. Please wait for approval as we review your report.');
+        } catch (\Exception $e) {
+            // If an error occurs during the execution, catch it and return an error message
+            return back()->with('error', 'An error occurred while processing your request: ' . $e->getMessage());
         }
-        // Create a task timeline entry to indicate the report has been added
-        if ($isCompleted) {
-            TaskTimeline::create([
-                'main_tasks_id' => $mainTask->id,
-                'department_id' => Auth::user()->department_id,
-                'status' => 'Report Added',
-                'action' => 'The Report has been added',
-                'user_id' => Auth::user()->id,
-            ]);
-        }
-
-
-        // Prepare updates for the main task and department task
-        $mainTaskUpdates = [
-            'status' => $actionStatus,
-            'isCompleted' => $isCompleted,
-
-        ];
-
-
-        $departmentTaskUpdates = [
-            'status' => $actionStatus,
-            'isCompleted' => $isCompleted,
-
-        ];
-        if ($actionStatus == 'Transfer the task to another engineer') {
-            $departmentTaskUpdates['eng_id'] = null;
-        }
-        // $this->logTaskCompletion($departmentTask, $actionStatus);
-        // Update the main task and department task with the prepared updates
-        $this->updateTaskAndDepartmentTask($mainTask, $departmentTask, $mainTaskUpdates, $departmentTaskUpdates, $actionContent);
     }
+
 
     /**
      * Update a main task and its related department task with the specified updates.
