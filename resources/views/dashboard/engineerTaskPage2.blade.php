@@ -179,7 +179,7 @@
                                         <div class="form-group">
                                             <label for="taskStatus">Task Status</label>
                                             <div class="custom-controls-stacked mt-3">
-                                                <div class="alert alert-danger mb-3" role="alert">
+                                                {{-- <div class="alert alert-danger mb-3" role="alert">
                                                     <strong>Completion Deadlines</strong>
                                                     <br><br>
                                                     Please ensure that the following tasks are completed within the
@@ -191,7 +191,7 @@
                                                     should be finished within 6 hours.
                                                     <br><br>
                                                     Promptly submit the first draft to preempt any potential delays.
-                                                </div>
+                                                </div> --}}
 
 
                                                 <div class="custom-group">

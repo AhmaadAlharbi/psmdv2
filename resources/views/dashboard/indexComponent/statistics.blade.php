@@ -147,8 +147,14 @@
                                         @foreach ($engineerData as $data)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                <a
+                                                    href="{{ route('dashboard.engineerProfile', ['eng_id' => $data['id']]) }}">
+                                                    {{ $data['name'] }}
+                                                </a>
+                                            </td>
 
-                                            <td>{{ $data['name'] }}</td>
+
                                             <td>{{ $data['assigned_tasks'] }}</td>
                                             <td class=" bg-light">
                                                 {{

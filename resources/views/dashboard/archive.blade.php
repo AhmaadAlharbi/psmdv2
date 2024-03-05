@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
+
+
 @section('styles')
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
 
 @endsection
 
@@ -10,38 +15,11 @@
 <div class="breadcrumb-header justify-content-between">
     <div class="my-auto">
         <div class="d-flex">
-            <h4 class="content-title mb-0 my-auto">ارشيف التقارير</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
+            <h4 class="content-title mb-0 my-auto">Reports Archive</h4><span class="text-muted mt-1 tx-13 ms-2 mb-0">/
                 {{Auth::user()->department->name}}</span>
         </div>
     </div>
-    <div class="d-flex my-xl-auto right-content">
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-info btn-icon me-2 btn-b"><i
-                    class="mdi mdi-filter-variant"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-danger btn-icon me-2"><i class="mdi mdi-star"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-warning  btn-icon me-2"><i class="mdi mdi-refresh"></i></button>
-        </div>
-        <div class="mb-xl-0">
-            <div class="btn-group dropdown">
-                <button type="button" class="btn btn-primary">14 Aug 2019</button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                    id="dropdownMenuDate" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate"
-                    x-placement="bottom-end">
-                    <a class="dropdown-item" href="javascript:void(0);">2015</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2016</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2017</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2018</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 <!-- breadcrumb -->
 
@@ -67,48 +45,48 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="panel-body tabs-menu-body main-content-body-right border">
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="tab4">
-                                    <form action="{{route('dashboard.searchArchive')}}" method="get">
-                                        @csrf
-                                        @livewire('station-equip')
-                                        <label for="">Engineer</label>
-                                        <input list="engineers" type="search" class="col-8 mx-sm-3 mb-2 form-control"
-                                            name="engineer">
-                                        <datalist id="engineers">
+                        <div class="tab-pane active" id="tab4">
+                            <form action="{{ route('dashboard.searchArchive') }}" method="get" class="row g-3">
+                                @csrf
+                                @livewire('station-equip')
 
-                                            @foreach ($engineers as $engineer)
-                                            <option value="{{ $engineer->user->name }}">
-                                                @endforeach
-                                        </datalist>
-                                        <div class="col">
-                                            <label for="">From</label>
-
-                                            <div class="col-8 mx-sm-3 input-group">
-                                                <div class="input-group-text">
-                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                                                </div>
-                                                <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY"
-                                                    type="text" name="task_Date" autocomplete="off">
-                                            </div><!-- input-group -->
-                                        </div>
-                                        <div class="col">
-                                            <label for="">to</label>
-
-                                            <div class="col-8 mx-sm-3 input-group">
-                                                <div class="input-group-text">
-                                                    <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                                                </div>
-                                                <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY"
-                                                    type="text" name="task_Date2" autocomplete="off">
-                                            </div><!-- input-group -->
-                                        </div>
+                                <div class="col-md-4">
+                                    <label for="engineer" class="form-label">Engineer</label>
+                                    <input list="engineers" type="search" class="form-control" id="engineer"
+                                        name="engineer" placeholder="Search for engineer">
+                                    <datalist id="engineers">
+                                        @foreach ($engineers as $engineer)
+                                        <option value="{{ $engineer->user->arabic_name }}">
+                                            @endforeach
+                                    </datalist>
                                 </div>
 
-                                <input type="submit" class="btn btn-dark my-4 " value="البحث">
-                            </div>
+                                <div class="col-md-4">
+                                    <label for="task_date_from" class="form-label">From</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i
+                                                class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i></span>
+                                        <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY" type="text"
+                                            id="task_date_from" name="task_Date" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="task_date_to" class="form-label">To</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i
+                                                class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i></span>
+                                        <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY" type="text"
+                                            id="task_date_to" name="task_Date2" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </form>
                         </div>
+
 
 
                     </div>
@@ -139,52 +117,102 @@
 
         </div>
     </div>
+    {{--!!!! cards --}}
+    @php
+    /*
     @foreach($tasks as $task)
-    <div class="col-12 col-sm-12 col-lg-6 col-xl-4">
-        <div class="card {{$task->status =='pending'  ? 'card-danger' : 'card-success'}} h-100">
-
-            <div class="card-body  ">
-                <ul class="list-group   text-center">
-
-                    <li class="list-group-item {{ ($task->status == 'pending') ? 'bg-danger': 'bg-success' }}">Task #
-                        {{$task->id}}
-                    </li>
-                    <li class="list-group-item ">{{$task->created_at}}</li>
-                    <li class="list-group-item "> <strong>Station<br>
-                        </strong>
-                        <span style="font-size:22px; font-wieght:bold;">{{$task->main_task->station->SSNAME}}</span>
-                    </li>
-                    <li class="list-group-item"><strong>Main Alarm
-                            <br></strong>@isset($task->main_task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
-                    </li>
-
-                    </li>
-                    <li class="list-group-item"><strong>Equip <br></strong>{{$task->main_task->equip_number}}</li>
-                    <li class="list-group-item"><strong>Nature of fault<br></strong>{{$task->main_task->problem}}
-                    </li>
-                    <a class="" href="{{route('dashboard.engineerProfile',['eng_id'=>$task->eng_id])}}">
-                        <li class="list-group-item bg-light text-dark"><strong>Engineer <br></strong>
-                            {{$task->engineer->name}}
-                        </li>
-                    </a>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card {{$task->status =='pending' ? 'border-danger' : 'border-success'}} h-100">
+            <div class="card-body">
+                <h5 class="card-title text-center">Task #{{$task->departmentsAssienments->first()->id}}</h5>
+                <ul class="list-group list-group-flush text-center">
+                    <li class="list-group-item bg-warning">
+                        Occurred on {{$task->created_at->format('j F, Y \a\t g:i A') }}</li>
+                    <li class="list-group-item bg-success">
+                        @if($task->section_tasks->isNotEmpty())
+                        Completed on {{ $task->section_tasks->first()->created_at->format('j F, Y \a\t g:i A') }}
+                        @else
+                        No completion data available
+                        @endif</li>
+                    <li class="list-group-item"><strong>Station:</strong> {{$task->station->SSNAME}}</li>
+                    <li class="list-group-item"><strong>Main Alarm:</strong>
+                        @isset($task->main_alarm->name){{$task->main_alarm->name}}@endisset</li>
+                    <li class="list-group-item"><strong>Equip:</strong> {{$task->equip_number}}</li>
+                    <li class="list-group-item"><strong>Nature of Fault:</strong> {{$task->problem}}</li>
+                    <li class="list-group-item"><strong>Action Take:</strong> {!!
+                        $task->section_tasks->first()->action_take !!}</li>
+                    {{-- <li class="list-group-item"><strong>Engineer:</strong> <a
+                            href="{{route('dashboard.engineerProfile',['eng_id'=>$task->section_tasks()->eng_id])}}">{{$task->section_tasks->engineer->name}}</a>
+                    </li> --}}
                 </ul>
             </div>
             <div class="card-footer">
-
                 @if($task->status === 'completed')
-                <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->main_tasks_id,'department_id'=>$task->department_id])}}"
-                    type="button" class="btn btn-outline-success  button-icon "><i class="si si-notebook px-2"
-                        data-bs-toggle="tooltip" title="" data-bs-original-title="si-notebook"
-                        aria-label="si-notebook"></i>Report</a>
-
+                <a href="{{route('dashboard.reportDepartment',['main_task_id'=>$task->id,'department_id'=>$task->section_tasks->first()->department_id])}}"
+                    type="button" class="btn btn-outline-success btn-sm"><i class="si si-notebook me-1"></i> Report</a>
                 @endif
-
             </div>
         </div>
     </div>
-
     @endforeach
     {{ $tasks->links() }}
+    */
+    @endphp
+
+
+    {{-- !!table--}}
+    <div class="table-responsive ">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Task #</th>
+                    <th>Date</th>
+                    <th>Station</th>
+                    <th>Nature of Fault</th>
+                    <th>Action Take</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($tasks as $task)
+                <tr>
+                    <td>{{ $task->departmentsAssienments->first()->id }}</td>
+                    <td>
+                        <strong>Occurred On:</strong><br> {{ $task->created_at->format('j F, Y \a\t g:i A') }}<br>
+                        @if($task->section_tasks->isNotEmpty())
+                        <strong>Completed On:</strong><br>
+                        {{ $task->section_tasks->first()->created_at->format('j F, Y \a\t g:i A') }}
+                        @else
+                        <span class="text-muted">No completion data available</span>
+                        @endif
+                    </td>
+                    <td>
+                        <strong>Station:</strong> {{ $task->station->SSNAME }}<br>
+                        @isset($task->main_alarm->name)
+                        <strong>Main Alarm:</strong> {{ $task->main_alarm->name }}<br>
+                        @endisset
+                        <strong>Equip:</strong> {{ $task->equip_number }}
+                    </td>
+                    <td>{{ $task->problem }}</td>
+                    <td>{!! $task->section_tasks->first()->action_take !!}
+                        @if($task->status === 'completed')
+                        <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->id, 'department_id' => $task->section_tasks->first()->department_id]) }}"
+                            class="btn btn-outline-success btn-sm">
+                            <i class="si si-notebook me-1"></i> Report
+                        </a>
+                        @endif
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+    </div>
+
+    {{ $tasks->links() }}
+
+</div>
+
+
 
 </div>
 
@@ -192,6 +220,7 @@
 @endsection
 
 @section('scripts')
+
 <!--Internal  jquery.maskedinput js -->
 <script src="{{asset('assets/plugins/jquery.maskedinput/jquery.maskedinput.js')}}"></script>
 
@@ -222,6 +251,5 @@
 
 <!-- Internal form-elements js -->
 <script src="{{asset('assets/js/form-elements.js')}}"></script>
-
 
 @endsection

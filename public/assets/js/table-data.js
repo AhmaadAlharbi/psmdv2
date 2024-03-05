@@ -120,6 +120,15 @@
                 lengthMenu: "_MENU_ items/page",
             },
         });
+        $("#archive").DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: "Search ...",
+                sSearch: "",
+                lengthMenu: "_MENU_ items/page",
+            },
+            ajax: "{{ route('dashboard.archive') }}", // Assuming 'archive' is the name of the route that returns JSON data
+        });
         $("#south-tasks").DataTable({
             responsive: true,
             language: {

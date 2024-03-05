@@ -51,11 +51,13 @@ class DashBoardController extends Controller
                 if ($assignment->eng_id && $assignment->department_id == $departmentId) {
 
                     if ($assignment->eng_id) {
+                        $engineer_id =  $assignment->eng_id;
                         $engineerName = $assignment->engineer->arabic_name;
 
                         // If the engineerName is not yet in the array, initialize the counts
                         if (!isset($engineerData[$engineerName])) {
                             $engineerData[$engineerName] = [
+                                'id' => $engineer_id,
                                 'name' => $engineerName,
                                 'assigned_tasks' => 0,
                                 'completed_tasks' => 0,
@@ -809,7 +811,7 @@ class DashBoardController extends Controller
         // return $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
         //     ->with('main_task', 'main_task.section_tasks', 'task_note')
         //     ->get();
-         $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
+        $pendingReports = department_task_assignment::where('eng_id', Auth::user()->id)
             ->where(function ($query) {
                 $query->where('isCompleted', '1')
                     ->orWhere('isCompleted', '0');
@@ -1885,9 +1887,30 @@ class DashBoardController extends Controller
         $currentMonth = Carbon::now()->month;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        $tasks = SectionTask::where('department_id', Auth::user()->department_id)->where('isCompleted', "1")->latest()->paginate(6);
-        return view('dashboard.showTasks', compact('tasks', 'stations', 'engineers'));
+        // $tasks = SectionTask::with('main_task', 'main_task.departmentTaskAssignment', 'main_task.main_alarm')
+        // ->where('department_id', Auth::user()->department_id)
+        // ->where('isCompleted', 1)
+        // ->where('approved', 1)
+        // ->latest()
+        // ->paginate(20);
+        $tasks = MainTask::where("isCompleted", '1')
+            ->whereHas('section_tasks', function ($query) {
+                $query->where('isCompleted', "1")
+                    ->where('approved', 1);
+            })
+            ->with(['section_tasks' => function ($query) {
+                $query->where('isCompleted', "1")
+                    ->where('approved', 1)
+                    ->latest();
+            }, 'departmentsAssienments'])
+            ->orderBy('id', 'desc') // Order by id in descending order
+            ->paginate(6);
+
+
+
+        return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
     }
+
     public function searchArchive(Request $request)
     {
         $stations = Station::all();
@@ -1909,7 +1932,7 @@ class DashBoardController extends Controller
             });
         }
         if ($request->has('engineer') && $request->engineer != ''  && !empty($request->engineer)) {
-            $engineer = User::where('name', $request->engineer)->pluck('id')->first();
+            $engineer = User::where('arabic_name', $request->engineer)->pluck('id')->first();
             $query->where('eng_id', $engineer);
         }
         if ($request->has('task_Date') && $request->has('task_Date2')) {
