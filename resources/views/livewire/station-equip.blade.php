@@ -1,5 +1,5 @@
 <div class="my-2">
-    <label for="ssname" class="form-label">المحطة</label>
+    <label for="ssname" class="form-label">Station</label>
     <input list="ssnames" wire:change="getVoltage" class="form-control col-8 mx-sm-3 mb-2" value=""
         wire:model="selectedStation" name="station_code" id="ssname" onchange="getStation()" type="search">
     <datalist id="ssnames">
@@ -22,7 +22,7 @@
 
     <div class="col-12">
         <label for="equip" class="form-label">Equip</label>
-        <select name="equip" wire:model="selectedEquip" class="form-control col-8 mx-sm-3 mb-2" id="equip">
+        <select name="equip" class="form-control col-8 mx-sm-3 mb-2" id="equip">
             <option>Please select Equip</option>
             @foreach($equip as $item)
             <option value="{{$item->equip_number}}">{{$item->equip_number}}</option>

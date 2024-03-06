@@ -33,7 +33,6 @@ class StationEquip extends Component
     public function getVoltage()
 
     {
-        sleep(1);
         $this->selectedVoltage = '';
         $this->selectedEquip = '';
         if ($this->selectedStation !== '-1') {
@@ -43,19 +42,13 @@ class StationEquip extends Component
     }
     public function getEquip()
     {
-        sleep(1);
-
-        if ($this->selectedVoltage !== '-1') {
-
-            $this->station_id = Station::where('SSNAME', $this->selectedStation)->pluck('id')->first();
-            // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
-            // $this->equip = MainTask::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->pluck('equip_number');
-            $this->equip = MainTask::where('station_id', $this->station_id)
-                ->where('voltage_level', $this->selectedVoltage)
-                ->select('equip_number')
-                ->distinct()
-
-                ->get();
-        }
+        $this->station_id = Station::where('SSNAME', $this->selectedStation)->pluck('id')->first();
+        // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+        // $this->equip = MainTask::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->pluck('equip_number');
+        $this->equip = MainTask::where('station_id', $this->station_id)
+            ->where('voltage_level', $this->selectedVoltage)
+            ->select('equip_number')
+            ->distinct()
+            ->get();
     }
 }
