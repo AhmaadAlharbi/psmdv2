@@ -1904,49 +1904,91 @@ class DashBoardController extends Controller
                     ->latest();
             }, 'departmentsAssienments'])
             ->orderBy('id', 'desc') // Order by id in descending order
-            ->paginate(6);
+            ->paginate(5);
 
 
 
         return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
     }
 
+    // public function searchArchive(Request $request)
+    // {
+    //     $stations = Station::all();
+    //     $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+    //     $query = SectionTask::query();
+    //     $query->where('department_id', Auth::user()->department_id)
+    //         ->where('status', 'completed');
+
+    //     if ($request->has('station_code') && !empty($request->station_code)) {
+    //         $station = Station::where('SSNAME', $request->station_code)->pluck('id')->first();
+    //         $query->whereHas('main_task', function ($query) use ($station) {
+    //             $query->where('station_id', $station);
+    //         });
+    //     }
+    //     if ($request->has('equip') && $request->equip !== -1  && !empty($request->equip) && $request->equip !== 'Please select Equip') {
+    //         $equip = $request->equip;
+    //         $query->whereHas('main_task', function ($query) use ($equip) {
+    //             $query->where('equip_number', $equip);
+    //         });
+    //     }
+    //     if ($request->has('engineer') && $request->engineer != ''  && !empty($request->engineer)) {
+    //         $engineer = User::where('arabic_name', $request->engineer)->pluck('id')->first();
+    //         $query->where('eng_id', $engineer);
+    //     }
+    //     if ($request->has('task_Date') && $request->has('task_Date2')) {
+    //         try {
+    //             $startDate = \Carbon\Carbon::createFromFormat('d/m/Y', $request->input('task_Date'))->format('Y-m-d');
+    //             $endDate = \Carbon\Carbon::createFromFormat('d/m/Y', $request->input('task_Date2'))->format('Y-m-d');
+    //             $query->whereBetween('date', [$startDate, $endDate]);
+    //         } catch (\Exception $e) {
+    //             // handle the error here
+    //         }
+    //     }
+    //     $tasks = $query->paginate(6);
+    //     return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
+    // }
     public function searchArchive(Request $request)
     {
         $stations = Station::all();
-        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-        $query = SectionTask::query();
-        $query->where('department_id', Auth::user()->department_id)
-            ->where('status', 'completed');
+        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get()->sortBy('user.arabic_name');;
+
+        $query = MainTask::query();
+        $query->where('isCompleted', '1');
 
         if ($request->has('station_code') && !empty($request->station_code)) {
             $station = Station::where('SSNAME', $request->station_code)->pluck('id')->first();
-            $query->whereHas('main_task', function ($query) use ($station) {
-                $query->where('station_id', $station);
-            });
+            $query->where('station_id', $station);
         }
-        if ($request->has('equip') && $request->equip !== -1  && !empty($request->equip) && $request->equip !== 'Please select Equip') {
+
+        if ($request->has('equip') && $request->equip !== -1 && !empty($request->equip) && $request->equip !== 'Please select Equip') {
             $equip = $request->equip;
-            $query->whereHas('main_task', function ($query) use ($equip) {
-                $query->where('equip_number', $equip);
+            $query->where('equip_number', $equip);
+        }
+
+        if ($request->has('engineer') && $request->engineer != '' && !empty($request->engineer)) {
+            $engineerName = $request->engineer;
+            $query->whereHas('section_tasks', function ($query) use ($engineerName) {
+                $query->whereHas('engineer', function ($query) use ($engineerName) {
+                    $query->where('arabic_name', $engineerName);
+                });
             });
         }
-        if ($request->has('engineer') && $request->engineer != ''  && !empty($request->engineer)) {
-            $engineer = User::where('arabic_name', $request->engineer)->pluck('id')->first();
-            $query->where('eng_id', $engineer);
-        }
+
         if ($request->has('task_Date') && $request->has('task_Date2')) {
             try {
                 $startDate = \Carbon\Carbon::createFromFormat('d/m/Y', $request->input('task_Date'))->format('Y-m-d');
                 $endDate = \Carbon\Carbon::createFromFormat('d/m/Y', $request->input('task_Date2'))->format('Y-m-d');
-                $query->whereBetween('date', [$startDate, $endDate]);
+                $query->whereBetween('created_at', [$startDate, $endDate]);
             } catch (\Exception $e) {
                 // handle the error here
+
             }
         }
-        $tasks = $query->paginate(6);
+
+        $tasks = $query->paginate();
         return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
     }
+
     /**
      * Delete a task with the given ID. If the task belongs to a different
      * department, update the task's department ID to the previous department

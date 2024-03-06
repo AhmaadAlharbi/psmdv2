@@ -52,20 +52,22 @@
 
                                 <div class="col-md-4">
                                     <label for="engineer" class="form-label">Engineer</label>
-                                    <input list="engineers" type="search" class="form-control" id="engineer"
-                                        name="engineer" placeholder="Search for engineer">
-                                    <datalist id="engineers">
-                                        @foreach ($engineers as $engineer)
-                                        <option value="{{ $engineer->user->arabic_name }}">
-                                            @endforeach
-                                    </datalist>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                        <input list="engineers" type="search" class="form-control" id="engineer"
+                                            name="engineer" placeholder="Search for engineer">
+                                        <datalist id="engineers">
+                                            @foreach ($engineers as $engineer)
+                                            <option value="{{ $engineer->user->arabic_name }}">
+                                                @endforeach
+                                        </datalist>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="task_date_from" class="form-label">From</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i
-                                                class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i></span>
+                                        <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
                                         <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY" type="text"
                                             id="task_date_from" name="task_Date" autocomplete="off">
                                     </div>
@@ -74,8 +76,7 @@
                                 <div class="col-md-4">
                                     <label for="task_date_to" class="form-label">To</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i
-                                                class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i></span>
+                                        <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
                                         <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY" type="text"
                                             id="task_date_to" name="task_Date2" autocomplete="off">
                                     </div>
@@ -85,6 +86,7 @@
                                     <button type="submit" class="btn btn-primary">Search</button>
                                 </div>
                             </form>
+
                         </div>
 
 
@@ -161,54 +163,64 @@
 
 
     {{-- !!table--}}
-    <div class="table-responsive ">
-        <table class="table table-bordered table-hover table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Task #</th>
-                    <th>Date</th>
-                    <th>Station</th>
-                    <th>Nature of Fault</th>
-                    <th>Action Take</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($tasks as $task)
-                <tr>
-                    <td>{{ $task->departmentsAssienments->first()->id }}</td>
-                    <td>
-                        <strong>Occurred On:</strong><br> {{ $task->created_at->format('j F, Y \a\t g:i A') }}<br>
-                        @if($task->section_tasks->isNotEmpty())
-                        <strong>Completed On:</strong><br>
-                        {{ $task->section_tasks->first()->created_at->format('j F, Y \a\t g:i A') }}
-                        @else
-                        <span class="text-muted">No completion data available</span>
-                        @endif
-                    </td>
-                    <td>
-                        <strong>Station:</strong> {{ $task->station->SSNAME }}<br>
-                        @isset($task->main_alarm->name)
-                        <strong>Main Alarm:</strong> {{ $task->main_alarm->name }}<br>
-                        @endisset
-                        <strong>Equip:</strong> {{ $task->equip_number }}
-                    </td>
-                    <td>{{ $task->problem }}</td>
-                    <td>{!! $task->section_tasks->first()->action_take !!}
-                        @if($task->status === 'completed')
-                        <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->id, 'department_id' => $task->section_tasks->first()->department_id]) }}"
-                            class="btn btn-outline-success btn-sm">
-                            <i class="si si-notebook me-1"></i> Report
-                        </a>
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Archive Data</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="archive" class="table table-bordered table-hover table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Task #</th>
+                            <th>Date</th>
+                            <th>Station</th>
+                            <th>Main Alarm</th>
+                            <th>Equip</th>
+                            <th>Nature of Fault</th>
+                            <th>Action Taken</th>
+                            <th>Engineer</th>
+                            <th>Report</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($tasks as $task)
+                        <tr>
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{ $task->departmentsAssienments->first()->id }}</td>
+                            <td>
+                                <strong>Occurred:</strong> {{ $task->created_at->format('j F, Y \a\t g:i A') }}<br>
+                                @if($task->section_tasks->isNotEmpty())
+                                <strong>Completed:</strong> {{ $task->section_tasks->first()->created_at->format('j F, Y
+                                \a\t g:i A') }}
+                                @else
+                                <span class="text-muted">No completion data available</span>
+                                @endif
+                            </td>
+                            <td>{{ $task->station->SSNAME }}</td>
+                            <td>@isset($task->main_alarm->name){{ $task->main_alarm->name }}@endisset</td>
+                            <td>{{ $task->equip_number }}</td>
+                            <td>{{ $task->problem }}</td>
+                            <td>{!! $task->section_tasks->first()->action_take !!}</td>
+                            <td>{{ $task->section_tasks->first()->engineer->arabic_name }}</td>
+                            <td>
+                                @if($task->status === 'completed')
+                                <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->id, 'department_id' => $task->section_tasks->first()->department_id]) }}"
+                                    class="btn btn-outline-success btn-sm">
+                                    <i class="si si-notebook me-1"></i> Report
+                                </a>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {{ $tasks->links() }}
+        </div>
     </div>
 
-    {{ $tasks->links() }}
 
 </div>
 
@@ -251,5 +263,19 @@
 
 <!-- Internal form-elements js -->
 <script src="{{asset('assets/js/form-elements.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.print.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.colVis.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/responsive.bootstrap5.min.js')}}"></script>
 
+<!--Internal  Datatable js -->
+<script src="{{asset('assets/js/table-data.js')}}"></script>
 @endsection
