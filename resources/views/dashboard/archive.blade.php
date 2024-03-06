@@ -48,9 +48,10 @@
                         <div class="tab-pane active" id="tab4">
                             <form action="{{ route('dashboard.searchArchive') }}" method="get" class="row g-3">
                                 @csrf
-                                @livewire('station-equip')
-
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    @livewire('station-equip')
+                                </div>
+                                <div class="col-md-3">
                                     <label for="engineer" class="form-label">Engineer</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
@@ -64,16 +65,13 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="task_date_from" class="form-label">From</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
                                         <input class="form-control fc-datepicker" placeholder="DD/MM/YYYY" type="text"
                                             id="task_date_from" name="task_Date" autocomplete="off">
                                     </div>
-                                </div>
-
-                                <div class="col-md-4">
                                     <label for="task_date_to" class="form-label">To</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
@@ -81,6 +79,8 @@
                                             id="task_date_to" name="task_Date2" autocomplete="off">
                                     </div>
                                 </div>
+
+
 
                                 <div class="col-12 text-center">
                                     <button type="submit" class="btn btn-primary">Search</button>
@@ -190,27 +190,39 @@
                             <td>{{$loop->iteration}}</td>
                             <td>{{ $task->departmentsAssienments->first()->id }}</td>
                             <td>
-                                <strong>Occurred:</strong> {{ $task->created_at->format('j F, Y \a\t g:i A') }}<br>
+                                <strong>Occurred:</strong>
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-calendar"></i> {{ $task->created_at->format('j F, Y \a\t g:i A') }}
+                                </span><br>
                                 @if($task->section_tasks->isNotEmpty())
-                                <strong>Completed:</strong> {{ $task->section_tasks->first()->created_at->format('j F, Y
-                                \a\t g:i A') }}
+                                <strong>Completed:</strong>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i> {{
+                                    $task->section_tasks->first()->created_at->format('j F, Y \a\t g:i A') }}
+                                </span>
                                 @else
                                 <span class="text-muted">No completion data available</span>
                                 @endif
                             </td>
-                            <td>{{ $task->station->SSNAME }}</td>
+
+                            <td class="fw-bold">{{ $task->station->SSNAME }}</td>
                             <td>@isset($task->main_alarm->name){{ $task->main_alarm->name }}@endisset</td>
                             <td>{{ $task->equip_number }}</td>
                             <td>{{ $task->problem }}</td>
                             <td>{!! $task->section_tasks->first()->action_take !!}</td>
-                            <td>{{ $task->section_tasks->first()->engineer->arabic_name }}</td>
                             <td>
-                                @if($task->status === 'completed')
+
+                                <a
+                                    href="{{ route('dashboard.engineerProfile', ['eng_id' => $task->section_tasks->first()->eng_id]) }}">
+                                    {{ $task->section_tasks->first()->engineer->arabic_name }}
+                                </a>
+
+                            </td>
+                            <td>
                                 <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->id, 'department_id' => $task->section_tasks->first()->department_id]) }}"
                                     class="btn btn-outline-success btn-sm">
                                     <i class="si si-notebook me-1"></i> Report
                                 </a>
-                                @endif
                             </td>
                         </tr>
                         @endforeach

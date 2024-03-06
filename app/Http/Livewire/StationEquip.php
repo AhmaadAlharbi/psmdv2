@@ -2,9 +2,10 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
-use App\Models\Station;
 use App\Models\Equip;
+use App\Models\Station;
+use Livewire\Component;
+use App\Models\MainTask;
 
 class StationEquip extends Component
 {
@@ -47,7 +48,14 @@ class StationEquip extends Component
         if ($this->selectedVoltage !== '-1') {
 
             $this->station_id = Station::where('SSNAME', $this->selectedStation)->pluck('id')->first();
-            $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+            // $this->equip = Equip::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->get();
+            // $this->equip = MainTask::where('station_id', $this->station_id)->where('voltage_level', $this->selectedVoltage)->pluck('equip_number');
+            $this->equip = MainTask::where('station_id', $this->station_id)
+                ->where('voltage_level', $this->selectedVoltage)
+                ->select('equip_number')
+                ->distinct()
+
+                ->get();
         }
     }
 }
