@@ -90,7 +90,7 @@
 
                                     <div class="ms-auto">
                                         <h5 class="tx-13">All Pending Tasks</h5>
-                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$pendingTasks}}</h2>
+                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$totalPendingTasks}}</h2>
                                     </div>
                                 </a>
                             </div>
@@ -111,7 +111,7 @@
                                     href="{{route('dashboard.engineerTask',['id'=>$engineer->id,'status'=>'completed'])}}">
                                     <div class="ms-auto">
                                         <h5 class="tx-13">All Completed Tasks</h5>
-                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$completedTask}}</h2>
+                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$totalCompletedTasks}}</h2>
                                     </div>
                                 </a>
                             </div>
@@ -271,6 +271,16 @@
                             </h4>
                             <div class="row">
                                 <div class="col-md-12">
+                                    @if($tasksInYear > 0)
+                                    <div style="width: 650px; height: 400px;">
+                                        <canvas id="tasksByMonthChart"></canvas>
+                                    </div>
+                                    @else
+                                    <div class="text-center mt-4">
+                                        <p class="mb-2">No tasks in the current month to show.</p>
+                                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 24px;"></i>
+                                    </div>
+                                    @endif
                                     <div class="table-responsive ">
                                         <table class="table table-striped">
                                             <thead>
@@ -286,15 +296,19 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Total pending tasks</td>
-                                                    <td>{{$pendingTasksInYear}}</td>
+                                                    <td>{{$totalPendingTasksYear}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total completed tasks</td>
-                                                    <td>{{$completedTasksInYear}}</td>
+                                                    <td>{{$totalCompletedTasksYear}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
+
+
+                                </div>
+                                <div class="col-md-12">
                                     <h4 class="my-3">Engineer's Tasks for Current Year : {{
                                         \Carbon\Carbon::now()->format(' Y') }}</h4>
                                     <div class="table-responsive border mt-5">
@@ -354,25 +368,13 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    @if($tasksInYear > 0)
-                                    <div style="width: 650px; height: 400px;">
-                                        <canvas id="tasksByMonthChart"></canvas>
-                                    </div>
-                                    @else
-                                    <div class="text-center mt-4">
-                                        <p class="mb-2">No tasks in the current month to show.</p>
-                                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 24px;"></i>
-                                    </div>
-                                    @endif
-                                </div>
                             </div>
                         </div>
 
                     </div>
                     <div class="tab-pane" id="all">
                         <div class="container py-4">
-                            <h4>Engineer's Tasks Statistics for Current Year : {{ \Carbon\Carbon::now()->format('Y') }}
+                            <h4>Engineer's Tasks Statistics for All Time</h4>
                             </h4>
                             <div class="row">
                                 <div class="col-md-12">
@@ -565,25 +567,29 @@
         }
     });
 </script>
+
 <script>
-    var ctx2 = document.getElementById('tasksByMonthChart').getContext('2d');
-    var tasksByMonthChart = new Chart(ctx2, {
+    var pendingTaskCounts = {!! json_encode($pendingTaskCountsYearArr) !!};
+    var completedTaskCounts = {!! json_encode($completedTaskCountsYearArr) !!};
+    var months = {!! json_encode($months) !!};
+
+    var ctx = document.getElementById('tasksByMonthChart').getContext('2d');
+    var tasksByMonthChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($months) !!},
+            labels: months,
             datasets: [{
                 label: 'Completed Tasks',
-                data: {!! json_encode($completedTaskCounts) !!},
-                backgroundColor: 'rgb(75, 192, 192)',
-                borderColor: 'rgba(255, 255, 255, 1)',
-                borderWidth: 1
-            },
-            {
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                data: completedTaskCounts
+            }, {
                 label: 'Pending Tasks',
-                data: {!! json_encode($pendingTaskCounts) !!},
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgba(255, 255, 255, 1)',
-                borderWidth: 1
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                data: pendingTaskCounts
             }]
         },
         options: {
@@ -593,56 +599,53 @@
                         beginAtZero: true
                     }
                 }]
-            },
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-<script>
-    // Get the data passed from the controller
-    var tasksByYear = @json($tasksByYear);
-
-    // Prepare data for the chart
-    var years = Object.keys(tasksByYear);
-    var completedData = [];
-    var pendingData = [];
-
-    years.forEach(function(year) {
-        completedData.push(tasksByYear[year]['completed']);
-        pendingData.push(tasksByYear[year]['pending']);
-    });
-
-    // Render the chart
-    var ctx = document.getElementById('tasksChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: years,
-            datasets: [{
-                label: 'Completed Tasks',
-                data: completedData,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Pending Tasks',
-                data: pendingData,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
             }
         }
     });
 </script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var tasksByYear = {!! json_encode($tasksByYear) !!};
+    var years = Object.keys(tasksByYear);
+    var completedTasksData = [];
+    var pendingTasksData = [];
+
+    years.forEach(function(year) {
+        completedTasksData.push(tasksByYear[year].completed);
+        pendingTasksData.push(tasksByYear[year].pending);
+    });
+
+    var ctx = document.getElementById('tasksChart').getContext('2d');
+    var tasksChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: years,
+            datasets: [{
+                label: 'Completed Tasks',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                data: completedTasksData
+            }, {
+                label: 'Pending Tasks',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                data: pendingTasksData
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+</script>
 
 @endsection

@@ -166,11 +166,20 @@ class EngineersController extends Controller
         $currentYear = date('Y');
         $currentMonth = date('m');
         $engineer = User::findOrFail($id);
-        $departmentId = Auth::user()->department_id;
+        $departmentId = $engineer->department_id;
 
         // Total tasks in general
         $totalTasks = $this->countTasks($departmentId, $id);
+        //Total pending Tasks in General
+        $totalPendingTasks = $this->countTasks($departmentId, $id, null, null, "0");
+        //Total Completed Tasks in General
+        $totalCompletedTasks = $this->countTasks($departmentId, $id, null, null, "1");
 
+        // pending Tasks count in year$
+        $totalPendingTasksYear = $this->countTasks($departmentId, $id, $currentYear, null, "0");
+        // Completed Tasks in year
+        $totalCompletedTasksYear = $this->countTasks($departmentId, $id, $currentYear, null, "1");
+        $totalTasksYear =  $totalPendingTasksYear +  $totalCompletedTasksYear;
         // Total tasks in current month
         $tasksInMonth = $this->countTasks($departmentId, $id, $currentYear, $currentMonth);
 
@@ -205,14 +214,14 @@ class EngineersController extends Controller
         $pendingTasksInYear = $tasksInYear - $completedTasksInYear;
 
         // Completed and pending tasks for each month
-        $taskCounts = [];
-        $pendingTaskCounts = [];
-        $completedTaskCounts = [];
+        $taskCountsYearArr = [];
+        $pendingTaskCountsYearArr = [];
+        $completedTaskCountsYearArr = [];
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         foreach ($months as $month) {
-            $taskCounts[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)));
-            $pendingTaskCounts[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)), false, 'pending');
-            $completedTaskCounts[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)), true);
+            $taskCountsYearArr[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)));
+            $pendingTaskCountsYearArr[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)), '0');
+            $completedTaskCountsYearArr[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)), '1');
         }
         // Get tasks grouped by year
         $tasksByYear = $tasksAll->groupBy(function ($task) {
@@ -230,6 +239,14 @@ class EngineersController extends Controller
 
 
         return view('dashboard.engineers.profile', compact(
+            'taskCountsYearArr',
+            'pendingTaskCountsYearArr',
+            'completedTaskCountsYearArr',
+            'totalTasksYear',
+            'totalCompletedTasks',
+            'totalPendingTasks',
+            'totalPendingTasksYear',
+            'totalCompletedTasksYear',
             'tasksByYear',
             'tasksAll',
             'tasksYearAll',
@@ -244,9 +261,6 @@ class EngineersController extends Controller
             'pendingTasksInMonth',
             'pendingTasksInYear',
             'months',
-            'taskCounts',
-            'pendingTaskCounts',
-            'completedTaskCounts',
             'engineer'
         ));
     }
@@ -265,7 +279,7 @@ class EngineersController extends Controller
         }
 
         if (!is_null($completed)) {
-            $query->where('isCompleted', $completed ? 1 : 0);
+            $query->where('isCompleted', $completed);
         }
 
         return $query->count();
