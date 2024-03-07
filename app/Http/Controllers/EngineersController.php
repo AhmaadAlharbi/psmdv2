@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use PDO;
+use Carbon\Carbon;
 use App\Models\Area;
-use App\Models\department_task_assignment;
 use App\Models\User;
 use App\Models\Shift;
 use App\Models\Station;
@@ -13,6 +13,7 @@ use App\Models\MainTask;
 use App\Models\SectionTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\department_task_assignment;
 
 class EngineersController extends Controller
 {
@@ -29,48 +30,278 @@ class EngineersController extends Controller
         $shifts = Shift::all();
         return view('dashboard.engineers.engineersList', compact('engineers', 'users', 'shifts', 'areas'));
     }
+    // public function engineerProfile($id)
+    // {
+    //     $currentYear = date('Y');
+    //     $currentMonth = date('m');
+    //     $engineer = User::findOrFail($id);
+
+    //     // Total tasks in general
+    //     $totalTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->count();
+
+    //     // Total tasks in current month
+    //     $tasksInMonth = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->whereYear('created_at', $currentYear)
+    //         ->whereMonth('created_at', $currentMonth)
+    //         ->count();
+    //     //get All tasks in month
+    //     $tasksMonthAll = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->whereMonth('created_at', $currentMonth)
+    //         ->with(['main_task.section_tasks'])
+    //         ->latest()
+    //         ->get();
+    //     $tasksYearAll = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->whereYear('created_at', $currentYear)
+    //         ->with(['main_task.section_tasks'])
+    //         ->latest()
+    //         ->get();
+
+    //     $tasksAll = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->with(['main_task.section_tasks'])
+    //         ->latest()
+    //         ->get();
+    //     $tasksInYear = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->whereYear('created_at', $currentYear)
+    //         ->count();
+
+    //     // Completed tasks in general
+    //     $completedTask = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->where('isCompleted', "1")
+    //         ->count();
+
+    //     // Completed tasks in current month
+    //     $completedTasksInMonth = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->where('isCompleted', "1")
+    //         ->whereYear('created_at', $currentYear)
+    //         ->whereMonth('created_at', $currentMonth)
+    //         ->count();
+
+    //     // Completed tasks in current year
+    //     $completedTasksInYear = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->where('isCompleted', "1")
+    //         ->whereYear('created_at', $currentYear)
+    //         ->count();
+
+    //     // Pending tasks in general
+    //     $pendingTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->where('isCompleted', "0")
+    //         ->count();
+
+    //     // Pending tasks in current month
+    //     $pendingTasksInMonth = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->where('isCompleted', "0")
+    //         ->whereYear('created_at', $currentYear)
+    //         ->whereMonth('created_at', $currentMonth)
+    //         ->count();
+
+    //     // Pending tasks in current year
+    //     $pendingTasksInYear = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //         ->where('eng_id', $id)
+    //         ->where('isCompleted', "0")
+    //         ->whereYear('created_at', $currentYear)
+    //         ->count();
+
+    //     // Completed and pending tasks for each month
+    //     $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    //     $taskCounts = [];
+    //     $pendingTaskCounts = [];
+    //     $completedTaskCounts = [];
+    //     foreach ($months as $month) {
+    //         $taskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //             ->where('eng_id', $id)
+    //             ->whereMonth('created_at', date('m', strtotime($month)))
+    //             ->whereYear('created_at', $currentYear)
+    //             ->count();
+
+    //         $pendingTaskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //             ->where('eng_id', $id)
+    //             ->whereMonth('created_at', date('m', strtotime($month)))
+    //             ->where('status', 'pending')
+    //             ->where('isCompleted', "0")
+    //             ->whereYear('created_at', $currentYear)
+    //             ->count();
+
+    //         $completedTaskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
+    //             ->where('eng_id', $id)
+    //             ->whereMonth('created_at', date('m', strtotime($month)))
+    //             ->where('isCompleted', "1")
+    //             ->whereYear('created_at', $currentYear)
+    //             ->count();
+    //     }
+
+    //     return view('dashboard.engineers.profile', compact(
+    //         'tasksAll',
+    //         'tasksYearAll',
+    //         'tasksMonthAll',
+    //         'tasksInYear',
+    //         'totalTasks',
+    //         'tasksInMonth',
+    //         'completedTask',
+    //         'completedTasksInMonth',
+    //         'completedTasksInYear',
+    //         'pendingTasks',
+    //         'pendingTasksInMonth',
+    //         'pendingTasksInYear',
+    //         'months',
+    //         'taskCounts',
+    //         'pendingTaskCounts',
+    //         'completedTaskCounts',
+    //         'engineer'
+    //     ));
+    // }
     public function engineerProfile($id)
     {
-        $engineer = User::findOrfail($id);
-        $tasks = department_task_assignment::where('department_id', Auth::user()->department_id)
-            ->where('eng_id', $id)
-            ->count();
-        $pendingTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
-            ->where('eng_id', $id)
-            ->where('isCompleted', "0")
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+        $engineer = User::findOrFail($id);
+        $departmentId = Auth::user()->department_id;
 
-            ->count();
-        $completedTasks = department_task_assignment::where('department_id', Auth::user()->department_id)
-            ->where('eng_id', $id)
-            ->where('isCompleted', "1")
+        // Total tasks in general
+        $totalTasks = $this->countTasks($departmentId, $id);
 
-            ->count();
-        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        // Total tasks in current month
+        $tasksInMonth = $this->countTasks($departmentId, $id, $currentYear, $currentMonth);
+
+        // Get all tasks for the current month
+        $tasksMonthAll = $this->getTasksByMonth($departmentId, $id, $currentYear, $currentMonth);
+
+        // Get all tasks for the current year
+        $tasksYearAll = $this->getTasksByYear($departmentId, $id, $currentYear);
+
+        // Get all tasks
+        $tasksAll = $this->getAllTasks($departmentId, $id);
+
+        // Total tasks in current year
+        $tasksInYear = $this->countTasks($departmentId, $id, $currentYear);
+
+        // Completed tasks in general
+        $completedTask = $this->countTasks($departmentId, $id, null, null, true);
+
+        // Completed tasks in current month
+        $completedTasksInMonth = $this->countTasks($departmentId, $id, $currentYear, $currentMonth, true);
+
+        // Completed tasks in current year
+        $completedTasksInYear = $this->countTasks($departmentId, $id, $currentYear, null, true);
+
+        // Pending tasks in general
+        $pendingTasks = $totalTasks - $completedTask;
+
+        // Pending tasks in current month
+        $pendingTasksInMonth = $tasksInMonth - $completedTasksInMonth;
+
+        // Pending tasks in current year
+        $pendingTasksInYear = $tasksInYear - $completedTasksInYear;
+
+        // Completed and pending tasks for each month
         $taskCounts = [];
         $pendingTaskCounts = [];
         $completedTaskCounts = [];
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         foreach ($months as $month) {
-            $taskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
-                ->where('eng_id', $id)
-                ->whereMonth('created_at', date('m', strtotime($month)))
-                ->count();
-
-            $pendingTaskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
-                ->where('eng_id', $id)
-                ->whereMonth('created_at', date('m', strtotime($month)))
-                ->where('status', 'pending')
-                ->where('isCompleted', "0")
-
-                ->count();
-
-            $completedTaskCounts[] = department_task_assignment::where('department_id', Auth::user()->department_id)
-                ->where('eng_id', $id)
-                ->whereMonth('created_at', date('m', strtotime($month)))
-                ->where('isCompleted', "1")
-                ->count();
+            $taskCounts[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)));
+            $pendingTaskCounts[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)), false, 'pending');
+            $completedTaskCounts[] = $this->countTasks($departmentId, $id, $currentYear, date('m', strtotime($month)), true);
         }
-        return view('dashboard.engineers.profile', compact('tasks', 'pendingTasks', 'completedTasks', 'months', 'taskCounts', 'pendingTaskCounts', 'completedTaskCounts', 'engineer', 'months', 'taskCounts', 'pendingTaskCounts', 'completedTaskCounts'));
+        // Get tasks grouped by year
+        $tasksByYear = $tasksAll->groupBy(function ($task) {
+            return Carbon::parse($task->created_at)->format('Y');
+        })->map(function ($tasks) {
+            $totalTasks = $tasks->count();
+            $completedTasksCount = $tasks->where('isCompleted', 1)->count();
+            $pendingTasksCount = $totalTasks - $completedTasksCount;
+            return [
+                'total' => $totalTasks,
+                'completed' => $completedTasksCount,
+                'pending' => $pendingTasksCount,
+            ];
+        });
+
+
+        return view('dashboard.engineers.profile', compact(
+            'tasksByYear',
+            'tasksAll',
+            'tasksYearAll',
+            'tasksMonthAll',
+            'tasksInYear',
+            'totalTasks',
+            'tasksInMonth',
+            'completedTask',
+            'completedTasksInMonth',
+            'completedTasksInYear',
+            'pendingTasks',
+            'pendingTasksInMonth',
+            'pendingTasksInYear',
+            'months',
+            'taskCounts',
+            'pendingTaskCounts',
+            'completedTaskCounts',
+            'engineer'
+        ));
     }
+
+    private function countTasks($departmentId, $engineerId, $year = null, $month = null, $completed = null)
+    {
+        $query = department_task_assignment::where('department_id', $departmentId)
+            ->where('eng_id', $engineerId);
+
+        if (!is_null($year)) {
+            $query->whereYear('created_at', $year);
+        }
+
+        if (!is_null($month)) {
+            $query->whereMonth('created_at', $month);
+        }
+
+        if (!is_null($completed)) {
+            $query->where('isCompleted', $completed ? 1 : 0);
+        }
+
+        return $query->count();
+    }
+
+    private function getTasksByMonth($departmentId, $engineerId, $year, $month)
+    {
+        return department_task_assignment::where('department_id', $departmentId)
+            ->where('eng_id', $engineerId)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->with(['main_task.section_tasks'])
+            ->latest()
+            ->get();
+    }
+
+    private function getTasksByYear($departmentId, $engineerId, $year)
+    {
+        return department_task_assignment::where('department_id', $departmentId)
+            ->where('eng_id', $engineerId)
+            ->whereYear('created_at', $year)
+            ->with(['main_task.section_tasks'])
+            ->latest()
+            ->get();
+    }
+
+    private function getAllTasks($departmentId, $engineerId)
+    {
+        return department_task_assignment::where('department_id', $departmentId)
+            ->where('eng_id', $engineerId)
+            ->with(['main_task.section_tasks'])
+            ->latest()
+            ->get();
+    }
+
+
     public function engineerTask($id, $status)
     {
         $stations = Station::all();

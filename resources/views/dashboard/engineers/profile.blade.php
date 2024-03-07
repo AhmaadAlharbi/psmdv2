@@ -1,7 +1,23 @@
 @extends('layouts.app')
 
 @section('styles')
+<style>
+    .alarm-date,
+    .is-seen {
+        display: flex;
+        flex-direction: column;
+    }
 
+    .alarm-date span,
+    .is-seen span {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .badge {
+        margin-left: 10px;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -14,34 +30,7 @@
                 Profile</span>
         </div>
     </div>
-    <div class="d-flex my-xl-auto right-content">
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-info btn-icon me-2 btn-b"><i
-                    class="mdi mdi-filter-variant"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-danger btn-icon me-2"><i class="mdi mdi-star"></i></button>
-        </div>
-        <div class="pe-1 mb-xl-0">
-            <button type="button" class="btn btn-warning  btn-icon me-2"><i class="mdi mdi-refresh"></i></button>
-        </div>
-        <div class="mb-xl-0">
-            <div class="btn-group dropdown">
-                <button type="button" class="btn btn-primary">14 Aug 2019</button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                    id="dropdownMenuDate" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuDate"
-                    x-placement="bottom-end">
-                    <a class="dropdown-item" href="javascript:void(0);">2015</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2016</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2017</a>
-                    <a class="dropdown-item" href="javascript:void(0);">2018</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 <!-- breadcrumb -->
 
@@ -80,8 +69,8 @@
                             </div>
                             <div class="ms-auto">
                                 <a href="{{route('dashboard.engineerTask',['id'=>$engineer->id,'status'=>'all'])}}">
-                                    <h5 class="tx-13">عدد المهمات</h5>
-                                    <h2 class="mb-0 tx-22 mb-1 mt-1">{{$tasks}}</h2>
+                                    <h5 class="tx-13">Tasks</h5>
+                                    <h2 class="mb-0 tx-22 mb-1 mt-1">{{$totalTasks}}</h2>
                                 </a>
 
                             </div>
@@ -100,7 +89,7 @@
                                 <a href="{{route('dashboard.engineerTask',['id'=>$engineer->id,'status'=>'pending'])}}">
 
                                     <div class="ms-auto">
-                                        <h5 class="tx-13">المهمات الغيرالمنجزة</h5>
+                                        <h5 class="tx-13">All Pending Tasks</h5>
                                         <h2 class="mb-0 tx-22 mb-1 mt-1">{{$pendingTasks}}</h2>
                                     </div>
                                 </a>
@@ -121,8 +110,8 @@
                                 <a
                                     href="{{route('dashboard.engineerTask',['id'=>$engineer->id,'status'=>'completed'])}}">
                                     <div class="ms-auto">
-                                        <h5 class="tx-13">المهمات المنجزة</h5>
-                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$completedTasks}}</h2>
+                                        <h5 class="tx-13">All Completed Tasks</h5>
+                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$completedTask}}</h2>
                                     </div>
                                 </a>
                             </div>
@@ -139,14 +128,19 @@
                     <!-- Tabs -->
                     <ul class="nav nav-tabs profile navtab-custom panel-tabs">
                         <li class="">
-                            <a href="#home" data-bs-toggle="tab" class="active" aria-expanded="true"> <span
+                            <a href="#month" data-bs-toggle="tab" class="active" aria-expanded="true"> <span
                                     class="visible-xs"><i class="las la-user-circle tx-16 me-1"></i></span> <span
-                                    class="hidden-xs">احصائيات الشهر</span> </a>
+                                    class="hidden-xs">Monthly Statistics</span> </a>
                         </li>
                         <li class="">
-                            <a href="#gallery" data-bs-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i
+                            <a href="#year" data-bs-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i
                                         class="las la-images tx-15 me-1"></i></span>
-                                <span class="hidden-xs">احصائيات السنة</span> </a>
+                                <span class="hidden-xs">Yearly Statistics</span> </a>
+                        </li>
+                        <li class="">
+                            <a href="#all" data-bs-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i
+                                        class="las la-images tx-15 me-1"></i></span>
+                                <span class="hidden-xs">Full Statistics</span> </a>
                         </li>
                         {{-- <li class="">
                             <a href="#friends" data-bs-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i
@@ -161,404 +155,328 @@
                     </ul>
                 </div>
                 <div class="tab-content border border-top-0 p-4 br-dark">
-                    <div class="tab-pane active" id="home">
-                        <div style="width:650px;height:400px">
-                            <canvas id="taskChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="gallery">
+                    <div class="tab-pane active" id="month">
+                        <div class="container py-4">
+                            <h4>Engineer's Tasks Statistics for Current Month</h4>
+                            <p class="mb-4">Month: {{ \Carbon\Carbon::now()->format('F Y') }}</p>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="table-responsive border">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Total tasks</td>
+                                                    <td>{{$tasksInMonth}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total pending tasks</td>
+                                                    <td>{{$pendingTasksInMonth}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total completed tasks</td>
+                                                    <td>{{$completedTasksInMonth}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <h4 class="my-3">Engineer's Tasks for Current Month</h4>
+                                    <p class="mb-4">Month: {{ \Carbon\Carbon::now()->format('F Y') }}</p>
+                                    <div class="table-responsive border mt-5">
 
-                        <div>
-                            <canvas id="taskMonthlyChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="friends">
-                        <div class="row row-sm">
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/1.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">James Thomas</h5>
-                                            <span class="text-muted">Web designer</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Station</th>
+                                                    <th>Status</th>
+                                                    <th> Date</th>
+                                                    <th>Seen</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($tasksMonthAll as $task)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $task->main_task->station->SSNAME }}</td>
+                                                    <td>{{ $task->status }}</td>
+                                                    <td>
+                                                        <div class="alarm-date">
+                                                            <span>Alarm Date:</span>
+                                                            {{ $task->created_at ? $task->created_at->format('j F, Y
+                                                            \a\t g:i A') : '' }} <br>
+                                                            @if ($task->main_task->section_tasks->isNotEmpty())
+                                                            <span> Completed Date</span>
+                                                            <span class="badge bg-success">
+
+                                                                {{
+                                                                optional($task->main_task->section_tasks->first())->created_at
+                                                                ?
+                                                                $task->main_task->section_tasks->first()->created_at->format('j
+                                                                F, Y \a\t g:i A')
+                                                                : ''
+                                                                }}
+                                                            </span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="is-seen">
+                                                            <span
+                                                                class="badge {{ $task->isSeen ? 'bg-success' : 'bg-danger' }}">{{
+                                                                $task->isSeen ? 'Yes' : 'No' }}</span>
+                                                        </div>
+
+
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+
+                                        </table>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/3.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Reynante
-                                                Labares</h5>
-                                            <span class="text-muted">Web designer</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
+                                <div class="col-md-4">
+                                    @if($tasksInMonth > 0)
+                                    <div class="chart-container" style="height: 400px;">
+                                        <canvas id="currentMonthChart"></canvas>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/4.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Owen
-                                                Bongcaras</h5>
-                                            <span class="text-muted">Web designer</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
+                                    @else
+                                    <div class="text-center mt-4">
+                                        <p class="mb-2">No tasks in the current month to show.</p>
+                                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 24px;"></i>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/8.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Stephen
-                                                Metcalfe</h5>
-                                            <span class="text-muted">Administrator</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/2.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Socrates
-                                                Itumay</h5>
-                                            <span class="text-muted">Project Manager</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/3.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Reynante
-                                                Labares</h5>
-                                            <span class="text-muted">Web Designer</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/4.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Owen
-                                                Bongcaras</h5>
-                                            <span class="text-muted">App Developer</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-                                <div class="card custom-card border">
-                                    <div class="card-body  user-lock text-center">
-                                        <div class="dropdown text-end">
-                                            <a href="javascript:void(0);" class="option-dots" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="true"> <i
-                                                    class="fe fe-more-vertical"></i> </a>
-                                            <div class="dropdown-menu dropdown-menu-end shadow"> <a
-                                                    class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-message-square me-2"></i>
-                                                    Message</a> <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-edit-2 me-2"></i> Edit</a> <a class="dropdown-item"
-                                                    href="javascript:void(0);"><i class="fe fe-eye me-2"></i> View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
-                                                        class="fe fe-trash-2 me-2"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                        <a href="{{url('profile')}}">
-                                            <img alt="avatar" class="rounded-circle"
-                                                src="{{asset('assets/img/faces/8.jpg')}}">
-                                            <h5 class="fs-16 mb-0 mt-3 text-dark fw-semibold">Stephen
-                                                Metcalfe</h5>
-                                            <span class="text-muted">Administrator</span>
-                                            <div class="mt-3 d-flex mx-auto text-center justify-content-center">
-                                                <span class="btn btn-icon me-3 btn-facebook">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-facebook tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-twitter tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="btn btn-icon me-3">
-                                                    <span class="btn-inner--icon"> <i
-                                                            class="bx bxl-linkedin tx-18 tx-prime"></i>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="settings">
-                        <form role="form">
-                            <div class="form-group">
-                                <label for="FullName">Full Name</label>
-                                <input type="text" value="John Doe" id="FullName" class="form-control">
+
+
+
+
+
+
+
+                    <div class="tab-pane" id="year">
+
+                        <div class="container py-4">
+                            <h4>Engineer's Tasks Statistics for Current Year : {{ \Carbon\Carbon::now()->format('Y') }}
+                            </h4>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive ">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Total tasks</td>
+                                                    <td>{{$tasksInYear}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total pending tasks</td>
+                                                    <td>{{$pendingTasksInYear}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total completed tasks</td>
+                                                    <td>{{$completedTasksInYear}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <h4 class="my-3">Engineer's Tasks for Current Year : {{
+                                        \Carbon\Carbon::now()->format(' Y') }}</h4>
+                                    <div class="table-responsive border mt-5">
+
+
+                                        <table id="example3"
+                                            class="border-top-0  table table-bordered text-nowrap border-bottom">
+
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Station</th>
+                                                    <th>Status</th>
+                                                    <th> Date</th>
+                                                    <th>Seen</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($tasksYearAll as $task)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $task->main_task->station->SSNAME }}</td>
+                                                    <td>{{ $task->status }}</td>
+                                                    <td>
+                                                        <div class="alarm-date">
+                                                            <span>Alarm Date:</span>
+                                                            {{ $task->created_at ? $task->created_at->format('j F, Y
+                                                            \a\t g:i A') : '' }} <br>
+                                                            @if ($task->main_task->section_tasks->isNotEmpty())
+                                                            <span> Completed Date</span>
+                                                            <span class="badge bg-success">
+
+                                                                {{
+                                                                optional($task->main_task->section_tasks->first())->created_at
+                                                                ?
+                                                                $task->main_task->section_tasks->first()->created_at->format('j
+                                                                F, Y \a\t g:i A')
+                                                                : ''
+                                                                }}
+                                                            </span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="is-seen">
+                                                            <span
+                                                                class="badge {{ $task->isSeen ? 'bg-success' : 'bg-danger' }}">{{
+                                                                $task->isSeen ? 'Yes' : 'No' }}</span>
+                                                        </div>
+
+
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    @if($tasksInYear > 0)
+                                    <div style="width: 650px; height: 400px;">
+                                        <canvas id="tasksByMonthChart"></canvas>
+                                    </div>
+                                    @else
+                                    <div class="text-center mt-4">
+                                        <p class="mb-2">No tasks in the current month to show.</p>
+                                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 24px;"></i>
+                                    </div>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="Email">Email</label>
-                                <input type="email" value="first.last@example.com" id="Email" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="Username">Username</label>
-                                <input type="text" value="john" id="Username" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="Password">Password</label>
-                                <input type="password" placeholder="6 - 15 Characters" id="Password"
-                                    class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="RePassword">Re-Password</label>
-                                <input type="password" placeholder="6 - 15 Characters" id="RePassword"
-                                    class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="AboutMe">About Me</label>
-                                <textarea id="AboutMe"
-                                    class="form-control">Loren gypsum dolor sit mate, consecrate disciplining lit, tied diam nonunion nib modernism tincidunt it Loretta dolor manga Amalia erst volute. Ur wise denim ad minim venial, quid nostrum exercise ration perambulator suspicious cortisol nil it applique ex ea commodore consequent.</textarea>
-                            </div>
-                            <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Save</button>
-                        </form>
+                        </div>
+
                     </div>
+                    <div class="tab-pane" id="all">
+                        <div class="container py-4">
+                            <h4>Engineer's Tasks Statistics for Current Year : {{ \Carbon\Carbon::now()->format('Y') }}
+                            </h4>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @if($tasksInYear > 0)
+                                    <div style="width: 650px; height: 400px;">
+                                        <canvas id="tasksChart" width="800" height="400"></canvas>
+
+
+                                    </div>
+                                    @else
+                                    <div class="text-center mt-4">
+                                        <p class="mb-2">No tasks in the current month to show.</p>
+                                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 24px;"></i>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="table-responsive ">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Total tasks</td>
+                                                    <td>{{$totalTasks}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total pending tasks</td>
+                                                    <td>{{$pendingTasks}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total completed tasks</td>
+                                                    <td>{{$completedTask}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <h4 class="my-3">Engineer's Tasks for Current Year : {{
+                                        \Carbon\Carbon::now()->format(' Y') }}</h4>
+                                    <div class="table-responsive border mt-5">
+
+
+                                        <table id="archive"
+                                            class="border-top-0  table table-bordered text-nowrap border-bottom">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Station</th>
+                                                    <th>Status</th>
+                                                    <th> Date</th>
+                                                    <th>Seen</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($tasksAll as $task)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $task->main_task->station->SSNAME }}</td>
+                                                    <td>{{ $task->status }}</td>
+                                                    <td>
+                                                        <div class="alarm-date">
+                                                            <span>Alarm Date:</span>
+                                                            {{ $task->created_at ? $task->created_at->format('j F, Y
+                                                            \a\t g:i A') : '' }} <br>
+                                                            @if ($task->main_task->section_tasks->isNotEmpty())
+                                                            <span> Completed Date</span>
+                                                            <span class="badge bg-success">
+
+                                                                {{
+                                                                optional($task->main_task->section_tasks->first())->created_at
+                                                                ?
+                                                                $task->main_task->section_tasks->first()->created_at->format('j
+                                                                F, Y \a\t g:i A')
+                                                                : ''
+                                                                }}
+                                                            </span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="is-seen">
+                                                            <span
+                                                                class="badge {{ $task->isSeen ? 'bg-success' : 'bg-danger' }}">{{
+                                                                $task->isSeen ? 'Yes' : 'No' }}</span>
+                                                        </div>
+
+
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -569,7 +487,25 @@
 @endsection
 
 @section('scripts')
+<!-- Internal Select2.min js -->
+<script src="{{asset('assets/plugins/select2/js/select2.min.js')}}"></script>
 
+<!-- DATA TABLE JS-->
+<script src="{{asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/dataTables.bootstrap5.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.print.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/js/buttons.colVis.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('assets/plugins/datatable/responsive.bootstrap5.min.js')}}"></script>
+
+<!--Internal  Datatable js -->
+<script src="{{asset('assets/js/table-data.js')}}"></script>
 <!-- smart photo master js -->
 <script src="{{asset('assets/plugins/SmartPhoto-master/smartphoto.js')}}"></script>
 <script src="{{asset('assets/js/gallery-1.js')}}"></script>
@@ -578,29 +514,75 @@
 
 <!-- Internal Chartjs js -->
 <script src="{{asset('assets/js/chart.chartjs.js')}}"></script>
-
 <script>
-    var ctx = document.getElementById('taskChart').getContext('2d');
-    var taskChart = new Chart(ctx, {
-        type: 'bar',
+    var ctx1 = document.getElementById('currentMonthChart').getContext('2d');
+    var currentMonthChart = new Chart(ctx1, {
+        type: 'pie',
         data: {
-            labels: ['Tasks', 'Pending Tasks', 'Completed Tasks'],
+            labels: ['Completed', 'Pending'],
             datasets: [{
-                label: 'Task Count',
-                data: [{{ $tasks }}, {{ $pendingTasks }}, {{ $completedTasks }}],
+                label: 'Tasks',
+                data: [{{ $completedTasksInMonth }}, {{ $pendingTasksInMonth }}],
                 backgroundColor: [
-                   
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 99, 132)',
-                    'rgb(50, 205, 50)'
+                    'rgb(75, 192, 192)',
+                    'rgb(255, 99, 132)'
                 ],
                 borderColor: [
-                 
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(34, 139, 34, 1)'
-
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)'
                 ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    var ctx2 = document.getElementById('currentYearChart').getContext('2d');
+    var currentYearChart = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: ['Completed', 'Pending'],
+            datasets: [{
+                label: 'Tasks',
+                data: [{{ $completedTasksInYear }}, {{ $pendingTasksInYear }}],
+                backgroundColor: [
+                    'rgb(75, 192, 192)',
+                    'rgb(255, 99, 132)'
+                ],
+                borderColor: [
+                    'rgba(255, 255, 255, 1)',
+                    'rgba(255, 255, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+<script>
+    var ctx2 = document.getElementById('tasksByMonthChart').getContext('2d');
+    var tasksByMonthChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($months) !!},
+            datasets: [{
+                label: 'Completed Tasks',
+                data: {!! json_encode($completedTaskCounts) !!},
+                backgroundColor: 'rgb(75, 192, 192)',
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Pending Tasks',
+                data: {!! json_encode($pendingTaskCounts) !!},
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgba(255, 255, 255, 1)',
                 borderWidth: 1
             }]
         },
@@ -617,45 +599,50 @@
         }
     });
 </script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 <script>
-    var ctx = document.getElementById('taskMonthlyChart').getContext('2d');
+    // Get the data passed from the controller
+    var tasksByYear = @json($tasksByYear);
+
+    // Prepare data for the chart
+    var years = Object.keys(tasksByYear);
+    var completedData = [];
+    var pendingData = [];
+
+    years.forEach(function(year) {
+        completedData.push(tasksByYear[year]['completed']);
+        pendingData.push(tasksByYear[year]['pending']);
+    });
+
+    // Render the chart
+    var ctx = document.getElementById('tasksChart').getContext('2d');
     var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        datasets: [{
-            label: 'Total Tasks',
-            data: [{{ implode(',', $taskCounts) }}],
-            backgroundColor: 'rgba(54, 162, 235)',
-            borderColor: 'rgb(54, 162, 235)',
-            borderWidth: 1
+        type: 'bar',
+        data: {
+            labels: years,
+            datasets: [{
+                label: 'Completed Tasks',
+                data: completedData,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Pending Tasks',
+                data: pendingData,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
         },
-        {
-            label: 'Pending Tasks',
-            data: [{{ implode(',', $pendingTaskCounts) }}],
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            borderWidth: 1
-        },
-        {
-            label: 'Completed Tasks',
-            data: [{{ implode(',', $completedTaskCounts) }}],
-            backgroundColor:  'rgb(50, 205, 50)',
-            borderColor: 'rgb(34, 139, 34)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
+        options: {
+            scales: {
+                y: {
                     beginAtZero: true
                 }
-            }]
+            }
         }
-    }
-});
+    });
 </script>
+
 
 @endsection
