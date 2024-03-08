@@ -213,22 +213,24 @@ class EngineersController extends Controller
         $tasksInYear = $this->countTasks($departmentId, $id, $currentYear);
 
         // Completed tasks in general
-        $completedTask = $this->countTasks($departmentId, $id, null, null, true);
+        // return $completedTask = $this->countTasks($departmentId, $id, null, null, true);
 
         // Completed tasks in current month
-        $completedTasksInMonth = $this->countTasks($departmentId, $id, $currentYear, $currentMonth, true);
+        $completedTasksInMonth = $this->countTasks($departmentId, $id, $currentYear, $currentMonth, "1");
 
         // Completed tasks in current year
-        $completedTasksInYear = $this->countTasks($departmentId, $id, $currentYear, null, true);
+        $completedTasksInYear = $this->countTasks($departmentId, $id, $currentYear, null, "1");
 
         // Pending tasks in general
-        $pendingTasks = $totalTasks - $completedTask;
+        $pendingTasks = $totalTasks - $totalCompletedTasks;
 
         // Pending tasks in current month
-        $pendingTasksInMonth = $tasksInMonth - $completedTasksInMonth;
+        $pendingTasksInMonth = $this->countTasks($departmentId, $id, $currentYear, $currentMonth, "0");
 
         // Pending tasks in current year
-        $pendingTasksInYear = $tasksInYear - $completedTasksInYear;
+        // return  $pendingTasksInYear = $tasksInYear - $completedTasksInYear;
+        $pendingTasksInYear = $this->countTasks($departmentId, $id, $currentYear, null, "0");
+
 
         // Completed and pending tasks for each month
         $taskCountsYearArr = [];
@@ -253,9 +255,15 @@ class EngineersController extends Controller
                 'pending' => $pendingTasksCount,
             ];
         });
-
-
+        // return $totalCompletedTasksYear;
+        $percentageofMonth = $this->calculatePercentage($completedTasksInMonth, $tasksInMonth);
+        $percentageofYear = $this->calculatePercentage($totalCompletedTasksYear, $tasksInYear);
+        // return $totalCompletedTasks;
+        $percentageOverAll = $this->calculatePercentage($totalCompletedTasks, $totalTasks);
         return view('dashboard.engineers.profile', compact(
+            'percentageofMonth',
+            'percentageofYear',
+            'percentageOverAll',
             'taskCountsYearArr',
             'pendingTaskCountsYearArr',
             'completedTaskCountsYearArr',
@@ -271,7 +279,6 @@ class EngineersController extends Controller
             'tasksInYear',
             'totalTasks',
             'tasksInMonth',
-            'completedTask',
             'completedTasksInMonth',
             'completedTasksInYear',
             'pendingTasks',
@@ -280,6 +287,16 @@ class EngineersController extends Controller
             'months',
             'engineer'
         ));
+    }
+    public function calculatePercentage($completedTasks, $totalTasks)
+    {
+        if ($totalTasks === 0) {
+            return 'N/A';
+        }
+
+        $percentage = ($completedTasks / $totalTasks) * 100;
+
+        return round($percentage, 2) . '%';
     }
 
     private function countTasks($departmentId, $engineerId, $year = null, $month = null, $completed = null)

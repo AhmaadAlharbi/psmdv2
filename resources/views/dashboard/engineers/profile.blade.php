@@ -41,19 +41,49 @@
             <div class="card-body">
                 <div class="ps-0">
                     <div class="main-profile-overview">
-                        <div class="main-img-user profile-user">
-                            {{-- <img alt="" src="{{asset('assets/img/faces/6.jpg')}}"><a
-                                class="fas fa-camera profile-edit" href="JavaScript:void(0);"></a> --}}
+                        <div class="profile-user">
+                            <img alt="Profile Picture" src="{{asset('assets/img/faces/6.jpg')}}">
+                            <a class="profile-edit" href="JavaScript:void(0);"><i class="fas fa-camera"></i></a>
                         </div>
-                        <div class="d-flex justify-content-center mg-b-20">
-                            <div>
-                                <h2 class="">{{$engineer->name}}</h2>
-                                <p class="main-profile-name-text">قسم {{$engineer->department->name}} </p>
+                        <div class="profile-details text-center mt-4">
+                            <h2>{{ $engineer->name }}</h2>
+                            <p class="text-muted">{{ $engineer->department->name }}</p>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Engineer Score</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-chart-line text-success me-3"></i>
+                                        <div>
+                                            <span class="fw-bold">Month:</span>
+                                            <span class="text-muted">{{ $percentageofMonth }}</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-calendar-alt text-primary me-3"></i>
+                                        <div>
+                                            <span class="fw-bold">Year:</span>
+                                            <span class="text-muted">{{ $percentageofYear }}</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-globe-americas text-info me-3"></i>
+                                        <div>
+                                            <span class="fw-bold">Overall:</span>
+                                            <span class="text-muted">{{ $percentageOverAll }}</span>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-
-                        <img src="{{asset('assets/img/dashboard/engineers/statistics.svg')}}" alt="">
+                        <div class="statistics-img mt-4">
+                            <img src="{{ asset('assets/img/dashboard/engineers/statistics.svg') }}" alt="Statistics">
+                        </div>
                     </div><!-- main-profile-overview -->
+
+
+
                 </div>
             </div>
         </div>
@@ -83,19 +113,19 @@
                     <div class="card-body">
                         <div class="counter-status d-flex md-mb-0">
                             <div class="counter-icon bg-danger-transparent">
-                                <i class="icon-paypal text-danger"></i>
+                                <i class="fas fa-exclamation-circle text-danger"></i>
                             </div>
                             <div class="ms-auto">
-                                <a href="{{route('dashboard.engineerTask',['id'=>$engineer->id,'status'=>'pending'])}}">
-
+                                <a
+                                    href="{{ route('dashboard.engineerTask', ['id' => $engineer->id, 'status' => 'pending']) }}">
                                     <div class="ms-auto">
                                         <h5 class="tx-13">All Pending Tasks</h5>
-                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$totalPendingTasks}}</h2>
+                                        <h2 class="mb-0 tx-22 mt-1">{{ $totalPendingTasks }}</h2>
                                     </div>
                                 </a>
                             </div>
-
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -104,20 +134,19 @@
                     <div class="card-body">
                         <div class="counter-status d-flex md-mb-0">
                             <div class="counter-icon bg-success-transparent">
-                                <i class="icon-rocket text-success"></i>
+                                <i class="fas fa-check-circle text-success"></i>
                             </div>
                             <div class="ms-auto">
                                 <a
-                                    href="{{route('dashboard.engineerTask',['id'=>$engineer->id,'status'=>'completed'])}}">
+                                    href="{{ route('dashboard.engineerTask', ['id' => $engineer->id, 'status' => 'completed']) }}">
                                     <div class="ms-auto">
                                         <h5 class="tx-13">All Completed Tasks</h5>
-                                        <h2 class="mb-0 tx-22 mb-1 mt-1">{{$totalCompletedTasks}}</h2>
+                                        <h2 class="mb-0 tx-22 mt-1">{{ $totalCompletedTasks }}</h2>
                                     </div>
                                 </a>
                             </div>
-
-
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -204,7 +233,9 @@
                                                 @foreach($tasksMonthAll as $task)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $task->main_task->station->SSNAME }}</td>
+                                                    <td><a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"> {{
+                                                            $task->main_task->station->SSNAME }}</a>
+                                                    </td>
                                                     <td>{{ $task->status }}</td>
                                                     <td>
                                                         <div class="alarm-date">
@@ -411,7 +442,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Total completed tasks</td>
-                                                    <td>{{$completedTask}}</td>
+                                                    <td>{{$totalCompletedTasks}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
