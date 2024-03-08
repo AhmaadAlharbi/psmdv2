@@ -12,6 +12,7 @@ use App\Models\Engineer;
 use App\Models\MainTask;
 use App\Models\SectionTask;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\department_task_assignment;
 
@@ -23,12 +24,28 @@ class EngineersController extends Controller
         // If the authenticated user's department is 1, retrieve all engineers
         // Otherwise, retrieve only the engineers who belong to the authenticated user's department
         $engineers = Engineer::when(Auth::user()->department_id !== 1, function ($query) {
-            return $query->where('department_id', Auth::user()->department_id);
-        })->get();
-        $users = User::where('department_id', Auth::user()->department_id)->orderBy('name')->get();
+            return $query->where('engineers.department_id', Auth::user()->department_id);
+        })
+            ->leftJoin('users', 'users.id', '=', 'engineers.user_id') // Assuming 'users' is the table name for the user model
+            ->orderBy('users.arabic_name')
+            ->get();
+        $northEngineers = Engineer::whereHas('areas', function ($query) {
+            $query->where('areas.id', 1);
+        })->leftJoin('users', 'users.id', '=', 'engineers.user_id') // Assuming 'users' is the table name for the user model
+            ->orderBy('users.arabic_name')
+
+            ->get();
+        $southEngineers = Engineer::whereHas('areas', function ($query) {
+            $query->where('areas.id', 2);
+        })->leftJoin('users', 'users.id', '=', 'engineers.user_id') // Assuming 'users' is the table name for the user model
+            ->orderBy('users.arabic_name')
+
+            ->get();
+
+        $users = User::where('department_id', Auth::user()->department_id)->orderBy('arabic_name')->get();
         $areas = Area::all();
         $shifts = Shift::all();
-        return view('dashboard.engineers.engineersList', compact('engineers', 'users', 'shifts', 'areas'));
+        return view('dashboard.engineers.engineersList', compact('southEngineers', 'northEngineers', 'engineers', 'users', 'shifts', 'areas'));
     }
     // public function engineerProfile($id)
     // {

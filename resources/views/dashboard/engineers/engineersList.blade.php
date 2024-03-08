@@ -118,79 +118,276 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table border-top-0 table-bordered text-nowrap border-bottom"
-                        id="responsive-datatable">
-                        <thead>
-                            <tr>
-                                <th class="wd-lg-20p"><span>#</span></th>
-                                <th class="wd-lg-20p"><span>Name</span></th>
-                                <th class="wd-lg-20p"><span>Department</span></th>
-                                {{-- <th class="wd-lg-20p"><span>Status</span></th> --}}
-                                <th class="wd-lg-20p">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                            $i=0
-                            @endphp
-                            @foreach($engineers as $engineer)
-                            <tr>
-                                <td>
-                                    {{++$i}}
-                                </td>
-                                <td> <a
-                                        href="{{route('dashboard.engineerProfile',['eng_id'=>$engineer->user_id])}}">{{$engineer->user->name}}</a>
-                                </td>
 
-                                {{-- <td class="text-center">
-                                    <span class="label text-success d-flex ">
-                                        <div class="dot-label bg-success mx-3"></div><span class="mt-1">active</span>
-                                    </span>
-                                </td> --}}
-                                <td>{{$engineer->user->department->name}}</td>
-                                <td>
+                <div id="basic-alert">
+                    <div>
 
-                                    <div class="btn-group">
-                                        <button type="button"
-                                            class="btn btn-{{ $engineer->user->role->title == 'Admin' ? 'warning' : 'outline-warning' }} btn-sm dropdown-toggle"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i
-                                                class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
-                                            Actions
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="{{ route('user.update', ['id' => $engineer->user->id]) }}"
-                                                    class="dropdown-item">
-                                                    <i
-                                                        class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
-                                                    {{ $engineer->user->role->title == 'Admin' ? 'Revoke Admin' : 'Make
-                                                    Admin' }}
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="{{ route('engineer.edit', ['id' => $engineer->id]) }}"
-                                                    class="dropdown-item">
-                                                    <i class="las la-pen"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="{{ route('engineerList.toggle', ['id' => $engineer->user->id]) }}"
-                                                    class="dropdown-item">
-                                                    <i class="las la-trash"></i> Delete
-                                                </a>
-                                            </li>
-                                        </ul>
+                        <div class="text-wrap">
+                            <div class="example">
+                                <div class="panel panel-primary tabs-style-1">
+                                    <div class=" tab-menu-heading">
+                                        <div class="tabs-menu1">
+                                            <!-- Tabs -->
+                                            <ul class="nav panel-tabs main-nav-line">
+                                                <li class="nav-item"><a href="#tab1" class="nav-link active"
+                                                        data-bs-toggle="tab">All Engineer</a></li>
+                                                <li class="nav-item"><a href="#tab2" class="nav-link"
+                                                        data-bs-toggle="tab">North Engineers</a></li>
+                                                <li class="nav-item"><a href="#tab3" class="nav-link"
+                                                        data-bs-toggle="tab">South Engineers</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
+                                    <div class="panel-body tabs-menu-body main-content-body-right border-top-0 border">
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="tab1">
+                                                <div class="table-responsive">
+                                                    <table
+                                                        class="table border-top-0 table-bordered text-nowrap border-bottom"
+                                                        id="responsive-datatable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="wd-lg-20p"><span>#</span></th>
+                                                                <th class="wd-lg-20p"><span>Name</span></th>
+                                                                <th class="wd-lg-20p"><span>Department</span></th>
+                                                                {{-- <th class="wd-lg-20p"><span>Status</span></th> --}}
+                                                                <th class="wd-lg-20p">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                            $i=0
+                                                            @endphp
+                                                            @foreach($engineers as $engineer)
+                                                            <tr>
+                                                                <td>
+                                                                    {{++$i}}
+                                                                </td>
+                                                                <td> <a
+                                                                        href="{{route('dashboard.engineerProfile',['eng_id'=>$engineer->user_id])}}">{{$engineer->user->arabic_name}}</a>
+                                                                </td>
+
+                                                                {{-- <td class="text-center">
+                                                                    <span class="label text-success d-flex ">
+                                                                        <div class="dot-label bg-success mx-3"></div>
+                                                                        <span class="mt-1">active</span>
+                                                                    </span>
+                                                                </td> --}}
+                                                                <td>{{$engineer->user->department->name}}</td>
+                                                                <td>
+
+                                                                    <div class="btn-group">
+                                                                        <button type="button"
+                                                                            class="btn btn-{{ $engineer->user->role->title == 'Admin' ? 'warning' : 'outline-warning' }} btn-sm dropdown-toggle"
+                                                                            data-bs-toggle="dropdown"
+                                                                            aria-expanded="false">
+                                                                            <i
+                                                                                class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                                            Actions
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li>
+                                                                                <a href="{{ route('user.update', ['id' => $engineer->user->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i
+                                                                                        class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                                                    {{ $engineer->user->role->title ==
+                                                                                    'Admin' ? 'Revoke Admin' : 'Make
+                                                                                    Admin' }}
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="{{ route('engineer.edit', ['id' => $engineer->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i class="las la-pen"></i> Edit
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="{{ route('engineerList.toggle', ['id' => $engineer->user->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i class="las la-trash"></i> Delete
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
 
 
 
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            {{--!! north Engineers--}}
+                                            <div class="tab-pane" id="tab2">
+                                                <div class="table-responsive">
+                                                    <table
+                                                        class="table border-top-0 table-bordered text-nowrap border-bottom"
+                                                        id="north-tasks">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="wd-lg-20p"><span>#</span></th>
+                                                                <th class="wd-lg-20p"><span>Name</span></th>
+                                                                <th class="wd-lg-20p"><span>Department</span></th>
+                                                                {{-- <th class="wd-lg-20p"><span>Status</span></th> --}}
+                                                                <th class="wd-lg-20p">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                            $i=0
+                                                            @endphp
+                                                            @foreach($northEngineers as $engineer)
+                                                            <tr>
+                                                                <td>
+                                                                    {{++$i}}
+                                                                </td>
+                                                                <td> <a
+                                                                        href="{{route('dashboard.engineerProfile',['eng_id'=>$engineer->user_id])}}">{{$engineer->user->arabic_name}}</a>
+                                                                </td>
+
+                                                                {{-- <td class="text-center">
+                                                                    <span class="label text-success d-flex ">
+                                                                        <div class="dot-label bg-success mx-3"></div>
+                                                                        <span class="mt-1">active</span>
+                                                                    </span>
+                                                                </td> --}}
+                                                                <td>{{$engineer->user->department->name}}</td>
+                                                                <td>
+
+                                                                    <div class="btn-group">
+                                                                        <button type="button"
+                                                                            class="btn btn-{{ $engineer->user->role->title == 'Admin' ? 'warning' : 'outline-warning' }} btn-sm dropdown-toggle"
+                                                                            data-bs-toggle="dropdown"
+                                                                            aria-expanded="false">
+                                                                            <i
+                                                                                class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                                            Actions
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li>
+                                                                                <a href="{{ route('user.update', ['id' => $engineer->user->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i
+                                                                                        class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                                                    {{ $engineer->user->role->title ==
+                                                                                    'Admin' ? 'Revoke Admin' : 'Make
+                                                                                    Admin' }}
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="{{ route('engineer.edit', ['id' => $engineer->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i class="las la-pen"></i> Edit
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="{{ route('engineerList.toggle', ['id' => $engineer->user->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i class="las la-trash"></i> Delete
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+
+
+
+                                                                </td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            {{--!! south Engineers --}}
+                                            <div class="tab-pane" id="tab3">
+                                                <div class="table-responsive">
+                                                    <table
+                                                        class="table border-top-0 table-bordered text-nowrap border-bottom"
+                                                        id="south-tasks">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="wd-lg-20p"><span>#</span></th>
+                                                                <th class="wd-lg-20p"><span>Name</span></th>
+                                                                <th class="wd-lg-20p"><span>Department</span></th>
+                                                                {{-- <th class="wd-lg-20p"><span>Status</span></th> --}}
+                                                                <th class="wd-lg-20p">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                            $i=0
+                                                            @endphp
+                                                            @foreach($southEngineers as $engineer)
+                                                            <tr>
+                                                                <td>
+                                                                    {{++$i}}
+                                                                </td>
+                                                                <td> <a
+                                                                        href="{{route('dashboard.engineerProfile',['eng_id'=>$engineer->user_id])}}">{{$engineer->user->arabic_name}}</a>
+                                                                </td>
+
+                                                                {{-- <td class="text-center">
+                                                                    <span class="label text-success d-flex ">
+                                                                        <div class="dot-label bg-success mx-3"></div>
+                                                                        <span class="mt-1">active</span>
+                                                                    </span>
+                                                                </td> --}}
+                                                                <td>{{$engineer->user->department->name}}</td>
+                                                                <td>
+
+                                                                    <div class="btn-group">
+                                                                        <button type="button"
+                                                                            class="btn btn-{{ $engineer->user->role->title == 'Admin' ? 'warning' : 'outline-warning' }} btn-sm dropdown-toggle"
+                                                                            data-bs-toggle="dropdown"
+                                                                            aria-expanded="false">
+                                                                            <i
+                                                                                class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                                            Actions
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li>
+                                                                                <a href="{{ route('user.update', ['id' => $engineer->user->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i
+                                                                                        class="fa {{ $engineer->user->role->title == 'Admin' ? 'fa-user-times' : 'fa-user-plus' }}"></i>
+                                                                                    {{ $engineer->user->role->title ==
+                                                                                    'Admin' ? 'Revoke Admin' : 'Make
+                                                                                    Admin' }}
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="{{ route('engineer.edit', ['id' => $engineer->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i class="las la-pen"></i> Edit
+                                                                                </a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <a href="{{ route('engineerList.toggle', ['id' => $engineer->user->id]) }}"
+                                                                                    class="dropdown-item">
+                                                                                    <i class="las la-trash"></i> Delete
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+
+
+
+                                                                </td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
