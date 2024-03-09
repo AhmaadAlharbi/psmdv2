@@ -37,4 +37,8 @@ class department_task_assignment extends Model
     {
         return $this->hasMany(TaskNotes::class, 'department_task_assignment_id');
     }
+    public function taskLog()
+    {
+        return $this->hasMany(TaskLog::class, 'task_id');
+    }
 }

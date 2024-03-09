@@ -1403,11 +1403,9 @@ class DashBoardController extends Controller
         $completedTime = now();
         $timeTakenInMinutes = $assignedTime->diffInMinutes($completedTime);
         $isLate = false; // Initialize isLate variable
-
         // Determine task type and due time
         // Default due time for non 'First Draft' actions
-        $dueTime = (24 * 60); // Default to 24 hours in minutes
-
+        $dueTime = 0; // Default due time is 0, no tasks considered late by default
         // Adjust due time based on the work type
         switch ($mainTask->work_type) {
             case 'Clearance':
@@ -1423,11 +1421,8 @@ class DashBoardController extends Controller
         }
         // Check if the task completion is late based on the due time
         $isLate = $timeTakenInMinutes > $dueTime;
-
-
         // Check if a task log entry already exists for the given main task
         $existingTaskLog = TaskLog::where('task_id', $mainTask->id)->first();
-
         // Create a new task log entry only if it doesn't already exist
         if (!$existingTaskLog) {
             // Log task completion

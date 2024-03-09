@@ -361,7 +361,8 @@
                                                 @foreach($tasksYearAll as $task)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $task->main_task->station->SSNAME }}</td>
+                                                    <td><a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"> {{
+                                                            $task->main_task->station->SSNAME }}</a>
                                                     <td>{{ $task->status }}</td>
                                                     <td>
                                                         <div class="alarm-date">
@@ -409,18 +410,13 @@
                             </h4>
                             <div class="row">
                                 <div class="col-md-12">
-                                    @if($tasksInYear > 0)
+
                                     <div style="width: 650px; height: 400px;">
                                         <canvas id="tasksChart" width="800" height="400"></canvas>
 
 
                                     </div>
-                                    @else
-                                    <div class="text-center mt-4">
-                                        <p class="mb-2">No tasks in the current month to show.</p>
-                                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 24px;"></i>
-                                    </div>
-                                    @endif
+
                                 </div>
                                 <div class="col-md-12">
                                     <div class="table-responsive ">
@@ -467,7 +463,8 @@
                                                 @foreach($tasksAll as $task)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $task->main_task->station->SSNAME }}</td>
+                                                    <td><a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"> {{
+                                                            $task->main_task->station->SSNAME }}</a>
                                                     <td>{{ $task->status }}</td>
                                                     <td>
                                                         <div class="alarm-date">

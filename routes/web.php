@@ -1,7 +1,9 @@
 <?php
 
+use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\Station;
+use App\Models\TaskLog;
 use App\Models\MainTask;
 use App\Http\Livewire\Faq;
 use App\Http\Livewire\Blog;
@@ -127,6 +129,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Livewire\Underconstruction;
 use App\Http\Livewire\FileManagerDetails;
 use App\Http\Livewire\WidgetNotification;
+use App\Models\department_task_assignment;
 use App\Http\Controllers\StationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EngineersController;
@@ -434,6 +437,52 @@ Route::get('/unauthorized', function () {
     return view('unauthorized');
 })->name('unauthorized');
 
+Route::get('/update-logs', function () {
+    // Fetch all reports
+    $departmentTasks = department_task_assignment::with(['main_task.section_tasks', 'taskLog'])
+        ->whereHas('taskLog') // Retrieve only records with associated task logs
+        ->latest()
+        ->get();
+
+    foreach ($departmentTasks as $task) {
+        $assignedTime = Carbon::parse($task->main_task->created_at);
+        $completedTime = $task->main_task->section_tasks->isNotEmpty() ? $task->main_task->section_tasks->first()->created_at : null;
+
+        // Calculate time taken in minutes
+        $timeTakenInMinutes = $completedTime ? $assignedTime->diffInMinutes($completedTime) : 0;
+
+        $isLate = false; // Initialize isLate variable
+
+        // Calculate due time based on work type
+        switch ($task->main_task->work_type) {
+            case 'Clearance':
+                $dueTime = (48 * 60); // 48 hours in minutes for clearance tasks
+                break;
+            case 'outage':
+            case 'Inspection':
+                $dueTime = (6 * 60); // 6 hours in minutes for tasks other than clearance
+                break;
+            default:
+                $dueTime = 0; // No due time for unspecified work types
+                break;
+        }
+
+        // Check if the task completion is late based on the due time
+        if ($timeTakenInMinutes > 0) {
+            $isLate = $timeTakenInMinutes > $dueTime;
+        }
+
+        // Check if a task log entry already exists for the given main task
+        $taskLog = TaskLog::where('task_id', $task->id)->first();
+        if ($taskLog) {
+            $taskLog->update([
+                'is_late' => $isLate,
+            ]);
+        }
+    }
+
+    return 'Task logs updated successfully';
+});
 
 
 ////##### statins list  
