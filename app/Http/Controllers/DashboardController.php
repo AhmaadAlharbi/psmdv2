@@ -1072,29 +1072,19 @@ class DashBoardController extends Controller
     public function submitEngineerReport(Request $request, $id)
     {
 
-        // Step 1: Retrieve form input
-        $actionStatus = $request->input('action_take_status');
-        $actionContent = $request->input('action_take');
+        $validated = $request->validate([
+            'action_take_status' => 'required' // Default error message will be used
+        ], [
+            'action_take_status.required' => 'Please select a task status.' // Custom error message
+        ]);
 
         try {
-            $validated = $request->validate([
-                'action_take' => [
-                    'bail',
-                    'required',
-                    'string',
-                    function ($attribute, $value, $fail) {
-                        // Check if the value is equal to "User"
-                        if (strtolower($value) === '<div><br></div>') {
-                            // If yes, apply additional validation rules
-                            $fail("Custom validation failed for $attribute.");
-                        }
-                    },
-                ],
-            ]);
 
 
 
-
+            // Step 1: Retrieve form input
+            $actionStatus = $request->input('action_take_status');
+            $actionContent = $request->input('action_take');
 
             // Step 2: Retrieve the main task
             $mainTask = MainTask::findOrFail($id);

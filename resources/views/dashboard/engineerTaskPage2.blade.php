@@ -192,7 +192,15 @@
                                                     <br><br>
                                                     Promptly submit the first draft to preempt any potential delays.
                                                 </div> --}}
-
+                                                @if ($errors->any())
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                                @endif
 
                                                 <div class="custom-group">
                                                     <div class="custom-control custom-radio mb-2">
@@ -266,7 +274,8 @@
 
                                         <div class="form-group">
                                             <label for="actionTake">Action Take</label>
-                                            <textarea class="form-control content5" name="action_take"></textarea>
+                                            <textarea class="form-control content5"
+                                                name="action_take">{{ old('action_take') }}</textarea>
                                             @error('action_take')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
