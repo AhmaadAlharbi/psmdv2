@@ -303,9 +303,19 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     @if($tasksInYear > 0)
-                                    <div style="width: 650px; height: 400px;">
-                                        <canvas id="tasksByMonthChart"></canvas>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="chart-container">
+                                                <canvas id="tasksByMonthChart"></canvas>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="chart-container">
+                                                <canvas id="percentageWorkEachMonth"></canvas>
+                                            </div>
+                                        </div>
                                     </div>
+
                                     @else
                                     <div class="text-center mt-4">
                                         <p class="mb-2">No tasks in the current month to show.</p>
@@ -595,6 +605,90 @@
         }
     });
 </script>
+<script>
+    var pendingTaskCounts = {!! json_encode($pendingTaskCountsYearArr) !!};
+    var completedTaskCounts = {!! json_encode($completedTaskCountsYearArr) !!};
+    var months = {!! json_encode($months) !!};
+
+    // Calculate completion percentage for each month
+    var completionPercentage = [];
+    for (var i = 0; i < completedTaskCounts.length; i++) {
+        var totalTasks = completedTaskCounts[i] + pendingTaskCounts[i];
+        var percentage = totalTasks > 0 ? (completedTaskCounts[i] / totalTasks) * 100 : 0;
+        completionPercentage.push(percentage.toFixed(2));
+    }
+
+    var ctx1 = document.getElementById('tasksByMonthChart').getContext('2d');
+    var tasksByMonthChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Completed Tasks',
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                data: completedTaskCounts
+            }, {
+                label: 'Pending Tasks',
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                data: pendingTaskCounts
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if (Number.isInteger(value)) {
+                                return value;
+                            }
+                            return value.toFixed(2) + '%';
+                        }
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Tasks'
+                    }
+                }]
+            }
+        }
+    });
+
+    var ctx2 = document.getElementById('percentageWorkEachMonth').getContext('2d');
+    var percentageWorkEachMonth = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Completion Percentage',
+                backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                borderColor: 'rgba(255, 205, 86, 1)',
+                borderWidth: 2,
+                data: completionPercentage
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function(value) {
+                            return value.toFixed(2) + '%';
+                        }
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Completion Percentage'
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+<div style="width: 650px; height: 400px;">
+    <canvas id="percentageWorkEachMonth"></canvas>
+</div>
 
 <script>
     var pendingTaskCounts = {!! json_encode($pendingTaskCountsYearArr) !!};
