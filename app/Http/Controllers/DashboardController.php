@@ -275,7 +275,6 @@ class DashBoardController extends Controller
     public function indexArea($id)
     {
         $departmentId = Auth::user()->department_id;
-
         $mainTasks = MainTask::whereHas('departmentsAssienments', function ($query) use ($departmentId, $id) {
             $query->where('department_id', $departmentId)
                 ->where('area_id', $id);
@@ -285,13 +284,13 @@ class DashBoardController extends Controller
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
                 if ($assignment->eng_id && $assignment->department_id == $departmentId) {
-
                     if ($assignment->eng_id) {
+                        $engineer_id =  $assignment->eng_id;
                         $engineerName = $assignment->engineer->arabic_name;
-
                         // If the engineerName is not yet in the array, initialize the counts
                         if (!isset($engineerData[$engineerName])) {
                             $engineerData[$engineerName] = [
+                                'id' => $engineer_id,
                                 'name' => $engineerName,
                                 'assigned_tasks' => 0,
                                 'completed_tasks' => 0,
@@ -299,7 +298,6 @@ class DashBoardController extends Controller
                                 'completion_percentage' => 0, // Initialize completion percentage
                             ];
                         }
-
                         // Increment counts based on the task status
                         $engineerData[$engineerName]['assigned_tasks']++;
                         $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
@@ -514,7 +512,6 @@ class DashBoardController extends Controller
                 $query->where('area_id', 1);
             })
             ->count();
-
         $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
