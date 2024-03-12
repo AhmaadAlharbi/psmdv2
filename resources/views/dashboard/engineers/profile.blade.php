@@ -186,6 +186,7 @@
                 <div class="tab-content border border-top-0 p-4 br-dark">
                     <div class="tab-pane active" id="month">
                         <div class="container py-4">
+
                             <h4>Engineer's Tasks Statistics for Current Month</h4>
                             <p class="mb-4">Month: {{ \Carbon\Carbon::now()->format('F Y') }}</p>
                             <div class="row">
@@ -316,6 +317,7 @@
                                         </div>
                                     </div>
 
+
                                     @else
                                     <div class="text-center mt-4">
                                         <p class="mb-2">No tasks in the current month to show.</p>
@@ -421,11 +423,10 @@
                             <div class="row">
                                 <div class="col-md-12">
 
-                                    <div style="width: 650px; height: 400px;">
-                                        <canvas id="tasksChart" width="800" height="400"></canvas>
-
-
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <canvas id="tasksChart" class="embed-responsive-item"></canvas>
                                     </div>
+
 
                                 </div>
                                 <div class="col-md-12">
@@ -557,7 +558,7 @@
 <script>
     var ctx1 = document.getElementById('currentMonthChart').getContext('2d');
     var currentMonthChart = new Chart(ctx1, {
-        type: 'pie',
+        type: 'bar',
         data: {
             labels: ['Completed', 'Pending'],
             datasets: [{
@@ -686,9 +687,7 @@
     });
 </script>
 
-<div style="width: 650px; height: 400px;">
-    <canvas id="percentageWorkEachMonth"></canvas>
-</div>
+
 
 <script>
     var pendingTaskCounts = {!! json_encode($pendingTaskCountsYearArr) !!};

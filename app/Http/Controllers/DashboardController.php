@@ -48,37 +48,39 @@ class DashBoardController extends Controller
         $engineerData = [];
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
-                if ($assignment->eng_id && $assignment->department_id == $departmentId) {
+                // Check if the assignment is for the current month
+                if (
+                    $assignment->eng_id && $assignment->department_id == $departmentId &&
+                    Carbon::parse($assignment->created_at)->month == Carbon::now()->month
+                ) {
 
-                    if ($assignment->eng_id) {
-                        $engineer_id =  $assignment->eng_id;
-                        $engineerName = $assignment->engineer->arabic_name;
+                    $engineer_id = $assignment->eng_id;
+                    $engineerName = $assignment->engineer->arabic_name;
 
-                        // If the engineerName is not yet in the array, initialize the counts
-                        if (!isset($engineerData[$engineerName])) {
-                            $engineerData[$engineerName] = [
-                                'id' => $engineer_id,
-                                'name' => $engineerName,
-                                'assigned_tasks' => 0,
-                                'completed_tasks' => 0,
-                                'pending_tasks' => 0,
-                                'completion_percentage' => 0, // Initialize completion percentage
-                            ];
-                        }
-
-                        // Increment counts based on the task status
-                        $engineerData[$engineerName]['assigned_tasks']++;
-                        $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
-                        $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
-
-                        // Calculate completion percentage
-                        $completedTasks = $engineerData[$engineerName]['completed_tasks'];
-                        $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
-                        $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
-
-                        // Update completion percentage in the data array
-                        $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
+                    // If the engineerName is not yet in the array, initialize the counts
+                    if (!isset($engineerData[$engineerName])) {
+                        $engineerData[$engineerName] = [
+                            'id' => $engineer_id,
+                            'name' => $engineerName,
+                            'assigned_tasks' => 0,
+                            'completed_tasks' => 0,
+                            'pending_tasks' => 0,
+                            'completion_percentage' => 0, // Initialize completion percentage
+                        ];
                     }
+
+                    // Increment counts based on the task status
+                    $engineerData[$engineerName]['assigned_tasks']++;
+                    $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                    $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+
+                    // Calculate completion percentage
+                    $completedTasks = $engineerData[$engineerName]['completed_tasks'];
+                    $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
+                    $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+
+                    // Update completion percentage in the data array
+                    $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                 }
             }
         }
@@ -283,34 +285,39 @@ class DashBoardController extends Controller
         $engineerData = [];
         foreach ($mainTasks as $task) {
             foreach ($task->departmentsAssienments as $assignment) {
-                if ($assignment->eng_id && $assignment->department_id == $departmentId) {
-                    if ($assignment->eng_id) {
-                        $engineer_id =  $assignment->eng_id;
-                        $engineerName = $assignment->engineer->arabic_name;
-                        // If the engineerName is not yet in the array, initialize the counts
-                        if (!isset($engineerData[$engineerName])) {
-                            $engineerData[$engineerName] = [
-                                'id' => $engineer_id,
-                                'name' => $engineerName,
-                                'assigned_tasks' => 0,
-                                'completed_tasks' => 0,
-                                'pending_tasks' => 0,
-                                'completion_percentage' => 0, // Initialize completion percentage
-                            ];
-                        }
-                        // Increment counts based on the task status
-                        $engineerData[$engineerName]['assigned_tasks']++;
-                        $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
-                        $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+                // Check if the assignment is for the current month
+                if (
+                    $assignment->eng_id && $assignment->department_id == $departmentId &&
+                    Carbon::parse($assignment->created_at)->month == Carbon::now()->month
+                ) {
 
-                        // Calculate completion percentage
-                        $completedTasks = $engineerData[$engineerName]['completed_tasks'];
-                        $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
-                        $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+                    $engineer_id = $assignment->eng_id;
+                    $engineerName = $assignment->engineer->arabic_name;
 
-                        // Update completion percentage in the data array
-                        $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
+                    // If the engineerName is not yet in the array, initialize the counts
+                    if (!isset($engineerData[$engineerName])) {
+                        $engineerData[$engineerName] = [
+                            'id' => $engineer_id,
+                            'name' => $engineerName,
+                            'assigned_tasks' => 0,
+                            'completed_tasks' => 0,
+                            'pending_tasks' => 0,
+                            'completion_percentage' => 0, // Initialize completion percentage
+                        ];
                     }
+
+                    // Increment counts based on the task status
+                    $engineerData[$engineerName]['assigned_tasks']++;
+                    $engineerData[$engineerName]['completed_tasks'] += $assignment->isCompleted ? 1 : 0;
+                    $engineerData[$engineerName]['pending_tasks'] += $assignment->isCompleted ? 0 : 1;
+
+                    // Calculate completion percentage
+                    $completedTasks = $engineerData[$engineerName]['completed_tasks'];
+                    $assignedTasks = $engineerData[$engineerName]['assigned_tasks'];
+                    $completionPercentage = ($assignedTasks > 0) ? ($completedTasks / $assignedTasks) * 100 : 0;
+
+                    // Update completion percentage in the data array
+                    $engineerData[$engineerName]['completion_percentage'] = round($completionPercentage, 2);
                 }
             }
         }
@@ -1714,7 +1721,7 @@ class DashBoardController extends Controller
         switch ($status) {
             case 'pending':
                 return department_task_assignment::where('department_id', Auth::user()->department_id)
-                    ->where('status', 'pending')
+                    ->where('isCompleted', '0')
                     ->latest()->paginate(6);
 
             case 'completed':
@@ -1831,7 +1838,6 @@ class DashBoardController extends Controller
         $currentMonth = Carbon::now()->month;
         $stations = Station::all();
         $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
-
         // Check if an engineer is selected in the search form
         if ($request->has('engineer')) {
             // Store the selected engineer's name in the session
@@ -1868,7 +1874,7 @@ class DashBoardController extends Controller
     {
         $currentMonth = Carbon::now()->month;
         $stations = Station::all();
-        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get();
+        $engineers = Engineer::where('department_id', Auth::user()->department_id)->get()->sortBy('user.arabic_name');;
         // $tasks = SectionTask::with('main_task', 'main_task.departmentTaskAssignment', 'main_task.main_alarm')
         // ->where('department_id', Auth::user()->department_id)
         // ->where('isCompleted', 1)
@@ -1878,18 +1884,18 @@ class DashBoardController extends Controller
         $tasks = MainTask::where("isCompleted", '1')
             ->whereHas('section_tasks', function ($query) {
                 $query->where('isCompleted', "1")
+                    ->where('department_id', Auth::user()->department_id)
                     ->where('approved', 1);
             })
             ->with(['section_tasks' => function ($query) {
                 $query->where('isCompleted', "1")
                     ->where('approved', 1)
                     ->latest();
-            }, 'departmentsAssienments'])
+            }, 'departmentsAssienments' => function ($query) {
+                $query->where('department_id', Auth::user()->department_id);
+            }])
             ->orderBy('id', 'desc') // Order by id in descending order
             ->paginate(5);
-
-
-
         return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
     }
 
@@ -1967,7 +1973,8 @@ class DashBoardController extends Controller
             }
         }
 
-        $tasks = $query->paginate();
+        // Preserve the search parameters in the pagination links
+        $tasks = $query->paginate()->appends($request->query());
         return view('dashboard.archive', compact('tasks', 'stations', 'engineers'));
     }
 

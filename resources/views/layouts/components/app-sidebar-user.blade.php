@@ -49,6 +49,8 @@
                         </svg><span class="side-menu__label">Home</span></a>
 
                 </li>
+                @if(Auth::user()->role_id == 6)
+
                 <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
                         <i class="fas fa-bell side-menu__icon"></i> <!-- Placeholder alert tracking icon -->
@@ -72,7 +74,7 @@
 
 
                 </li>
-
+                @endif
                 {{-- <li class="side-item side-item-category">WEB APPS</li>
                 <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><svg
