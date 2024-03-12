@@ -20,6 +20,11 @@ class TaskNotesController extends Controller
     public function store(Request $request, $department_task_id)
     {
         $task = department_task_assignment::findOrFail($department_task_id);
+        $engineer = TaskNotes::where('department_task_assignment_id', $department_task_id)->first();
+
+        if (!$task->eng_id) {
+            $task->update(['eng_id' => $engineer->eng_id]);
+        }
         TaskNotes::create([
             'eng_id' => $task->eng_id,
             'user_id' => Auth::user()->id,

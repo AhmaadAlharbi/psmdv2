@@ -1776,12 +1776,12 @@ class DashBoardController extends Controller
         switch ($status) {
             case 'pending':
                 return department_task_assignment::where('eng_id', Auth::user()->id)
-                    ->where('status', 'pending')
+                    ->where('isCompleted', '0')
                     ->paginate(6);
             case 'completed':
                 return department_task_assignment::where('eng_id', Auth::user()->id)
                     ->where('department_id', Auth::user()->department_id)
-                    ->where('status', 'completed')
+                    ->where('isCompleted', '1')
                     ->latest()->paginate(6);
             case 'all':
                 return department_task_assignment::where('eng_id', Auth::user()->id)
