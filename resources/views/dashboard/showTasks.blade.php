@@ -121,10 +121,12 @@
                             <thead>
                                 <tr>
                                     <th>Task</th>
-                                    <th>Dates</th>
-                                    <th>Department</th>
-                                    <th>Status</th>
                                     <th>Station</th>
+                                    <th>Department</th>
+
+                                    <th>Dates</th>
+                                    <th>Status</th>
+
                                     <th>Engineer</th>
                                     <th>Main Alarm</th>
                                     <th>Equip</th>
@@ -137,7 +139,9 @@
                             <tbody>
                                 @foreach($tasks as $task)
                                 <tr>
-                                    <td>{{$task->main_task->id}}</td>
+                                    <td>{{$task->id}}</td>
+                                    <td>{{$task->main_task->station->SSNAME}}</td>
+                                    <td><span class="badge bg-light rounded">{{$task->department->name}}</span></td>
                                     <td>
                                         <strong>Occurred:</strong>
                                         <span class="badge bg-primary">
@@ -156,7 +160,6 @@
                                         @endif
 
                                     </td>
-                                    <td><span class="badge bg-light rounded">{{$task->department->name}}</span></td>
                                     <td>
                                         @php
                                         $badgeStatus = '';
@@ -170,8 +173,13 @@
                                         @endphp
                                         <span class="{{$badgeStatus}}">{{$task->status}}</span>
                                     </td>
-                                    <td>{{$task->main_task->station->SSNAME}}</td>
-                                    <td>{{ optional($task->engineer)->name }}</td>
+                                    <td>
+                                        <a
+                                            href="{{ $task->eng_id ? route('dashboard.engineerProfile', ['eng_id' => $task->eng_id]) : '#' }}">
+                                            {{ optional($task->engineer)->name ?: '-' }}
+                                        </a>
+
+                                    </td>
                                     <td>@isset($task->main_task->main_alarm->name){{$task->main_task->main_alarm->name}}@endisset
                                     </td>
                                     <td>{{$task->main_task->equip_number}}</td>
@@ -194,13 +202,18 @@
                                             <a class="dropdown-item"
                                                 href="/engineer-task-page/{{$task->main_tasks_id}}">Add
                                                 Report</a>
+
+
+
+                                            @else
                                             <a class="dropdown-item"
                                                 href="{{ route('taskNote.show', ['department_task_id' => $task->main_tasks_id]) }}">Add
                                                 Task Notes</a>
-                                            @else
+                                            @foreach($task->main_task->section_tasks->reverse() as $sectionTask)
                                             <a class="dropdown-item"
-                                                href="{{ route('dashboard.reportPage',['id'=>$task->id]) }}">
+                                                href="{{ route('dashboard.reportPage',['id'=>$sectionTask->id])}}">
                                                 View Report</a>
+                                            @endforeach
 
                                             @endif
 

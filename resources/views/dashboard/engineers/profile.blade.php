@@ -41,10 +41,10 @@
             <div class="card-body">
                 <div class="ps-0">
                     <div class="main-profile-overview">
-                        <div class="profile-user">
+                        {{-- <div class="profile-user">
                             <img alt="Profile Picture" src="{{asset('assets/img/faces/6.jpg')}}">
                             <a class="profile-edit" href="JavaScript:void(0);"><i class="fas fa-camera"></i></a>
-                        </div>
+                        </div> --}}
                         <div class="profile-details text-center mt-4">
                             <h2>{{ $engineer->name }}</h2>
                             <p class="text-muted">{{ $engineer->department->name }}</p>
@@ -237,7 +237,20 @@
                                                     <td><a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"> {{
                                                             $task->main_task->station->SSNAME }}</a>
                                                     </td>
-                                                    <td>{{ $task->status }}</td>
+                                                    @php
+                                                    $badgeStatus = '';
+                                                    if ($task->status == 'pending') {
+                                                    $badgeStatus = 'badge bg-danger';
+                                                    } elseif ($task->status != 'pending' && $task->isCompleted ==
+                                                    '0') {
+                                                    $badgeStatus = 'badge bg-warning';
+                                                    } elseif ($task->status != 'pending' && $task->isCompleted ==
+                                                    '1') {
+                                                    $badgeStatus = 'badge bg-success';
+                                                    }
+                                                    @endphp
+
+                                                    <td> <span class="{{$badgeStatus}}">{{$task->status}}</span></td>
                                                     <td>
                                                         <div class="alarm-date">
                                                             <span>Alarm Date:</span>
@@ -245,7 +258,7 @@
                                                             \a\t g:i A') : '' }} <br>
                                                             @if ($task->main_task->section_tasks->isNotEmpty())
                                                             <span> Completed Date</span>
-                                                            <span class="badge bg-success">
+                                                            <span class="badge bg-info">
 
                                                                 {{
                                                                 optional($task->main_task->section_tasks->first())->created_at
@@ -375,7 +388,20 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td><a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"> {{
                                                             $task->main_task->station->SSNAME }}</a>
-                                                    <td>{{ $task->status }}</td>
+                                                        @php
+                                                        $badgeStatus = '';
+                                                        if ($task->status == 'pending') {
+                                                        $badgeStatus = 'badge bg-danger';
+                                                        } elseif ($task->status != 'pending' && $task->isCompleted ==
+                                                        '0') {
+                                                        $badgeStatus = 'badge bg-warning';
+                                                        } elseif ($task->status != 'pending' && $task->isCompleted ==
+                                                        '1') {
+                                                        $badgeStatus = 'badge bg-success';
+                                                        }
+                                                        @endphp
+
+                                                    <td> <span class="{{$badgeStatus}}">{{$task->status}}</span></td>
                                                     <td>
                                                         <div class="alarm-date">
                                                             <span>Alarm Date:</span>
@@ -383,7 +409,7 @@
                                                             \a\t g:i A') : '' }} <br>
                                                             @if ($task->main_task->section_tasks->isNotEmpty())
                                                             <span> Completed Date</span>
-                                                            <span class="badge bg-success">
+                                                            <span class="badge bg-info">
 
                                                                 {{
                                                                 optional($task->main_task->section_tasks->first())->created_at
@@ -476,7 +502,20 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td><a href="{{route('dashboard.viewTask',['id'=>$task->id])}}"> {{
                                                             $task->main_task->station->SSNAME }}</a>
-                                                    <td>{{ $task->status }}</td>
+                                                        @php
+                                                        $badgeStatus = '';
+                                                        if ($task->status == 'pending') {
+                                                        $badgeStatus = 'badge bg-danger';
+                                                        } elseif ($task->status != 'pending' && $task->isCompleted ==
+                                                        '0') {
+                                                        $badgeStatus = 'badge bg-warning';
+                                                        } elseif ($task->status != 'pending' && $task->isCompleted ==
+                                                        '1') {
+                                                        $badgeStatus = 'badge bg-success';
+                                                        }
+                                                        @endphp
+
+                                                    <td> <span class="{{$badgeStatus}}">{{$task->status}}</span></td>
                                                     <td>
                                                         <div class="alarm-date">
                                                             <span>Alarm Date:</span>
@@ -484,7 +523,7 @@
                                                             \a\t g:i A') : '' }} <br>
                                                             @if ($task->main_task->section_tasks->isNotEmpty())
                                                             <span> Completed Date</span>
-                                                            <span class="badge bg-success">
+                                                            <span class="badge bg-info">
 
                                                                 {{
                                                                 optional($task->main_task->section_tasks->first())->created_at

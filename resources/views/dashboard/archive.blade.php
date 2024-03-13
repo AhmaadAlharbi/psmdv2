@@ -174,13 +174,14 @@
                         <tr>
                             <th>#</th>
                             <th>Task #</th>
-                            <th>Date</th>
                             <th>Station</th>
+                            <th>Department</th>
+                            <th>Engineer</th>
+                            <th>Date</th>
                             <th>Main Alarm</th>
                             <th>Equip</th>
                             <th>Nature of Fault</th>
                             <th>Action Taken</th>
-                            <th>Engineer</th>
                             <th>Report</th>
                         </tr>
                     </thead>
@@ -189,6 +190,16 @@
                         <tr>
                             <td>{{$loop->iteration}}</td>
                             <td>{{ $task->departmentsAssienments->first()->id }}</td>
+                            <td class="fw-bold">{{ $task->station->SSNAME }}</td>
+                            <td class="fw-bold">{{ $task->departmentsAssienments->first()->department->name }}</td>
+                            <td>
+
+                                <a
+                                    href="{{ route('dashboard.engineerProfile', ['eng_id' => $task->section_tasks->first()->eng_id]) }}">
+                                    {{ $task->section_tasks->first()->engineer->arabic_name }}
+                                </a>
+
+                            </td>
                             <td>
                                 <strong>Occurred:</strong>
                                 <span class="badge bg-primary">
@@ -205,19 +216,11 @@
                                 @endif
                             </td>
 
-                            <td class="fw-bold">{{ $task->station->SSNAME }}</td>
                             <td>@isset($task->main_alarm->name){{ $task->main_alarm->name }}@endisset</td>
                             <td>{{ $task->equip_number }}</td>
                             <td>{{ $task->problem }}</td>
                             <td>{!! $task->section_tasks->first()->action_take !!}</td>
-                            <td>
 
-                                <a
-                                    href="{{ route('dashboard.engineerProfile', ['eng_id' => $task->section_tasks->first()->eng_id]) }}">
-                                    {{ $task->section_tasks->first()->engineer->arabic_name }}
-                                </a>
-
-                            </td>
                             <td>
                                 <a href="{{ route('dashboard.reportDepartment', ['main_task_id' => $task->id, 'department_id' => $task->section_tasks->first()->department_id]) }}"
                                     class="btn btn-outline-success btn-sm">
