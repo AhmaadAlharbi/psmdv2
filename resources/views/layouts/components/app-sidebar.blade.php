@@ -106,6 +106,7 @@
 					<li class="side-menu__label1"><a href="javascript:void(0);">Charts</a></li>
 					<li><a class="slide-item" href="{{ route('stations.index') }}">Stations List</a></li>
 					<li><a class="slide-item" href="{{ route('stations.create') }}">Add Station</a></li>
+					<li><a class="slide-item" href="{{ route('equips.index') }}">Equips</a></li>
 				</ul>
 			</li>
 			<li class="slide">

@@ -9,4 +9,8 @@ class Equip extends Model
 {
     use HasFactory;
     protected $table = 'equip';
+    public function station()
+    {
+        return $this->belongsTo(Station::class);
+    }
 }

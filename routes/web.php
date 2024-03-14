@@ -133,6 +133,7 @@ use App\Models\department_task_assignment;
 use App\Http\Controllers\StationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EngineersController;
+use App\Http\Controllers\EquipController;
 use App\Http\Controllers\MainAlarmController;
 use App\Http\Controllers\TaskNotesController;
 use App\Http\Controllers\FileActivityController;
@@ -345,6 +346,7 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/submit-old-reports', [DashboardController::class, 'submitOldReport'])->name('submitOldReport');
     Route::post('/tasks/{id}/resend', [DashboardController::class, 'resendTask'])->name('resendTask');
     Route::delete('/section_task/{id}', [DashboardController::class, 'deleteSectionTask'])->name('deleteSectionTask');
+    Route::get('/dashboard/stations/equips', [EquipController::class, 'index'])->name('equips.index');
 });
 
 Route::get('/update_area_id_based_on_control', function () {
