@@ -55,7 +55,16 @@
                                                 <x-input-error :messages="$errors->get('name')"
                                                     class="mt-2 text-danger" />
                                             </div>
+                                            <!-- Arabic Name -->
 
+                                            <div>
+                                                <x-input-label for="arabic_name"
+                                                    :value="__('الرجاء تسجيل اسمك الثلاثي باللغة العربية')" />
+                                                <x-text-input id="arabic_name" class="form-control" type="text"
+                                                    name="arabic_name" :value="old('arabic_name')" required autofocus />
+                                                <x-input-error :messages="$errors->get('arabic_name')"
+                                                    class="mt-2 text-danger" />
+                                            </div>
                                             <!-- Email Address -->
                                             <div class="mt-4">
                                                 <x-input-label for="email" :value="__('Email,only MEW Email')" />

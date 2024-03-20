@@ -49,6 +49,7 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:255', new FullName],
+            'arabic_name' => ['required', 'string', 'max:255', new FullName],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users', new MewEmail],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'department' => ['required', 'integer'],
@@ -56,6 +57,7 @@ class RegisteredUserController extends Controller
         ]);
         $user = User::create([
             'name' => $request->name,
+            'arabic_name' => $request->arabic_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'department_id' => $request->department,
