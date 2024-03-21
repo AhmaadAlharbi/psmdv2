@@ -251,6 +251,8 @@ class DashBoardController extends Controller
             ->where('department_id', '!=', 1)
             ->count();
         $pendingNorthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('department_id', Auth::user()->department_id)
+
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
@@ -258,6 +260,7 @@ class DashBoardController extends Controller
             })
             ->count();
         $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('department_id', Auth::user()->department_id)
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
@@ -514,12 +517,16 @@ class DashBoardController extends Controller
         $departments = Department::all();
         $pendingNorthReportsCount = SectionTask::where('isCompleted', "1")
             ->where('approved', 0)
+            ->where('department_id', Auth::user()->department_id)
+
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
                 $query->where('area_id', 1);
             })
             ->count();
         $pendingSouthReportsCount = SectionTask::where('isCompleted', "1")
+            ->where('department_id', Auth::user()->department_id)
+
             ->where('approved', 0)
             ->where('department_id', '!=', 1)
             ->whereHas('main_task.departmentsAssienments', function ($query) {
